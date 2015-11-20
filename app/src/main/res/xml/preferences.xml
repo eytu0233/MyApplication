@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!--<PreferenceCategory
+        android:key="ACCOUNT_RELATION"
+        android:summary="帳號相關"
+        android:title="帳號相關" >
+        <CheckBoxPreference
+            android:key="MESSAGER_SUBSCRIPTION"
+            android:summary="設定是否訂閱推播訊息"
+            android:title="訂閱推播訊息" />
+    </PreferenceCategory>-->
+    <PreferenceCategory
+        android:key="MESSAGER_RELATION"
+        android:summary="最新消息相關"
+        android:title="最新消息相關" >
+        <ListPreference
+            android:entries="@array/preload_msgs_array"
+            android:entryValues="@array/preload_msgs_value_array"
+            android:key="PRELOAD_MSGS_MAX"
+            android:summary="最新消息一開始載入畫面的訊息數量"
+            android:title="一次載入最多訊息數量" />
+        <ListPreference
+            android:entries="@array/preload_msgs_array"
+            android:entryValues="@array/load_msgs_value_array"
+            android:key="LOAD_MSGS_MAX"
+            android:summary="最新消息加載訊息數量"
+            android:title="加載時能夠載入的訊息數量" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
