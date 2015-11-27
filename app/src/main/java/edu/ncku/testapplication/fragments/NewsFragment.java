@@ -132,7 +132,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     e.printStackTrace();
                 }
             }
-        }, 1000);
+        }, 500);
 
     }
 
@@ -174,7 +174,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     listView.onLoadComplete();
                 }
-            }, 2000);
+            }, 100);
         } catch (Exception e) {
             e.printStackTrace();
         }

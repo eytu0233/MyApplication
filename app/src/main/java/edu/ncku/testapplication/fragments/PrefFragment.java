@@ -1,10 +1,15 @@
 package edu.ncku.testapplication.fragments;
 
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,33 +36,34 @@ public class PrefFragment extends PreferenceFragment {
 		this.addPreferencesFromResource(R.xml.preferences);
 		final CheckBoxPreference checkboxPref = (CheckBoxPreference) getPreferenceManager().findPreference("MESSAGER_SUBSCRIPTION");
 
-		if(checkboxPref != null){
-		    /*checkboxPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-		        public boolean onPreferenceChange(final Preference preference, Object newValue) {
-		        	
-		        	final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-		    		final SharedPreferences.Editor SPE = SP.edit();
-		    		
-		        	new AlertDialog.Builder(getActivity())
-                    .setMessage(R.string.dialog_subcription)
-                    .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                        	boolean sub = SP.getBoolean(preference.getKey(), true);
-							SPE.putBoolean(preference.getKey(), !sub);
-							SPE.apply();
-							checkboxPref.setChecked(!sub);
-                        }
-                    })
-                    .setPositiveButton(getString(R.string.comfirm), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                        	
-                        }
-                    }).create().show();
-		            return true;
-		        }
-		    }); */
+		if(checkboxPref != null) {
+			checkboxPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+				public boolean onPreferenceChange(final Preference preference, Object newValue) {
+
+					final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+					final SharedPreferences.Editor SPE = SP.edit();
+
+					new AlertDialog.Builder(getActivity())
+							.setMessage(R.string.dialog_subcription)
+							.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int whichButton) {
+									boolean sub = SP.getBoolean(preference.getKey(), true);
+									SPE.putBoolean(preference.getKey(), !sub);
+									SPE.apply();
+									checkboxPref.setChecked(!sub);
+								}
+							})
+							.setPositiveButton(getString(R.string.comfirm), new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int whichButton) {
+
+								}
+							}).create().show();
+					return true;
+				}
+			});
+		}
 		    
 		    /* Below code is to avoid the default value not to be set */
 		    ListPreference preload_list_preference = (ListPreference) getPreferenceManager().findPreference("PRELOAD_MSGS_MAX");
@@ -71,7 +77,7 @@ public class PrefFragment extends PreferenceFragment {
 		    if(load_list_preference_value == null || load_list_preference_value.equals("0")){
 		    	load_list_preference.setValueIndex(0);
 		    }
-		}
+
 	}
 
 	

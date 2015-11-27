@@ -68,6 +68,9 @@ public class LibInfoListFragment extends Fragment {
                     case 0:
                         fragment = LibInfoOpenTimeFragment.newInstance();
                         break;
+                    case 3:
+                        fragment = LibMapFragment.newInstance();
+                        break;
                     default:
                         break;
                 }

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <!--<PreferenceCategory
-        android:key="ACCOUNT_RELATION"
-        android:summary="帳號相關"
-        android:title="帳號相關" >
-        <CheckBoxPreference
-            android:key="MESSAGER_SUBSCRIPTION"
-            android:summary="設定是否訂閱推播訊息"
-            android:title="訂閱推播訊息" />
-    </PreferenceCategory>-->
+    <!--<PreferenceCategory-->
+        <!--android:key="ACCOUNT_RELATION"-->
+        <!--android:summary="帳號相關"-->
+        <!--android:title="帳號相關" >-->
+        <!--<CheckBoxPreference-->
+            <!--android:key="MESSAGER_SUBSCRIPTION"-->
+            <!--android:summary="設定是否訂閱推播訊息"-->
+            <!--android:title="訂閱推播訊息" />-->
+    <!--</PreferenceCategory>-->
     <PreferenceCategory
         android:key="MESSAGER_RELATION"
         android:summary="最新消息相關"

@@ -3,6 +3,7 @@ package edu.ncku.testapplication.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,12 @@ import edu.ncku.testapplication.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MessageViewerFragment#newInstance} factory method to
+ * Use the {@link NewsViewerFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MessageViewerFragment extends Fragment {
+public class NewsViewerFragment extends Fragment {
 
+    private static final String DEBUG_FLAG = NewsViewerFragment.class.getName();
     private WebView msgContents;
     private TextView msgTitle, msgUnit, msgDate;
 
@@ -26,14 +28,14 @@ public class MessageViewerFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment MessageViewerFragment.
+     * @return A new instance of fragment NewsViewerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MessageViewerFragment newInstance() {
-        return new MessageViewerFragment();
+    public static NewsViewerFragment newInstance() {
+        return new NewsViewerFragment();
     }
 
-    public MessageViewerFragment() {
+    public NewsViewerFragment() {
         // Required empty public constructor
     }
 
@@ -59,6 +61,7 @@ public class MessageViewerFragment extends Fragment {
         msgDate.setText(getArguments().getString("date"));
 
         msgContents = (WebView) rootView.findViewById(R.id.webContesViewer);
+        Log.d(DEBUG_FLAG, getArguments().getString("contents"));
         msgContents.loadDataWithBaseURL("file:///android_asset/",
                 getArguments().getString("contents"), "text/html",
                 "utf-8", null);

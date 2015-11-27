@@ -20,7 +20,7 @@ import java.util.LinkedList;
 
 import edu.ncku.testapplication.data.News;
 import edu.ncku.testapplication.R;
-import edu.ncku.testapplication.fragments.MessageViewerFragment;
+import edu.ncku.testapplication.fragments.NewsViewerFragment;
 
 public class ListNewsAdapter extends BaseAdapter {
 
@@ -142,7 +142,7 @@ public class ListNewsAdapter extends BaseAdapter {
 					bundle.putString("unit", news.getUnit());
 					bundle.putString("contents", news.getContents().replace("\r\n", "<br>").trim());
 
-					MessageViewerFragment msgViewerFragment = new MessageViewerFragment();
+					NewsViewerFragment msgViewerFragment = new NewsViewerFragment();
 					msgViewerFragment.setArguments(bundle);
 					
 					FragmentManager fragmentManager = activity.getFragmentManager();
@@ -178,7 +178,7 @@ public class ListNewsAdapter extends BaseAdapter {
 					MULTIMEDIA = 6,
 					PEDROIDICAL_GROUP = 7,
 					READING_ROUP = 8;
-			int id = 0;
+			int id = R.drawable.ic_chief_room;
 				
 			if(unit.equals(unitStrings[SYSTEM_GROUP])){
 				id = R.drawable.ic_system_group;
