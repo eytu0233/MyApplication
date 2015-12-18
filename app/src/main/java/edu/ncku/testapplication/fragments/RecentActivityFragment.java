@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,23 +24,21 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import edu.ncku.testapplication.R;
+import edu.ncku.testapplication.io.RecentActivityReaderTask;
 
 public class RecentActivityFragment extends Fragment {
 
 	private static final String DEBUG_FLAG = RecentActivityFragment.class
 			.getName();
-	
-	private static final String URL = "http://140.116.207.87/";
 
-	private static String[] imgURLs = {
-		URL +"images/cycle/cycle01.jpg",
-		URL + "images/cycle/cycle02.jpg",
-		URL + "images/cycle/cycle03.jpg",};
-	
-	private static Map<String, String> imgSuperLink = new HashMap<String, String>();
-	
+	private static Map<String, String> imgSuperLinks;
+	private static String[] imgURLs;
+
 	private static Gallery gallery;
 
 	public static RecentActivityFragment newInstance() {
@@ -51,14 +50,36 @@ public class RecentActivityFragment extends Fragment {
 	}
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		RecentActivityReaderTask urlReceiveTask = new RecentActivityReaderTask(getActivity().getApplicationContext());
+		urlReceiveTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		try {
+			Map<String, String> tempMap = urlReceiveTask.get(3, TimeUnit.SECONDS);
+			if(tempMap != null && !tempMap.isEmpty()){
+				imgSuperLinks = tempMap;
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (TimeoutException e) {
+			e.printStackTrace();
+		}
+
+		if(imgSuperLinks == null || imgSuperLinks.isEmpty()) {
+			imgSuperLinks = new HashMap<String, String>();
+			imgSuperLinks.put("", "");
+		}
+		imgURLs = new String[imgSuperLinks.keySet().size()];
+		imgSuperLinks.keySet().toArray(imgURLs);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_recent_activity,
 				container, false);
-		
-		imgSuperLink.put(imgURLs[0], URL + "service/promotion/bazaar/");
-		imgSuperLink.put(imgURLs[1], "http://www.lib.ncku.edu.tw/www2008/media/exhibit/2015/summer/index.html");
-		imgSuperLink.put(imgURLs[2], "http://libvote.nlpi.edu.tw/vote_detail.php?Key=81");
 
 		gallery = (Gallery) rootView.findViewById(R.id.gallery);
 		gallery.setAdapter(new ImageAdapter(getActivity()));
@@ -67,8 +88,8 @@ public class RecentActivityFragment extends Fragment {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Log.d(DEBUG_FLAG, "position : " + position % imgURLs.length);
-				Uri uri=Uri.parse(imgSuperLink.get(imgURLs[position % imgURLs.length])); 
-				Intent i=new Intent(Intent.ACTION_VIEW,uri); 
+				Uri uri=Uri.parse(imgSuperLinks.get(imgURLs[position % imgURLs.length]));
+				Intent i = new Intent(Intent.ACTION_VIEW,uri);
 				startActivity(i); 
 			}
 		});
@@ -82,7 +103,6 @@ public class RecentActivityFragment extends Fragment {
 			}
 			
 		});
-		
 
 		return rootView;
 	}

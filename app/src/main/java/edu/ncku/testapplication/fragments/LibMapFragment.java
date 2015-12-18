@@ -2,6 +2,8 @@ package edu.ncku.testapplication.fragments;
 
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -89,6 +91,9 @@ public class LibMapFragment extends Fragment {
         else {
             Toast.makeText(context, R.string.no_maps, Toast.LENGTH_LONG).show();
             getActivity().getFragmentManager().beginTransaction().remove(this).commit();
+            Uri uri=Uri.parse("http://m.lib.ncku.edu.tw/map.html");
+            Intent i = new Intent(Intent.ACTION_VIEW,uri);
+            startActivity(i);
         }
 
         return(false);

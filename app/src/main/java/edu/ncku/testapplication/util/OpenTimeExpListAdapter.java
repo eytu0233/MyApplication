@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import edu.ncku.testapplication.R;
 
@@ -18,19 +19,21 @@ public class OpenTimeExpListAdapter extends BaseExpandableListAdapter {
 
 	private Context mContext;
 	private List<String> mListDataHeader;
-	private HashMap<String, List<String>> mListDataChild;
+	private Map<String, List<String>> mListDataChild;
+
+	private ArrayList<TextView> gourpView = new ArrayList<TextView>();
 
 	public OpenTimeExpListAdapter(Context context, List<String> listDataHeader,
-								  HashMap<String, List<String>> listChildData) {
+								  Map<String, List<String>> listChildData) {
 		this.mContext = context;
 		this.mListDataHeader = listDataHeader;
 		this.mListDataChild = listChildData;
 	}
 
 	@Override
-	public Object getChild(int groupPosition, int childPosititon) {
+	public Object getChild(int groupPosition, int childPosition) {
 		return this.mListDataChild.get(this.mListDataHeader.get(groupPosition))
-				.get(childPosititon);
+				.get(childPosition);
 	}
 
 	@Override
@@ -102,6 +105,7 @@ public class OpenTimeExpListAdapter extends BaseExpandableListAdapter {
 		/* 設置標題 */
 		TextView lblListHeader = (TextView) convertView
 				.findViewById(R.id.txtTitle);
+		gourpView.add(groupPosition, lblListHeader);
 		lblListHeader.setTypeface(null, Typeface.BOLD);
 		lblListHeader.setText(headerTitle);
 
@@ -118,6 +122,10 @@ public class OpenTimeExpListAdapter extends BaseExpandableListAdapter {
 	public boolean isChildSelectable(int groupPosition, int childPosition) {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	public TextView getGroupHeaderView(int groupPosition){
+		return gourpView.get(groupPosition);
 	}
 
 }

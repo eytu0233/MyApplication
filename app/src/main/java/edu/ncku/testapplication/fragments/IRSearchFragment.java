@@ -1,6 +1,5 @@
 package edu.ncku.testapplication.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,9 +19,12 @@ public class IRSearchFragment extends Fragment {
 
     private static final String DEBUG_FLAG = IRSearchFragment.class.getName();
 
-    private static final String URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordSearch.php";
+    public static final String KEYWORD = "keyword";
 
-    private WebView webView;
+    private static final String SEARCH_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordSearch.php";
+    private static final String BIB_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordbibSearch.php?lan=cht&Keyword=";
+
+    private String url;
 
     /**
      * Use this factory method to create a new instance of
@@ -31,6 +33,14 @@ public class IRSearchFragment extends Fragment {
      * @return A new instance of fragment IRSearchFragment.
      */
     // TODO: Rename and change types and number of parameters
+    public static IRSearchFragment newInstance(String keyword) {
+        IRSearchFragment fragment = new IRSearchFragment();
+        Bundle args = new Bundle();
+        args.putString(KEYWORD, keyword);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public static IRSearchFragment newInstance() {
         return new IRSearchFragment();
     }
@@ -42,6 +52,11 @@ public class IRSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            url = BIB_URL + getArguments().getString(KEYWORD);
+        } else {
+            url = SEARCH_URL;
+        }
     }
 
     @Override
@@ -51,7 +66,7 @@ public class IRSearchFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_web, container,
                 false);
 
-        webView = (WebView) rootView.findViewById(R.id.irWebView);
+        WebView webView = (WebView) rootView.findViewById(R.id.irWebView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
 
@@ -63,19 +78,8 @@ public class IRSearchFragment extends Fragment {
             }
 
         });
-        webView.loadUrl(URL);
+        webView.loadUrl(url);
 
         return rootView;
     }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
 }

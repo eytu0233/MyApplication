@@ -1,5 +1,6 @@
 package edu.ncku.testapplication;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -7,11 +8,13 @@ import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -27,13 +30,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.LinkedList;
 
 import edu.ncku.testapplication.fragments.HomePageFragment;
+import edu.ncku.testapplication.fragments.IRISBNSearchFragment;
 import edu.ncku.testapplication.fragments.PrefFragment;
-import edu.ncku.testapplication.service.NewsRecieveService;
+import edu.ncku.testapplication.fragments.ProgressFragment;
+import edu.ncku.testapplication.service.NetworkListenerService;
 import edu.ncku.testapplication.util.IReceiverRegisterListener;
+import edu.ncku.testapplication.util.ISBNMacher;
 import edu.ncku.testapplication.util.ITitleChangeListener;
 
 public class MainActivity extends AppCompatActivity implements ITitleChangeListener, IReceiverRegisterListener {
@@ -63,8 +73,12 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
         replaceFragment(mHomePageFragment);
 
-        if(!isServiceRunning(NewsRecieveService.class)) {
-            NewsRecieveService.startActionNORMAL(getApplicationContext());
+        if (!isServiceRunning(NetworkListenerService.class)) {
+            if (startService(new Intent(this, NetworkListenerService.class)) != null) {
+                Log.d(DEBUG_FLAG, "NetworkListenerService start!");
+            } else {
+                Log.e(DEBUG_FLAG, "NetworkListenerService start fail!");
+            }
         }
 
         /*String parameters = getIntent().getStringExtra("mainActivityParameter");
@@ -86,8 +100,8 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         return true;
     }
 
-    private void replaceFragment(Fragment fragment){
-        if(fragment != null) {
+    private void replaceFragment(Fragment fragment) {
+        if (fragment != null) {
             getFragmentManager().beginTransaction()
                     .replace(R.id.content_frame, fragment).commit();
         }
@@ -111,14 +125,14 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
                 return true;
             }
         };
-        Drawable logo =  ContextCompat.getDrawable(this, R.drawable.ic_launcher);
+        Drawable logo = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
         toolbar.setLogo(logo);
         for (int i = 0; i < toolbar.getChildCount(); i++) {
             View child = toolbar.getChildAt(i);
             if (child != null)
                 if (child.getClass() == ImageView.class) {
                     ImageView logoImageView = (ImageView) child;
-                    if ( logoImageView.getDrawable() == logo ) {
+                    if (logoImageView.getDrawable() == logo) {
                         logoImageView.setAdjustViewBounds(true);
                         logoImageView.setPadding(0, 0, 30, 0);
                     }
@@ -195,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
     }
 
-    private void logout(){
+    private void logout() {
         final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         final SharedPreferences.Editor SPE = SP.edit();
 
@@ -234,11 +248,11 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
     public void setTitle(CharSequence title) {
         titleStack.push(mTitle.toString());
         mTitle = title;
-        if(title == null) {
+        if (title == null) {
             Log.d(DEBUG_FLAG, "title null");
             return;
         }
-        if(getSupportActionBar() == null) {
+        if (getSupportActionBar() == null) {
             Log.d(DEBUG_FLAG, "getSupportActionBar null");
             return;
         }
@@ -252,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
         Log.d(DEBUG_FLAG, countStackSize + " / " + titleStackSize);
 
-        if(countStackSize == 0 && countStackSize == 0){
+        if (countStackSize == 0 && countStackSize == 0) {
             new AlertDialog.Builder(this)
                     .setMessage(R.string.dialog_close_confirm)
                     .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -261,27 +275,26 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
                         }
                     })
-                    .setPositiveButton(getString(R.string.comfirm), new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
                             android.os.Process.killProcess(android.os.Process.myPid());
                             onDestroy();
                         }
                     }).create().show();
-        }else if(countStackSize > titleStackSize){
+        } else if (countStackSize > titleStackSize) {
             getFragmentManager().popBackStack();
-        }else if(countStackSize == titleStackSize){
+        } else if (countStackSize == titleStackSize) {
             mTitle = titleStack.pop();
             getSupportActionBar().setTitle(mTitle);// the reason why the code is written like this is to avoid to push title into titleStack
             getFragmentManager().popBackStack();
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
 
     @Override
     protected void onDestroy() {
-        NewsRecieveService.startActionUNREGISTER(getApplicationContext());
         super.onDestroy();
     }
 
@@ -316,25 +329,39 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
     private void selectItem(int position) {
         // update the main content by replacing fragments
-        String navigationTilte = mDrawerList.getAdapter().getItem(position)
+        String navigationTitle = mDrawerList.getAdapter().getItem(position)
                 .toString();
         Fragment fragment = null;
 
         if (getResources().getString(R.string.home_page)
-                .equals(navigationTilte)) {
+                .equals(navigationTitle)) {
             fragment = mHomePageFragment;
-            setTitle(navigationTilte);
+            setTitle(R.string.app_name);
         } else if (getResources().getString(R.string.login).equals(
-                navigationTilte)) {
+                navigationTitle)) {
             (new LoginDialog(this)).show(getFragmentManager(), "Dialog");
             mDrawerLayout.closeDrawer(mDrawerList);
             return;
         } else if (getResources().getString(R.string.logout).equals(
-                navigationTilte)) {
+                navigationTitle)) {
             changeNavigationNormalList();
             logout();
             mDrawerLayout.closeDrawer(mDrawerList);
             return;
+        } else if (navigationTitle.equals("BarcodeScanner")) {
+            final ProgressFragment progressFragment = ProgressFragment.newInstance();
+
+            getFragmentManager().beginTransaction().addToBackStack(null)
+                    .add(R.id.content_frame, progressFragment).commit();
+            (new Handler()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getFragmentManager().popBackStack();
+                    IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+                    integrator.initiateScan();
+                }
+            }, 500);
+
         } else {
             Log.e(DEBUG_FLAG, "Select no definition fragment!");
             mDrawerList.setItemChecked(position, true);
@@ -347,10 +374,10 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
             clearBackStackFragment();
             getFragmentManager().beginTransaction()
                     .replace(R.id.content_frame, fragment).commit();
+            mDrawerList.setItemChecked(position, true);
         }
 
         // update selected item and title, then close the drawer
-        mDrawerList.setItemChecked(position, true);
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -364,5 +391,26 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_list_item, mNavigationLoginList));
         selectItem(0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch (requestCode) {
+            case IntentIntegrator.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    // Parsing bar code reader result
+                    IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+                    String scanContent = result.getContents();
+                    if (ISBNMacher.validateIsbn10(scanContent) || ISBNMacher.validateIsbn13(scanContent)) {
+                        FragmentManager fragmentManager = getFragmentManager();
+                        fragmentManager.beginTransaction().addToBackStack(null)
+                                .add(R.id.content_frame, IRISBNSearchFragment.newInstance(scanContent)).commit();
+                        onChangeTitle(getResources().getString(R.string.homepage_ic_search));
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.not_match_isbn, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+        }
     }
 }

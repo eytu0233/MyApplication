@@ -9,13 +9,15 @@
         android:id="@+id/imgIcon"
         android:layout_width="42dp"
         android:layout_height="42dp"
-        android:src="@drawable/ic_information_service" />
+        android:src="@drawable/ic_information_service"
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="233dp"
         android:layout_height="match_parent"
         android:background="#FFFFFF"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:layout_weight="5">
 
         <TextView
             android:id="@+id/txtDate"
@@ -40,20 +42,14 @@
             android:textColor="#000000" />
     </LinearLayout>
 
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:columnCount="1" >
-
-        <ImageView
-            android:id="@+id/icEnterImgView"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_column="0"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:layout_row="0"
-            android:src="@drawable/ic_enter" />
-
-    </GridLayout>
+    <ImageView
+        android:id="@+id/icEnterImgView"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_column="0"
+        android:layout_row="0"
+        android:src="@drawable/ic_enter"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp" />
 
 </LinearLayout>

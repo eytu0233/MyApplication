@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class NetworkCheckReceiver extends BroadcastReceiver {
 
@@ -15,6 +16,7 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
             .getName();
 
     private NetworkInfo currentNetworkInfo;
+    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3);
 
     public NetworkCheckReceiver() {
     }
@@ -35,7 +37,11 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
                 // do something when network connected.
                 Log.d(DEBUG_FLAG, "連上網路");
 
-                Executors.newScheduledThreadPool(1).submit(new NewsReceiveTask(true, context));
+                scheduledExecutorService.submit(new NewsReceiveTask(context, false));
+                scheduledExecutorService.submit(new LibOpenTimeReceiveTask(context));
+                scheduledExecutorService.submit(new RecentActivityReceiveTask(context));
+                scheduledExecutorService.submit(new FloorInfoReceiveTask(context));
+                scheduledExecutorService.submit(new ContactInfoReceiveTask(context));
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -26,6 +26,12 @@
             android:key="LOAD_MSGS_MAX"
             android:summary="最新消息加載訊息數量"
             android:title="加載時能夠載入的訊息數量" />
+        <ListPreference
+            android:entries="@array/out_of_date_array"
+            android:entryValues="@array/out_of_date_value_array"
+            android:key="OUT_OF_DATE"
+            android:summary="最新消息存活時間"
+            android:title="最新消息資料儲存在裝置的最長時間(活動結束時間開始算)" />
     </PreferenceCategory>
 
 </PreferenceScreen>

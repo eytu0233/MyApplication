@@ -7,10 +7,15 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.ncku.testapplication.R;
@@ -30,6 +35,7 @@ public class HomePageFragment extends Fragment {
     private Fragment mIRSearchFragment;
     private Fragment mRecentActivityFragment;
     private Fragment mNewsFragment;
+    private Fragment mPersonalBorrowFragment;
 
     private ImageView mLibInfoImageView;
     private ImageView mNewsImageView;
@@ -37,8 +43,10 @@ public class HomePageFragment extends Fragment {
     private ImageView mPersonalBorrowImageView;
     private ImageView mActivityImageView;
     private ImageView mScannerImageView;
+    private EditText searchBarEditText;
 
     private Context context;
+    private Activity activity;
     private ITitleChangeListener titleChangeListener;
     private NetworkInfo currentNetworkInfo;
 
@@ -58,8 +66,10 @@ public class HomePageFragment extends Fragment {
         mIRSearchFragment = IRSearchFragment.newInstance();
         mLibInfoListFragment = LibInfoListFragment.newInstance();
         mRecentActivityFragment = RecentActivityFragment.newInstance();
+        mPersonalBorrowFragment = PersonalBorrowFragment.newInstance();
 
         context = this.getActivity().getApplicationContext();
+        activity = this.getActivity();
         ConnectivityManager connectivityManager = ((ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE));
         currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -134,6 +144,40 @@ public class HomePageFragment extends Fragment {
                 }
             }
 
+        });
+        mPersonalBorrowImageView = (ImageView) rootView.findViewById(R.id.borrowImgBtn);
+        mPersonalBorrowImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mPersonalBorrowFragment != null) {
+                    FragmentManager fragmentManager = getActivity()
+                            .getFragmentManager();
+                    fragmentManager.beginTransaction().addToBackStack(null)
+                            .add(R.id.content_frame, mPersonalBorrowFragment).commit();
+                    titleChangeListener.onChangeTitle(getResources().getString(R.string.homepage_ic_barrow));
+                }
+            }
+        });
+        searchBarEditText = (EditText) rootView.findViewById(R.id.searchBarEditText);
+        searchBarEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_NULL
+                        && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    FragmentManager fragmentManager = getActivity()
+                            .getFragmentManager();
+                    fragmentManager.beginTransaction().addToBackStack(null)
+                            .add(R.id.content_frame, IRSearchFragment.newInstance(v.getText().toString())).commit();
+                    titleChangeListener.onChangeTitle(getResources().getString(R.string.homepage_ic_search));
+                    v.setText("");
+                    View view = activity.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+                return true;
+            }
         });
         return rootView;
     }

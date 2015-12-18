@@ -24,7 +24,7 @@ import android.widget.Toast;
 import edu.ncku.testapplication.LoadMoreListView;
 import edu.ncku.testapplication.R;
 import edu.ncku.testapplication.io.NewsReaderTask;
-import edu.ncku.testapplication.service.NewsRecieveService;
+import edu.ncku.testapplication.service.DataReceiveService;
 import edu.ncku.testapplication.util.IReceiverRegisterListener;
 import edu.ncku.testapplication.util.ListNewsAdapter;
 
@@ -208,7 +208,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * broadcast to update message data once
      */
     private void onceActiveUpdateMessageData() {
-        NewsRecieveService.startActionONCE(getActivity().getApplicationContext());
+        DataReceiveService.startActionONCE(getActivity().getApplicationContext());
 
         mHandler.postDelayed(new Runnable() {
             @Override

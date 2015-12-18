@@ -21,7 +21,44 @@
             android:id="@+id/icEnterImgView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/main_title_icon_s" />
+            android:src="@drawable/main_title_icon_s"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:adjustViewBounds="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/main_search_bar" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchBarEditText"
+            android:singleLine="true"
+            android:hint="@string/searchbar_hint"
+            android:background="@null"
+            android:layout_alignBottom="@+id/imageView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center" />
     </RelativeLayout>
 
     <LinearLayout
@@ -29,7 +66,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|end"
         android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingTop="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,7 +75,7 @@
             android:gravity="center" >
 
             <ImageButton
-                android:id="@+id/imgBtnNews"
+                android:id="@+id/newsImgBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -45,7 +83,7 @@
                 android:src="@drawable/news_selector" />
 
             <ImageButton
-                android:id="@+id/imgBtnIRSearch"
+                android:id="@+id/IRSearchImgBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -53,7 +91,7 @@
                 android:src="@drawable/irsearch_selector" />
 
             <ImageButton
-                android:id="@+id/imgBtnBorrow"
+                android:id="@+id/borrowImgBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -75,12 +113,13 @@
                 android:src="@drawable/lib_info_selector" />
 
             <ImageButton
-                android:id="@+id/imgBtnActivity"
+                android:id="@+id/activityImgBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
                 android:src="@drawable/activity_selector" />
+
         </LinearLayout>
     </LinearLayout>
 

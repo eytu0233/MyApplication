@@ -9,26 +9,21 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import edu.ncku.testapplication.data.News;
 
-public class NewsReceiveTask extends Thread {
+public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 	private static final String DEBUG_FLAG = NewsReceiveTask.class.getName();
 	private static final String FILE_NAME = "News";
-	private static final String URL = "http://m.lib.ncku.edu.tw/news/news_json.php?item=webNews";
+	private static final String JSON_URL = "http://m.lib.ncku.edu.tw/news/news_json.php?item=webNews";
 	private static final Object LOCKER = new Object();
 
 	private static NetworkInfo currentNetworkInfo;
@@ -37,10 +32,32 @@ public class NewsReceiveTask extends Thread {
 	private Context mContext;
 	private Intent mIntent = new Intent();
 
-	public NewsReceiveTask(boolean isOnce, Context context) {
+	public NewsReceiveTask(Context mContext, boolean isOnce) {
+		super(mContext);
+		this.mContext = mContext;
 		this.isOnce = isOnce;
 		this.mIntent.setAction("android.intent.action.MY_RECEIVER");
-		this.mContext = context;
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		if (mContext != null) {
+			ConnectivityManager connectivityManager = ((ConnectivityManager) mContext
+					.getSystemService(Context.CONNECTIVITY_SERVICE));
+			currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		}
+
+		if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
+
+			receiveNewsFromNetwork();
+
+		} else {
+			if (isOnce) {
+				mIntent.putExtra("flag", "目前網路尚未開啟,無法更新訊息。");
+				mContext.sendBroadcast(mIntent);
+			}
+		}
 	}
 
 	private int synMsgFile(LinkedList<News> newsList) {
@@ -78,6 +95,9 @@ public class NewsReceiveTask extends Thread {
 
 				// overwrite the news data to the file
 				oos = new ObjectOutputStream(new FileOutputStream(newsFile));
+				if (!isOnce) {
+					deleteOutOfDateNews(mergeReadNews);
+				}
 				oos.writeObject(mergeReadNews);
 				oos.flush();
 				if (oos != null)
@@ -96,24 +116,31 @@ public class NewsReceiveTask extends Thread {
 		return updateNum;
 	}
 
+	private void deleteOutOfDateNews(LinkedHashSet<News> newsSet){
+		final long ALIVE_DAYS = 90;
+		final long SECONDS_OF_A_DAY = 24 * 60 * 60;
+		final long OUT_OF_DATE_TIMESTAMP = ALIVE_DAYS * SECONDS_OF_A_DAY;
+		long nowTimeStamp = System.currentTimeMillis() / 1000L;
+
+		LinkedHashSet<News> deleteNewsSet = new LinkedHashSet<News>();
+
+		for(News news : newsSet){
+			if(nowTimeStamp - (long)news.getTimeStamp() >= OUT_OF_DATE_TIMESTAMP){
+				deleteNewsSet.add(news);
+			}
+		}
+
+		if(!deleteNewsSet.isEmpty()) newsSet.removeAll(deleteNewsSet);
+	}
+
 	private void receiveNewsFromNetwork() {
-		HttpURLConnection urlConnection = null;
 		LinkedList<News> news;
 
 		int numNews = 0;
 
 		try {
-			URL url = new URL(URL);
-			urlConnection = (HttpURLConnection) url.openConnection();
-			BufferedReader streamReader = new BufferedReader(
-					new InputStreamReader(urlConnection.getInputStream()));
-			StringBuilder responseStrBuilder = new StringBuilder();
 
-			String inputStr;
-			while ((inputStr = streamReader.readLine()) != null)
-				responseStrBuilder.append(inputStr);
-
-			JSONArray arr = new JSONArray(responseStrBuilder.toString());
+			JSONArray arr = new JSONArray(jsonRecieve(JSON_URL));
 
 			news = new LinkedList<News>();
 
@@ -168,8 +195,8 @@ public class NewsReceiveTask extends Thread {
 
 				if(contact_tel.length() > 0){
 					content += "&nbsp;"
-					+ contact_tel
-					+ "<br>";
+							+ contact_tel
+							+ "<br>";
 				}
 
 				if(contact_email.length() > 0){
@@ -187,41 +214,14 @@ public class NewsReceiveTask extends Thread {
 
 			numNews = synMsgFile(news);
 
-		} catch (ConnectException e) {
-			// TODO Auto-generated catch block
-			Log.e(DEBUG_FLAG, "網頁連線逾時");
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			urlConnection.disconnect();
 		}
 
-		mIntent.putExtra("numNews", numNews);
 		if (isOnce) {
+			mIntent.putExtra("numNews", numNews);
 			mIntent.putExtra("flag", "FinishFlushFlag");
-		}
-		mContext.sendBroadcast(mIntent);
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-
-		if (mContext != null) {
-			ConnectivityManager connectivityManager = ((ConnectivityManager) mContext
-					.getSystemService(Context.CONNECTIVITY_SERVICE));
-			currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-		}
-
-		if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
-
-			receiveNewsFromNetwork();
-
-		} else {
-			if (isOnce) {
-				mIntent.putExtra("flag", "目前網路尚未開啟,無法更新訊息。");
-				mContext.sendBroadcast(mIntent);
-			}
+			mContext.sendBroadcast(mIntent);
 		}
 	}
 }

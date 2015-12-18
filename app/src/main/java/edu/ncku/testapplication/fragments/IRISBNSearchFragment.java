@@ -12,34 +12,46 @@ import edu.ncku.testapplication.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link PersonalBorrowFragment#newInstance} factory method to
+ * Use the {@link IRISBNSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PersonalBorrowFragment extends Fragment {
-    private static final String DEBUG_FLAG = IRSearchFragment.class.getName();
+public class IRISBNSearchFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    private static final String DEBUG_FLAG = IRISBNSearchFragment.class.getName();
 
-    private static final String URL = "http://m.lib.ncku.edu.tw/patroninfo/login_my_account.php";
+    private static final String ISBN = "ISBN";
 
-    private WebView webView;
+    private static final String ISBN_SEARCH_URL = "http://m.lib.ncku.edu.tw/catalogs/ISBNBibSearch.php?lan=cht&ISBN=";
+
+    // TODO: Rename and change types of parameters
+    private String isbn;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment IRSearchFragment.
+     * @param isbn Parameter 1.
+     * @return A new instance of fragment IRISBNSearchFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PersonalBorrowFragment newInstance() {
-        return new PersonalBorrowFragment();
+    public static IRISBNSearchFragment newInstance(String isbn) {
+        IRISBNSearchFragment fragment = new IRISBNSearchFragment();
+        Bundle args = new Bundle();
+        args.putString(ISBN, isbn);
+        fragment.setArguments(args);
+        return fragment;
     }
 
-    public PersonalBorrowFragment() {
+    public IRISBNSearchFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            isbn = getArguments().getString(ISBN);
+        }
     }
 
     @Override
@@ -49,7 +61,7 @@ public class PersonalBorrowFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_web, container,
                 false);
 
-        webView = (WebView) rootView.findViewById(R.id.irWebView);
+        WebView webView = (WebView) rootView.findViewById(R.id.irWebView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
 
@@ -61,7 +73,7 @@ public class PersonalBorrowFragment extends Fragment {
             }
 
         });
-        webView.loadUrl(URL);
+        webView.loadUrl(ISBN_SEARCH_URL + isbn);
 
         return rootView;
     }
