@@ -162,19 +162,22 @@ public class HomePageFragment extends Fragment {
         searchBarEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_NULL
-                        && event.getAction() == KeyEvent.ACTION_DOWN) {
-                    FragmentManager fragmentManager = getActivity()
-                            .getFragmentManager();
-                    fragmentManager.beginTransaction().addToBackStack(null)
-                            .add(R.id.content_frame, IRSearchFragment.newInstance(v.getText().toString())).commit();
-                    titleChangeListener.onChangeTitle(getResources().getString(R.string.homepage_ic_search));
-                    v.setText("");
-                    View view = activity.getCurrentFocus();
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
+                switch(actionId){
+                    case EditorInfo.IME_NULL:
+                    case EditorInfo.IME_ACTION_SEND:
+                    case EditorInfo.IME_ACTION_DONE:
+                        FragmentManager fragmentManager = getActivity()
+                                .getFragmentManager();
+                        fragmentManager.beginTransaction().addToBackStack(null)
+                                .add(R.id.content_frame, IRSearchFragment.newInstance(v.getText().toString())).commit();
+                        titleChangeListener.onChangeTitle(getResources().getString(R.string.homepage_ic_search));
+                        v.setText("");
+                        View view = activity.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+                        break;
                 }
                 return true;
             }

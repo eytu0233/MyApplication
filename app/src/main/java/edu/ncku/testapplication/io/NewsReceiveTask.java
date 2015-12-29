@@ -23,7 +23,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 	private static final String DEBUG_FLAG = NewsReceiveTask.class.getName();
 	private static final String FILE_NAME = "News";
-	private static final String JSON_URL = "http://m.lib.ncku.edu.tw/news/news_json.php?item=webNews";
+	private static final String JSON_URL = "http://140.116.207.24/libweb/index.php?item=webNews&lan=cht";
 	private static final Object LOCKER = new Object();
 
 	private static NetworkInfo currentNetworkInfo;

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Pattern;
 
 import edu.ncku.testapplication.R;
 import edu.ncku.testapplication.data.ContactInfo;
@@ -120,7 +121,7 @@ public class LibContactFragment extends Fragment {
     }
 
     private String convert2Telext(String s){
-        return s.replace(" ", "").replace('#', ',');
+        return Pattern.compile("[^0-9#]").matcher(s).replaceAll("").replace('#', ',');
     }
 
 }

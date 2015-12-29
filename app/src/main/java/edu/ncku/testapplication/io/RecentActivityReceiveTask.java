@@ -14,7 +14,7 @@ import java.util.Map;
 public class RecentActivityReceiveTask extends JsonReceiveTask implements Runnable {
 
     private static final String DEBUG_FLAG = RecentActivityReceiveTask.class.getName();
-    private static final String JSON_URL = "http://140.116.207.24/libweb/activity_json.php?item=webActivity";
+    private static final String JSON_URL = "http://140.116.207.24/libweb/index.php?item=webActivity&lan=cht";
     private static final String FILE_NAME = "NCKU_Lib_RecentActivity";
 
     public RecentActivityReceiveTask(Context mContext) {

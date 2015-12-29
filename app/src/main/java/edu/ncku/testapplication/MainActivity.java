@@ -294,11 +294,6 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     public void onChangeTitle(String title) {
         setTitle(title);
     }

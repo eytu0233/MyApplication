@@ -16,10 +16,10 @@ import java.util.Map;
 public class LibOpenTimeReceiveTask extends JsonReceiveTask implements Runnable {
 
     private static final String DEBUG_FLAG = LibOpenTimeReceiveTask.class.getName();
-    private static final String JSON_MAIN_LIB_URL = "http://140.116.207.24/libweb/OpenMainLib.php";
-    private static final String JSON_STUDY_HALL_URL = "http://140.116.207.24/libweb/OpenStudyHall.php";
-    private static final String JSON_MED_LIB_URL = "http://140.116.207.24/libweb/OpenMedLib.php";
-    private static final String JSON_DEPT_LIB_URL = "http://140.116.207.24/libweb/OpenDeptLib.php";
+    private static final String JSON_MAIN_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webMainLib&lan=cht";
+    private static final String JSON_STUDY_HALL_URL = "http://140.116.207.24/libweb/index.php?item=webStudyHall&lan=cht";
+    private static final String JSON_MED_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webMedLib&lan=cht";
+    private static final String JSON_DEPT_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webDeptLib&lan=cht";
     private static final String FILE_NAME = "NCKU_Lib_Open_Time";
 
 

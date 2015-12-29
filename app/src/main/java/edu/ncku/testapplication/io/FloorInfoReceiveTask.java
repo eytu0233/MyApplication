@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 public class FloorInfoReceiveTask extends JsonReceiveTask implements Runnable{
 
     private static final String DEBUG_FLAG = FloorInfoReceiveTask.class.getName();
-    private static final String JSON_URL = "http://140.116.207.24/libweb/floorplan_json.php?item=webFloorplan";
+    private static final String JSON_URL = "http://140.116.207.24/libweb/index.php?item=webFloorplan&lan=cht";
     private static final String FILE_NAME = "NCKU_Lib_Floor_Info";
 
     public FloorInfoReceiveTask(Context mContext) {

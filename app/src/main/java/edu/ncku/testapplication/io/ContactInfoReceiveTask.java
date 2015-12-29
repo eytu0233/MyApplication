@@ -15,7 +15,7 @@ import edu.ncku.testapplication.data.ContactInfo;
 public class ContactInfoReceiveTask extends JsonReceiveTask implements Runnable{
 
     private static final String DEBUG_FLAG = ContactInfoReceiveTask.class.getName();
-    private static final String JSON_URL = "http://140.116.207.24/libweb/organization_json.php?item=webOrganization";
+    private static final String JSON_URL = "http://140.116.207.24/libweb/index.php?item=webOrganization&lan=cht";
     private static final String FILE_NAME = "NCKU_Lib_Contact_Info";
 
     public ContactInfoReceiveTask(Context mContext) {

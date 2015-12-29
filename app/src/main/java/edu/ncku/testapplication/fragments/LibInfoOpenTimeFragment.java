@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -136,7 +137,7 @@ public class LibInfoOpenTimeFragment extends Fragment {
         }
 
         if(mListDataChild == null || mListDataChild.keySet().size() != mListDataHeader.size()) {
-
+            Log.d(DEBUG_FLAG, "預設值");
             main_lib.add(getString(R.string.open_time_main_lib));
             self_studying
                     .add(getString(R.string.open_time_self_studying_reading_room));
@@ -148,6 +149,8 @@ public class LibInfoOpenTimeFragment extends Fragment {
             mListDataChild.put(mListDataHeader.get(2), medical_branch);
             mListDataChild.put(mListDataHeader.get(3), departments);
         }
+
+
     }
 
 }
