@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/searchBarEditText"
             android:singleLine="true"
-            android:hint="@string/searchbar_hint"
+            android:hint="@string/search_bar_hint"
             android:background="@null"
             android:layout_alignBottom="@+id/imageView"
             android:layout_alignParentTop="true"

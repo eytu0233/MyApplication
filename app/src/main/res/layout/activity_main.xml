@@ -8,7 +8,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
-    tools:context="edu.ncku.testapplication.MainActivity">
+    tools:context="edu.ncku.application.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_height="wrap_content"

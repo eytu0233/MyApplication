@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin" >
 
     <ProgressBar
-        android:id="@+id/newsProgressBar"
+        android:id="@+id/msgProgressBar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,28 +18,28 @@
         android:layout_centerVertical="true" />
 
     <TextView
-        android:id="@+id/newsTip"
+        android:id="@+id/msgTip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/news_empty"
+        android:text="@string/msg_empty"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:visibility="invisible" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swip_index"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="0dp">
 
+    <!--<android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/msgSwipe"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="0dp">-->
         <edu.ncku.application.LoadMoreListView
-            android:id="@+id/listView"
+            android:id="@+id/msgListView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:divider="#FFEEEEEE"
             android:dividerHeight="1dip" >
         </edu.ncku.application.LoadMoreListView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
 </RelativeLayout>
