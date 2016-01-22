@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import edu.ncku.application.io.MsgsReaderTask;
+import edu.ncku.application.io.file.MsgsReaderTask;
 import edu.ncku.application.LoadMoreListView;
-import edu.ncku.testapplication.R;
-import edu.ncku.application.util.ListMsgsAdapter;
+import edu.ncku.application.R;
+import edu.ncku.application.util.adapter.ListMsgsAdapter;
 
 /**
  * A simple {@link Fragment} subclass.

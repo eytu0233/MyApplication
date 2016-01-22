@@ -1,4 +1,4 @@
-package edu.ncku.application.io;
+package edu.ncku.application.io.network;
 
 import android.content.Context;
 import android.util.Log;

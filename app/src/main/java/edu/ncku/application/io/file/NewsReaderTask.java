@@ -1,4 +1,4 @@
-package edu.ncku.application.io;
+package edu.ncku.application.io.file;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -9,9 +9,9 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.LinkedHashSet;
 
-import edu.ncku.application.data.News;
+import edu.ncku.application.model.News;
 import edu.ncku.application.fragments.NewsFragment;
-import edu.ncku.application.util.ListNewsAdapter;
+import edu.ncku.application.util.adapter.ListNewsAdapter;
 
 public class NewsReaderTask extends AsyncTask<Void, Void, ListNewsAdapter>{
 

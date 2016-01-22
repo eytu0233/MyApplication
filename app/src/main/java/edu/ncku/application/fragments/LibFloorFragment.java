@@ -14,8 +14,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import edu.ncku.testapplication.R;
-import edu.ncku.application.io.FloorInfoReaderTask;
+import edu.ncku.application.R;
+import edu.ncku.application.io.file.FloorInfoReaderTask;
 
 public class LibFloorFragment extends Fragment {
 

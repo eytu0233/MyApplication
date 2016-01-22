@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
 
-import edu.ncku.testapplication.R;
+import edu.ncku.application.R;
 
 
 /**

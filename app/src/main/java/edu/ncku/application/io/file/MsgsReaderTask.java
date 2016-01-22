@@ -1,4 +1,4 @@
-package edu.ncku.application.io;
+package edu.ncku.application.io.file;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -9,9 +9,9 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.LinkedHashSet;
 
-import edu.ncku.application.data.News;
+import edu.ncku.application.model.News;
 import edu.ncku.application.fragments.MessagerFragment;
-import edu.ncku.application.util.ListMsgsAdapter;
+import edu.ncku.application.util.adapter.ListMsgsAdapter;
 
 /**
  * Created by NCKU on 2016/1/8.

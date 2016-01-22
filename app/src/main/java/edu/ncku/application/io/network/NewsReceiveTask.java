@@ -1,4 +1,4 @@
-package edu.ncku.application.io;
+package edu.ncku.application.io.network;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,8 +17,8 @@ import java.io.ObjectOutputStream;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-import edu.ncku.application.data.News;
-import edu.ncku.testapplication.R;
+import edu.ncku.application.model.News;
+import edu.ncku.application.R;
 
 public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 

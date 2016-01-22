@@ -1,4 +1,4 @@
-package edu.ncku.application.io;
+package edu.ncku.application.io.file;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -7,30 +7,27 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Created by NCKU on 2015/12/1.
+ * Created by NCKU on 2015/11/27.
  */
-public class LibOpenTimeReaderTask extends AsyncTask<Void, Void, Map<String, List<String>>> {
+public class RecentActivityReaderTask extends AsyncTask<Void, Void, Map<String, String>> {
 
-    private static final String DEBUG_FLAG = LibOpenTimeReaderTask.class.getName();
-    private static final String FILE_NAME = "NCKU_Lib_Open_Time";
+    private static final String DEBUG_FLAG = RecentActivityReaderTask.class.getName();
+    private static final String FILE_NAME = "NCKU_Lib_RecentActivity";
 
     private Context mContext;
 
-    public LibOpenTimeReaderTask(Context context){
+    public RecentActivityReaderTask(Context context){
         this.mContext = context;
     }
 
-
     @Override
-    protected Map<String, List<String>> doInBackground(Void... params) {
-
+    protected Map<String, String> doInBackground(Void... params) {
         File inputFile = null;
         ObjectInputStream ois = null;
-        Map<String, List<String>> serviceMap = null;
+        Map<String, String> imgSuperLink = null;
 
         try {
             inputFile = new File(mContext
@@ -41,13 +38,13 @@ public class LibOpenTimeReaderTask extends AsyncTask<Void, Void, Map<String, Lis
                 return null;
             } else {
                 ois = new ObjectInputStream(new FileInputStream(inputFile));
-                serviceMap = (Map<String, List<String>>) ois.readObject();
+                imgSuperLink = (Map<String, String>) ois.readObject();
                 ois.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return serviceMap;
+        return imgSuperLink;
     }
 }

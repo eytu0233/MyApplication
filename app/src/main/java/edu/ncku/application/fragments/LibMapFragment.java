@@ -27,7 +27,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import edu.ncku.testapplication.R;
+import edu.ncku.application.R;
 
 /**
  * A simple {@link Fragment} subclass.

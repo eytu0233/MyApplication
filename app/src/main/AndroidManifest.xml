@@ -60,20 +60,60 @@
             android:exported="true" >
         </service>
 
+        <!-- [START gcm_listener] -->
+        <service
+            android:name="edu.ncku.application.service.OwnGcmListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <!-- [END gcm_listener] -->
+
+        <!-- [START gcm_receiver] -->
         <receiver
-            android:name="edu.ncku.application.io.NetworkCheckReceiver"
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="edu.ncku.application" />
+            </intent-filter>
+        </receiver>
+        <!-- [END gcm_receiver] -->
+
+        <!-- [START instanceId_listener] -->
+        <service
+            android:name="edu.ncku.application.service.OwnInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+        <!-- [END instanceId_listener] -->
+
+        <!-- [START registration_service] -->
+        <service
+            android:name="edu.ncku.application.service.RegistrationIntentService"
+            android:exported="false"/>
+        <!-- [END registration_service] -->
+
+        <!-- [START network_check_receiver] -->
+        <receiver
+            android:name=".io.network.NetworkCheckReceiver"
             android:enabled="true"
             android:exported="true" >
         </receiver>
+        <!-- [END network_check_receiver] -->
 
         <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
-        -->
+                The API key for Google Maps-based APIs is defined as a string resource.
+                (See the file "res/values/google_maps_api.xml").
+                Note that the API key is linked to the encryption key used to sign the APK.
+                You need a different API key for each encryption key, including the release key that is used to
+                sign the APK for publishing.
+                You can define the keys for the debug and release targets in src/debug/ and src/release/.
+                 -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

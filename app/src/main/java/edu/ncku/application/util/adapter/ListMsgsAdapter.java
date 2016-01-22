@@ -1,4 +1,4 @@
-package edu.ncku.application.util;
+package edu.ncku.application.util.adapter;
 
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -15,8 +15,8 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-import edu.ncku.application.data.News;
-import edu.ncku.testapplication.R;
+import edu.ncku.application.model.News;
+import edu.ncku.application.R;
 import edu.ncku.application.fragments.NewsViewerFragment;
 
 /**

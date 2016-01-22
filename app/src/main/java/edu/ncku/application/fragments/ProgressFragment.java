@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import edu.ncku.testapplication.R;
+import edu.ncku.application.R;
 
 public class ProgressFragment extends Fragment {
 

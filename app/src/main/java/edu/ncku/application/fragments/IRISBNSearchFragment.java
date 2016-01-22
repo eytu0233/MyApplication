@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import edu.ncku.testapplication.R;
+import edu.ncku.application.R;
 
 /**
  * A simple {@link Fragment} subclass.

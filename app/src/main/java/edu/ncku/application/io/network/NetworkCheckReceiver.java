@@ -1,4 +1,4 @@
-package edu.ncku.application.io;
+package edu.ncku.application.io.network;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

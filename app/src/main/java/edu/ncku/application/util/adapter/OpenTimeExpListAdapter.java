@@ -1,4 +1,4 @@
-package edu.ncku.application.util;
+package edu.ncku.application.util.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import edu.ncku.testapplication.R;
+import edu.ncku.application.R;
 
 public class OpenTimeExpListAdapter extends BaseExpandableListAdapter {
 

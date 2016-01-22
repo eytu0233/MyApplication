@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.ncku.application.util.ITitleChangeListener;
-import edu.ncku.testapplication.R;
+import edu.ncku.application.R;
 
 
 /**

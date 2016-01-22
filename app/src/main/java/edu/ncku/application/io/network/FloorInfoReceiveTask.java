@@ -1,4 +1,4 @@
-package edu.ncku.application.io;
+package edu.ncku.application.io.network;
 
 import android.content.Context;
 
@@ -23,7 +23,7 @@ public class FloorInfoReceiveTask extends JsonReceiveTask implements Runnable{
     @Override
     public void run() {
 
-        LinkedHashMap<String, String> floorInfo = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> floorInfo = new LinkedHashMap<>();
 
         try {
             JSONArray jsonArray = new JSONArray(jsonRecieve(JSON_URL));

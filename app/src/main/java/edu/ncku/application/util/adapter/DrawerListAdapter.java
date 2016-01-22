@@ -1,4 +1,4 @@
-package edu.ncku.application.util;
+package edu.ncku.application.util.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -9,7 +9,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import edu.ncku.testapplication.R;
+import edu.ncku.application.R;
+import edu.ncku.application.util.DrawerListItem;
 
 /**
  * Created by NCKU on 2016/1/15.

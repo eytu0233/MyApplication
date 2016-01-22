@@ -1,4 +1,4 @@
-package edu.ncku.application.io;
+package edu.ncku.application.io.file;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -7,29 +7,30 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-
-import edu.ncku.application.data.ContactInfo;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by NCKU on 2015/12/8.
+ * Created by NCKU on 2015/12/1.
  */
-public class ContactInfoReaderTask extends AsyncTask<Void, Void, ArrayList<ContactInfo>> {
+public class LibOpenTimeReaderTask extends AsyncTask<Void, Void, Map<String, List<String>>> {
 
-    private static final String DEBUG_FLAG = ContactInfoReaderTask.class.getName();
-    private static final String FILE_NAME = "NCKU_Lib_Contact_Info";
+    private static final String DEBUG_FLAG = LibOpenTimeReaderTask.class.getName();
+    private static final String FILE_NAME = "NCKU_Lib_Open_Time";
 
     private Context mContext;
 
-    public ContactInfoReaderTask(Context mContext) {
-        this.mContext = mContext;
+    public LibOpenTimeReaderTask(Context context){
+        this.mContext = context;
     }
 
+
     @Override
-    protected ArrayList<ContactInfo> doInBackground(Void... params) {
+    protected Map<String, List<String>> doInBackground(Void... params) {
+
         File inputFile = null;
         ObjectInputStream ois = null;
-        ArrayList<ContactInfo> contactInfos = null;
+        Map<String, List<String>> serviceMap = null;
 
         try {
             inputFile = new File(mContext
@@ -40,13 +41,13 @@ public class ContactInfoReaderTask extends AsyncTask<Void, Void, ArrayList<Conta
                 return null;
             } else {
                 ois = new ObjectInputStream(new FileInputStream(inputFile));
-                contactInfos = (ArrayList<ContactInfo>) ois.readObject();
+                serviceMap = (Map<String, List<String>>) ois.readObject();
                 ois.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return contactInfos;
+        return serviceMap;
     }
 }

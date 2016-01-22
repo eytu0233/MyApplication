@@ -28,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -36,16 +38,18 @@ import java.util.LinkedList;
 import edu.ncku.application.fragments.IRISBNSearchFragment;
 import edu.ncku.application.fragments.PrefFragment;
 import edu.ncku.application.service.NetworkListenerService;
+import edu.ncku.application.service.RegistrationIntentService;
 import edu.ncku.application.util.DrawerListSelector;
 import edu.ncku.application.util.IReceiverRegisterListener;
 import edu.ncku.application.util.ISBNMacher;
 import edu.ncku.application.util.ITitleChangeListener;
 import edu.ncku.application.util.PreferenceKeys;
-import edu.ncku.testapplication.R;
 
 public class MainActivity extends AppCompatActivity implements ITitleChangeListener, IReceiverRegisterListener {
 
     private static final String DEBUG_FLAG = MainActivity.class.getName();
+
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private LinkedList<String> titleStack = new LinkedList<String>();
 
@@ -63,12 +67,19 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
         mSettingFragment = new PrefFragment();
 
-        if (!isServiceRunning(NetworkListenerService.class)) {
+        if (!checkServicesState(NetworkListenerService.class)) {
             if (startService(new Intent(this, NetworkListenerService.class)) != null) {
                 Log.d(DEBUG_FLAG, "NetworkListenerService start!");
             } else {
                 Log.e(DEBUG_FLAG, "NetworkListenerService start fail!");
             }
+        }
+
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+            Log.d(DEBUG_FLAG, "RegistrationIntentService start!");
         }
 
         /*String parameters = getIntent().getStringExtra("mainActivityParameter");
@@ -88,109 +99,6 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         // 為了讓 Toolbar 的 Menu 有作用，這邊的程式不可以拿掉
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
-
-    private void initUI() {
-
-        mTitle = getTitle();
-
-        /* ToolBar configuration */
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.imageViewLayout:
-                        getFragmentManager().beginTransaction().addToBackStack(null)
-                                .addToBackStack(null).add(R.id.content_frame, mSettingFragment).commit();
-                        setTitle(R.string.setting);
-                        return true;
-                }
-                return true;
-            }
-        };
-        Drawable logo = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
-        toolbar.setLogo(logo);
-        for (int i = 0; i < toolbar.getChildCount(); i++) {
-            View child = toolbar.getChildAt(i);
-            if (child != null)
-                if (child.getClass() == ImageView.class) {
-                    ImageView logoImageView = (ImageView) child;
-                    if (logoImageView.getDrawable() == logo) {
-                        logoImageView.setAdjustViewBounds(true);
-                        logoImageView.setPadding(0, 0, 30, 0);
-                    }
-                }
-        }
-        setSupportActionBar(toolbar);
-        toolbar.setOnMenuItemClickListener(onMenuItemClick);
-
-        /* Start to create the instances of ui component in main activity */
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
-                mDrawerLayout, /* DrawerLayout object */
-                toolbar,
-                R.string.drawer_open, /* "open drawer" description for accessibility */
-                R.string.drawer_close /* "close drawer" description for accessibility */
-        ) {
-            public void onDrawerClosed(View view) {
-                invalidateOptionsMenu(); // creates call to
-                // onPrepareOptionsMenu()
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                invalidateOptionsMenu(); // creates call to
-                // onPrepareOptionsMenu()
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        DrawerListSelector selector = new DrawerListSelector(this, mDrawerLayout, mDrawerList);
-        selector.logoutState();
-    }
-
-    private boolean isLogin() {
-
-        final SharedPreferences SP = PreferenceManager
-                .getDefaultSharedPreferences(getApplicationContext());
-        String username = SP.getString(PreferenceKeys.USERNAME.toString(), ""), password = SP.getString(PreferenceKeys.PASSWORD.toString(),
-                "");
-
-        Log.d(DEBUG_FLAG, "username : " + username);
-        Log.d(DEBUG_FLAG, "password : " + password);
-
-        if ("".equals(username) || "".equals(password)) {
-            return false;
-        } else {
-            return true;
-        }
-
-    }
-
-    public void clearTitleStack(){
-        this.titleStack.clear();
-    }
-
-    /**
-     * Check the service is alive or not
-     *
-     * @param serviceClass
-     * @return Alive state of the service
-     */
-    private boolean isServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -290,5 +198,124 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
                 }
                 break;
         }
+    }
+
+    private void initUI() {
+
+        mTitle = getTitle();
+
+        /* ToolBar configuration */
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.imageViewLayout:
+                        getFragmentManager().beginTransaction().addToBackStack(null)
+                                .addToBackStack(null).add(R.id.content_frame, mSettingFragment).commit();
+                        setTitle(R.string.setting);
+                        return true;
+                }
+                return true;
+            }
+        };
+        Drawable logo = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
+        toolbar.setLogo(logo);
+        for (int i = 0; i < toolbar.getChildCount(); i++) {
+            View child = toolbar.getChildAt(i);
+            if (child != null)
+                if (child.getClass() == ImageView.class) {
+                    ImageView logoImageView = (ImageView) child;
+                    if (logoImageView.getDrawable() == logo) {
+                        logoImageView.setAdjustViewBounds(true);
+                        logoImageView.setPadding(0, 0, 30, 0);
+                    }
+                }
+        }
+        setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(onMenuItemClick);
+
+        /* Start to create the instances of ui component in main activity */
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
+                mDrawerLayout, /* DrawerLayout object */
+                toolbar,
+                R.string.drawer_open, /* "open drawer" description for accessibility */
+                R.string.drawer_close /* "close drawer" description for accessibility */
+        ) {
+            public void onDrawerClosed(View view) {
+                invalidateOptionsMenu(); // creates call to
+                // onPrepareOptionsMenu()
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                invalidateOptionsMenu(); // creates call to
+                // onPrepareOptionsMenu()
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        DrawerListSelector selector = new DrawerListSelector(this, mDrawerLayout, mDrawerList);
+        selector.logoutState();
+    }
+
+    private boolean isLogin() {
+
+        final SharedPreferences SP = PreferenceManager
+                .getDefaultSharedPreferences(getApplicationContext());
+        String username = SP.getString(PreferenceKeys.USERNAME.toString(), ""), password = SP.getString(PreferenceKeys.PASSWORD.toString(),
+                "");
+
+        Log.d(DEBUG_FLAG, "username : " + username);
+        Log.d(DEBUG_FLAG, "password : " + password);
+
+        if ("".equals(username) || "".equals(password)) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+    public void clearTitleStack(){
+        this.titleStack.clear();
+    }
+
+    /**
+     * @param serviceClass
+     * @return the service is alive or not
+     */
+    private boolean checkServicesState(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @return check this device  can use google play service
+     */
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(DEBUG_FLAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 }

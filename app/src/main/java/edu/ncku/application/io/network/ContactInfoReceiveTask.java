@@ -1,4 +1,4 @@
-package edu.ncku.application.io;
+package edu.ncku.application.io.network;
 
 import android.content.Context;
 
@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import edu.ncku.application.data.ContactInfo;
+import edu.ncku.application.model.ContactInfo;
 
 /**
  * Created by NCKU on 2015/12/1.

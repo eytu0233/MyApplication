@@ -128,4 +128,5 @@
     <string name="not_match_isbn">錯誤的ISBN，請掃描書背面的Barcode</string>
     <string name="msg_empty">沒有任何推播訊息</string>
     <string name="undefine">未定義</string>
+    <string name="gcm_defaultSenderId">645919590322</string>
 </resources>

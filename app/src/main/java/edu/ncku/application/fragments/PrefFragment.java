@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import edu.ncku.testapplication.R;
+import edu.ncku.application.R;
 
 public class PrefFragment extends PreferenceFragment {
 

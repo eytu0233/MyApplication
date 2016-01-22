@@ -18,9 +18,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
-import edu.ncku.application.data.ContactInfo;
-import edu.ncku.application.io.ContactInfoReaderTask;
-import edu.ncku.testapplication.R;
+import edu.ncku.application.model.ContactInfo;
+import edu.ncku.application.io.file.ContactInfoReaderTask;
+import edu.ncku.application.R;
 
 
 public class LibContactFragment extends Fragment {

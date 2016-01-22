@@ -7,8 +7,8 @@ import android.util.Log;
 
 import java.util.concurrent.Executors;
 
-import edu.ncku.application.io.NetworkCheckReceiver;
-import edu.ncku.application.io.NewsReceiveTask;
+import edu.ncku.application.io.network.NetworkCheckReceiver;
+import edu.ncku.application.io.network.NewsReceiveTask;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in

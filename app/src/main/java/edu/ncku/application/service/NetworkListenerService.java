@@ -8,7 +8,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-import edu.ncku.application.io.NetworkCheckReceiver;
+import edu.ncku.application.io.network.NetworkCheckReceiver;
 
 public class NetworkListenerService extends Service {
 

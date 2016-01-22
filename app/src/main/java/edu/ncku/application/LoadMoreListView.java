@@ -11,8 +11,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import edu.ncku.testapplication.R;
-
 public class LoadMoreListView extends ListView implements OnScrollListener{
 	private View footer;  
 	private TextView mReloadTextView, mIsLoadTextView;

@@ -22,11 +22,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.ncku.application.LoadMoreListView;
-import edu.ncku.application.io.NewsReaderTask;
+import edu.ncku.application.io.file.NewsReaderTask;
 import edu.ncku.application.service.DataReceiveService;
 import edu.ncku.application.util.IReceiverRegisterListener;
-import edu.ncku.application.util.ListNewsAdapter;
-import edu.ncku.testapplication.R;
+import edu.ncku.application.util.adapter.ListNewsAdapter;
+import edu.ncku.application.R;
 
 /**
  * A simple {@link Fragment} subclass.

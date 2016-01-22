@@ -1,4 +1,4 @@
-package edu.ncku.application.data;
+package edu.ncku.application.model;
 
 import java.io.Serializable;
 

@@ -14,8 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import edu.ncku.testapplication.R;
-import edu.ncku.application.util.ListViewInfoAdapter;
+import edu.ncku.application.R;
+import edu.ncku.application.util.adapter.ListViewInfoAdapter;
 
 /**
  * A simple {@link Fragment} subclass.

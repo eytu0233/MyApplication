@@ -22,11 +22,10 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.ncku.application.io.LoginTask;
+import edu.ncku.application.io.network.LoginTask;
 import edu.ncku.application.util.DrawerListSelector;
 import edu.ncku.application.util.ILoginResultListener;
 import edu.ncku.application.util.PreferenceKeys;
-import edu.ncku.testapplication.R;
 
 public class LoginDialog extends DialogFragment {
 

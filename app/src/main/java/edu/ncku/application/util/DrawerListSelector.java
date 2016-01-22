@@ -20,7 +20,8 @@ import edu.ncku.application.MainActivity;
 import edu.ncku.application.fragments.HomePageFragment;
 import edu.ncku.application.fragments.MessagerFragment;
 import edu.ncku.application.fragments.ProgressFragment;
-import edu.ncku.testapplication.R;
+import edu.ncku.application.R;
+import edu.ncku.application.util.adapter.DrawerListAdapter;
 
 /**
  * Created by NCKU on 2016/1/12.

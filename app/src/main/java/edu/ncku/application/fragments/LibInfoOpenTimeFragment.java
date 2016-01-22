@@ -19,9 +19,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import edu.ncku.application.io.LibOpenTimeReaderTask;
-import edu.ncku.application.util.OpenTimeExpListAdapter;
-import edu.ncku.testapplication.R;
+import edu.ncku.application.io.file.LibOpenTimeReaderTask;
+import edu.ncku.application.util.adapter.OpenTimeExpListAdapter;
+import edu.ncku.application.R;
 
 /**
  * A simple {@link Fragment} subclass.

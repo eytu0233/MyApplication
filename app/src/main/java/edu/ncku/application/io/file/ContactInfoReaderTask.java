@@ -1,4 +1,4 @@
-package edu.ncku.application.io;
+package edu.ncku.application.io.file;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -7,27 +7,29 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.Map;
+import java.util.ArrayList;
+
+import edu.ncku.application.model.ContactInfo;
 
 /**
- * Created by NCKU on 2015/11/27.
+ * Created by NCKU on 2015/12/8.
  */
-public class RecentActivityReaderTask extends AsyncTask<Void, Void, Map<String, String>> {
+public class ContactInfoReaderTask extends AsyncTask<Void, Void, ArrayList<ContactInfo>> {
 
-    private static final String DEBUG_FLAG = RecentActivityReaderTask.class.getName();
-    private static final String FILE_NAME = "NCKU_Lib_RecentActivity";
+    private static final String DEBUG_FLAG = ContactInfoReaderTask.class.getName();
+    private static final String FILE_NAME = "NCKU_Lib_Contact_Info";
 
     private Context mContext;
 
-    public RecentActivityReaderTask(Context context){
-        this.mContext = context;
+    public ContactInfoReaderTask(Context mContext) {
+        this.mContext = mContext;
     }
 
     @Override
-    protected Map<String, String> doInBackground(Void... params) {
+    protected ArrayList<ContactInfo> doInBackground(Void... params) {
         File inputFile = null;
         ObjectInputStream ois = null;
-        Map<String, String> imgSuperLink = null;
+        ArrayList<ContactInfo> contactInfos = null;
 
         try {
             inputFile = new File(mContext
@@ -38,13 +40,13 @@ public class RecentActivityReaderTask extends AsyncTask<Void, Void, Map<String, 
                 return null;
             } else {
                 ois = new ObjectInputStream(new FileInputStream(inputFile));
-                imgSuperLink = (Map<String, String>) ois.readObject();
+                contactInfos = (ArrayList<ContactInfo>) ois.readObject();
                 ois.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return imgSuperLink;
+        return contactInfos;
     }
 }
