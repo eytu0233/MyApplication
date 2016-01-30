@@ -10,6 +10,9 @@ import android.util.Log;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+/**
+ * 此Receiver類別由NetworkListenerService註冊，接收網路狀態改變的事件
+ */
 public class NetworkCheckReceiver extends BroadcastReceiver {
 
     private static final String DEBUG_FLAG = NetworkCheckReceiver.class
@@ -33,6 +36,7 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
                 currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
             }
 
+            /* 當連上網路時，在背景執行資料更新的工作 */
             if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
                 // do something when network connected.
                 Log.d(DEBUG_FLAG, "連上網路");

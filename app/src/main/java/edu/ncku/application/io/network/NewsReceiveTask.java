@@ -20,6 +20,9 @@ import java.util.LinkedList;
 import edu.ncku.application.model.News;
 import edu.ncku.application.R;
 
+/**
+ * 此類別用來在背景接收最新消息的JSON資料，一樣將其存進檔案之中
+ */
 public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 	private static final String DEBUG_FLAG = NewsReceiveTask.class.getName();
@@ -29,7 +32,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 	private static NetworkInfo currentNetworkInfo;
 
-	private boolean isOnce = false;
+	private boolean isOnce = false; // 判斷是否為使用者刷新最新消息頁面
 	private Context mContext;
 	private Intent mIntent = new Intent();
 
@@ -49,11 +52,13 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 			currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		}
 
+		// 判斷網路是否連線
 		if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
 
 			receiveNewsFromNetwork();
 
 		} else {
+			/* 廣播給NewsFragment告知網路目前無法連線 */
 			if (isOnce) {
 				mIntent.putExtra("flag", mContext.getString(R.string.messenger_network_disconnected));
 				mContext.sendBroadcast(mIntent);
@@ -61,6 +66,13 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 		}
 	}
 
+	/**
+	 *  將最新消息資料存進檔案，但之中有重複的最新消息
+	 *  不會多次存取只留一個。並且刪除超過保存時間的最新消息。
+	 *
+	 * @param newsList 來自網路的最新消息資料
+	 * @return 新增的最新消息數量(假如都重複則為0)
+	 */
 	private int synMsgFile(LinkedList<News> newsList) {
 
 		/* Get internal storage directory */
@@ -73,7 +85,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 		int updateNum = 0;
 
-		synchronized (LOCKER) {
+		synchronized (LOCKER) { // 為避免有可能的race condition 以同步化區塊框之
 			try {
 				// read news data from file
 				if (newsFile.exists()) {
@@ -117,11 +129,18 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 		return updateNum;
 	}
 
+	/**
+	 *  刪除已超過保存時間的最新消息
+	 *  保存時間依照使用者給予的設定
+	 *
+	 * @param newsSet
+	 */
 	private void deleteOutOfDateNews(LinkedHashSet<News> newsSet){
-		final long ALIVE_DAYS = 90;
-		final long SECONDS_OF_A_DAY = 24 * 60 * 60;
-		final long OUT_OF_DATE_TIMESTAMP = ALIVE_DAYS * SECONDS_OF_A_DAY;
-		long nowTimeStamp = System.currentTimeMillis() / 1000L;
+		final long ALIVE_DAYS = 90; // 存活天數
+		final long SECONDS_OF_A_DAY = 24 * 60 * 60; // 一天秒數
+		final long OUT_OF_DATE_TIMESTAMP = ALIVE_DAYS * SECONDS_OF_A_DAY; // 時間戳記的差值
+
+		long nowTimeStamp = System.currentTimeMillis() / 1000L; // 取得當前時間戳記
 
 		LinkedHashSet<News> deleteNewsSet = new LinkedHashSet<News>();
 
@@ -131,9 +150,12 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 			}
 		}
 
-		if(!deleteNewsSet.isEmpty()) newsSet.removeAll(deleteNewsSet);
+		if(!deleteNewsSet.isEmpty()) newsSet.removeAll(deleteNewsSet); // 刪除過期最新消息
 	}
 
+	/**
+	 * 從網路接收最新消息
+	 */
 	private void receiveNewsFromNetwork() {
 		LinkedList<News> news;
 
@@ -219,6 +241,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 			e.printStackTrace();
 		}
 
+		/* 當使用者刷新最新消息頁面時，通知其更新頁面 */
 		if (isOnce) {
 			mIntent.putExtra("numNews", numNews);
 			mIntent.putExtra("flag", "FinishFlushFlag");

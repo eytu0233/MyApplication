@@ -14,7 +14,7 @@ import edu.ncku.application.fragments.MessagerFragment;
 import edu.ncku.application.util.adapter.ListMsgsAdapter;
 
 /**
- * Created by NCKU on 2016/1/8.
+ *
  */
 public class MsgsReaderTask extends AsyncTask<Void, Void, ListMsgsAdapter> {
     private static final String DEBUG_FLAG = NewsReaderTask.class.getName();

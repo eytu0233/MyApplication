@@ -1,9 +1,5 @@
 package edu.ncku.application.service;
 
-/**
- * Created by NCKU on 2016/1/5.
- */
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -17,6 +13,11 @@ import android.util.Log;
 import edu.ncku.application.MainActivity;
 import edu.ncku.application.R;
 
+/**
+ * 此類別是繼承自GcmListenerService，用來實現GCM與APP的接口
+ * 當GCM發送訊息給此APP時，將會呼叫onMessageReceived來處理訊息
+ * 而sendNotification將會發出通知給使用者。
+ */
 public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListenerService {
 
     private static final String DEBUG_FLAG = "OwnGcmListenerService";
@@ -43,16 +44,16 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
 
         // [START_EXCLUDE]
         /**
-         * Production applications would usually process the message here.
-         * Eg: - Syncing with server.
-         *     - Store message in local database.
-         *     - Update UI.
-         */
+                * Production applications would usually process the message here.
+                * Eg: - Syncing with server.
+                *     - Store message in local database.
+                *     - Update UI.
+                */
 
         /**
-         * In some cases it may be useful to show a notification indicating to the user
-         * that a message was received.
-         */
+                * In some cases it may be useful to show a notification indicating to the user
+                * that a message was received.
+                */
         sendNotification(message);
         // [END_EXCLUDE]
     }

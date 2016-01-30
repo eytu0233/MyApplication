@@ -129,4 +129,10 @@
     <string name="msg_empty">沒有任何推播訊息</string>
     <string name="undefine">未定義</string>
     <string name="gcm_defaultSenderId">645919590322</string>
+    <string name="device_unsupport">很抱歉，此裝置不支援訂閱功能</string>
+    <string name="please_wait">請稍後</string>
+    <string name="handle_subscription">正在處理您的訂閱</string>
+    <string name="sub_handled">訂閱處理完成</string>
+    <string name="login_success">登入成功</string>
+    <string name="subscription">MESSAGER_SUBSCRIPTION</string>
 </resources>

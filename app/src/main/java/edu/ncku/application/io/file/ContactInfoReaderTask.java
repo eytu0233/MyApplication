@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import edu.ncku.application.model.ContactInfo;
 
 /**
- * Created by NCKU on 2015/12/8.
+ * 此AsyncTask類別將會在聯絡資訊頁面開啟時被執行，進行頁面資料讀取的工作
  */
 public class ContactInfoReaderTask extends AsyncTask<Void, Void, ArrayList<ContactInfo>> {
 

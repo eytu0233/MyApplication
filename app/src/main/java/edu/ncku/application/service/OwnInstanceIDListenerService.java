@@ -1,10 +1,9 @@
 package edu.ncku.application.service;
 
 /**
- * Created by NCKU on 2016/1/5.
+ * 此類別是官網範例中的一個Service，當DeviceID(token)
+ * 發生改變時，在背景向GCM Server重新註冊
  */
-import android.content.Intent;
-
 public class OwnInstanceIDListenerService extends com.google.android.gms.iid.InstanceIDListenerService {
 
     private static final String DEBUG_FLAG = OwnInstanceIDListenerService.class.getName();
@@ -18,8 +17,7 @@ public class OwnInstanceIDListenerService extends com.google.android.gms.iid.Ins
     @Override
     public void onTokenRefresh() {
         // Fetch updated Instance ID token and notify our app's server of any changes (if applicable).
-        Intent intent = new Intent(this, RegistrationIntentService.class);
-        startService(intent);
+        RegistrationIntentService.subscribeAction(this);
     }
     // [END refresh_token]
 }

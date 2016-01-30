@@ -1,110 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.ncku.application" >
+    package="edu.ncku.application">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- [START App 權限] -->
+    <uses-permission android:name="android.permission.CAMERA" /><!-- 相機權限 : ISBN掃描使用 -->
+    <uses-permission android:name="android.permission.INTERNET" /><!-- 網路權限 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" /><!-- 不進入待機權限 -->
+    <uses-permission android:name="android.permission.CALL_PHONE" /><!-- 通話權限 : 通訊錄使用 -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" /><!-- 取得帳戶權限 : GCM使用 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /><!-- 取得網路狀態權限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /><!-- 外部空間寫入權限 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /><!-- SD卡存取權限  -->
+    <!-- [END App 權限] -->
 
+    <!-- [START GCM 權限] -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
-    <permission android:name="edu.ncku.application.permission.C2D_MESSAGE"
+    <permission
+        android:name="edu.ncku.application.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-    <uses-permission android:name="edu.ncku.application.permission.C2D_MESSAGE" />
 
+    <uses-permission android:name="edu.ncku.application.permission.C2D_MESSAGE" />
+    <!-- [END GCM 權限] -->
+
+    <!-- [START Google Map 權限] -->
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality. 
-    -->
+         -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
-<!--          The users-feature will avoid the device can't use Google Maps Android API v2 to install this app in google play store. -->
+    <!-- The users-feature will avoid the device can't use Google Maps Android API v2 to install this app in google play store. -->
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
+    <!-- [END Google Map 權限] -->
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
-            android:name="edu.ncku.application.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- [START news_receiver] -->
         <service
-            android:name="edu.ncku.application.service.DataReceiveService"
-            android:exported="true" >
-        </service>
+            android:name=".service.DataReceiveService"
+            android:exported="true"></service>
+        <!-- [END news_receiver] -->
 
+        <!-- [START network_state_listener] -->
         <service
-            android:name="edu.ncku.application.service.NetworkListenerService"
+            android:name=".service.NetworkListenerService"
             android:enabled="true"
-            android:exported="true" >
-        </service>
+            android:exported="true"></service>
+        <!-- [END network_state_listener] -->
 
         <!-- [START gcm_listener] -->
         <service
-            android:name="edu.ncku.application.service.OwnGcmListenerService"
-            android:exported="false" >
+            android:name=".service.OwnGcmListenerService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <!-- [END gcm_listener] -->
 
+
         <!-- [START gcm_receiver] -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="edu.ncku.application" />
             </intent-filter>
         </receiver>
         <!-- [END gcm_receiver] -->
 
+
         <!-- [START instanceId_listener] -->
         <service
-            android:name="edu.ncku.application.service.OwnInstanceIDListenerService"
+            android:name=".service.OwnInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
         <!-- [END instanceId_listener] -->
 
+
         <!-- [START registration_service] -->
         <service
-            android:name="edu.ncku.application.service.RegistrationIntentService"
-            android:exported="false"/>
+            android:name=".service.RegistrationIntentService"
+            android:exported="false" />
         <!-- [END registration_service] -->
+
 
         <!-- [START network_check_receiver] -->
         <receiver
             android:name=".io.network.NetworkCheckReceiver"
             android:enabled="true"
-            android:exported="true" >
-        </receiver>
+            android:exported="true"></receiver>
         <!-- [END network_check_receiver] -->
+
 
         <!--
                 The API key for Google Maps-based APIs is defined as a string resource.
@@ -113,11 +128,10 @@
                 You need a different API key for each encryption key, including the release key that is used to
                 sign the APK for publishing.
                 You can define the keys for the debug and release targets in src/debug/ and src/release/.
-                 -->
+                -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
 
     </application>
 

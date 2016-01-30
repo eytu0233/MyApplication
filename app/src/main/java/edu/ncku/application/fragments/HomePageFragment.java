@@ -18,8 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import edu.ncku.application.util.ITitleChangeListener;
 import edu.ncku.application.R;
+import edu.ncku.application.util.ITitleChangeListener;
 
 
 /**
@@ -48,7 +48,6 @@ public class HomePageFragment extends Fragment {
     private Context context;
     private Activity activity;
     private ITitleChangeListener titleChangeListener;
-    private NetworkInfo currentNetworkInfo;
 
     // TODO: Rename and change types and number of parameters
     public static HomePageFragment newInstance() {
@@ -70,9 +69,6 @@ public class HomePageFragment extends Fragment {
 
         context = this.getActivity().getApplicationContext();
         activity = this.getActivity();
-        ConnectivityManager connectivityManager = ((ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE));
-        currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
     }
 
     @Override
@@ -208,7 +204,14 @@ public class HomePageFragment extends Fragment {
         titleChangeListener = null;
     }
 
+    /**
+        * 確認當前網路狀態
+        *
+        *@return
+        */
     private boolean checkNetworkToast() {
+        NetworkInfo currentNetworkInfo = ((ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         if (currentNetworkInfo == null || !currentNetworkInfo.isConnected()) {
             Toast.makeText(context, R.string.network_disconnected, Toast.LENGTH_SHORT).show();
             return false;

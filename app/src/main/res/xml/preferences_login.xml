@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <!--<PreferenceCategory-->
-        <!--android:key="ACCOUNT_RELATION"-->
-        <!--android:summary="帳號相關"-->
-        <!--android:title="帳號相關" >-->
-        <!--<CheckBoxPreference-->
-            <!--android:key="MESSAGER_SUBSCRIPTION"-->
-            <!--android:summary="設定是否訂閱推播訊息"-->
-            <!--android:title="訂閱推播訊息" />-->
-    <!--</PreferenceCategory>-->
+    <PreferenceCategory
+        android:key="ACCOUNT_RELATION"
+        android:summary="帳號相關"
+        android:title="帳號相關" >
+        <CheckBoxPreference
+            android:key="@string/subscription"
+            android:summary="設定是否訂閱推播訊息"
+            android:title="訂閱推播訊息" />
+    </PreferenceCategory>
     <PreferenceCategory
         android:key="MESSAGER_RELATION"
         android:summary="最新消息相關"
@@ -30,8 +30,8 @@
             android:entries="@array/out_of_date_array"
             android:entryValues="@array/out_of_date_value_array"
             android:key="OUT_OF_DATE"
-            android:summary="最新消息存活時間"
-            android:title="最新消息資料儲存在裝置的最長時間(活動結束時間開始算)" />
+            android:summary="存活時間(活動結束時間開始算)"
+            android:title="最新消息資料儲存在裝置的最長時間" />
     </PreferenceCategory>
 
 </PreferenceScreen>

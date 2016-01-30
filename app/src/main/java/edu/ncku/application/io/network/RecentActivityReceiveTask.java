@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by NCKU on 2015/11/27.
+ * 此類別用來接收近期活動的JSON資料，一樣儲存進檔案
  */
 public class RecentActivityReceiveTask extends JsonReceiveTask implements Runnable {
 

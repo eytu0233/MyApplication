@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.util.Map;
 
 /**
- * Created by NCKU on 2015/12/1.
+ * 此AsyncTask類別將會在樓層資訊頁面開啟時被執行，進行頁面資料讀取的工作
  */
 public class FloorInfoReaderTask extends AsyncTask<Void, Void, Map<String, String>> {
 

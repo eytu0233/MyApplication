@@ -28,8 +28,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -38,7 +36,6 @@ import java.util.LinkedList;
 import edu.ncku.application.fragments.IRISBNSearchFragment;
 import edu.ncku.application.fragments.PrefFragment;
 import edu.ncku.application.service.NetworkListenerService;
-import edu.ncku.application.service.RegistrationIntentService;
 import edu.ncku.application.util.DrawerListSelector;
 import edu.ncku.application.util.IReceiverRegisterListener;
 import edu.ncku.application.util.ISBNMacher;
@@ -49,13 +46,11 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
     private static final String DEBUG_FLAG = MainActivity.class.getName();
 
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private LinkedList<String> titleStack = new LinkedList<String>(); // 標題堆疊
 
-    private LinkedList<String> titleStack = new LinkedList<String>();
+    private CharSequence mTitle; // 當前App的標題
 
-    private CharSequence mTitle;
-
-    private Fragment mSettingFragment;
+    private Fragment mSettingFragment = new PrefFragment();
     private ActionBarDrawerToggle mDrawerToggle;
 
     @Override
@@ -63,9 +58,9 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initUI();
+        mTitle = getTitle();
 
-        mSettingFragment = new PrefFragment();
+        initUI();
 
         if (!checkServicesState(NetworkListenerService.class)) {
             if (startService(new Intent(this, NetworkListenerService.class)) != null) {
@@ -73,13 +68,6 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
             } else {
                 Log.e(DEBUG_FLAG, "NetworkListenerService start fail!");
             }
-        }
-
-        if (checkPlayServices()) {
-            // Start IntentService to register this application with GCM.
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-            Log.d(DEBUG_FLAG, "RegistrationIntentService start!");
         }
 
         /*String parameters = getIntent().getStringExtra("mainActivityParameter");
@@ -106,11 +94,11 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         titleStack.push(mTitle.toString());
         mTitle = title;
         if (title == null) {
-            Log.d(DEBUG_FLAG, "title null");
+            Log.e(DEBUG_FLAG, "title null");
             return;
         }
         if (getSupportActionBar() == null) {
-            Log.d(DEBUG_FLAG, "getSupportActionBar null");
+            Log.e(DEBUG_FLAG, "getSupportActionBar null");
             return;
         }
         getSupportActionBar().setTitle(mTitle);
@@ -119,33 +107,37 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
     @Override
     public void onBackPressed() {
         // TODO Auto-generated method stub
-        int countStackSize = getFragmentManager().getBackStackEntryCount(), titleStackSize = titleStack.size();
+        int countStackSize = getFragmentManager().getBackStackEntryCount(); // Fragment堆疊的數量，由於有些Fragment可能沒有變更標題故需比較
+        int titleStackSize = titleStack.size(); // 標題堆疊的數量
 
         Log.d(DEBUG_FLAG, countStackSize + " / " + titleStackSize);
 
+        /* 當標題堆疊裡沒有標題卻按下返回鍵將會詢問使用者是否結束此App */
         if (countStackSize == 0 && countStackSize == 0) {
             new AlertDialog.Builder(this)
                     .setMessage(R.string.dialog_close_confirm)
                     .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
-
+                            // nothing will happen
                         }
                     })
                     .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
+                            /* shut down this App */
                             android.os.Process.killProcess(android.os.Process.myPid());
                             onDestroy();
                         }
                     }).create().show();
-        } else if (countStackSize > titleStackSize) {
+        } else if (countStackSize > titleStackSize) {  // 當Fragment堆疊數量大於標題堆疊，表示有Fragment沒有變更標題，App標題不予變更
             getFragmentManager().popBackStack();
-        } else if (countStackSize == titleStackSize) {
+        } else if (countStackSize == titleStackSize) { // 當兩者數量相同，表示需要pop標題堆疊的標題來變更App標題
             mTitle = titleStack.pop();
             getSupportActionBar().setTitle(mTitle);// the reason why the code is written like this is to avoid to push title into titleStack
             getFragmentManager().popBackStack();
-        } else {
+        } else { // 不應該發生的異常狀況
+            Log.e(DEBUG_FLAG, "TitleStack Error");
             super.onBackPressed();
         }
     }
@@ -200,9 +192,17 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         }
     }
 
-    private void initUI() {
+    /**
+        *  清空標題堆疊
+        */
+    public void clearTitleStack(){
+        this.titleStack.clear();
+    }
 
-        mTitle = getTitle();
+    /**
+        *  初始化MainActivity的UI元件
+        */
+    private void initUI() {
 
         /* ToolBar configuration */
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -221,19 +221,20 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         };
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
         toolbar.setLogo(logo);
+        /* 以下這段用來設定Logo在Toolbar裡的邊界大小 */
         for (int i = 0; i < toolbar.getChildCount(); i++) {
-            View child = toolbar.getChildAt(i);
+            View child = toolbar.getChildAt(i); // Toolbar的子元件
             if (child != null)
-                if (child.getClass() == ImageView.class) {
-                    ImageView logoImageView = (ImageView) child;
-                    if (logoImageView.getDrawable() == logo) {
+                if (child.getClass() == ImageView.class) { // 確定元件為ImageView
+                    ImageView logoImageView = (ImageView) child; // 取得ImageView實體
+                    if (logoImageView.getDrawable() == logo) { // 找到Logo實體
                         logoImageView.setAdjustViewBounds(true);
-                        logoImageView.setPadding(0, 0, 30, 0);
+                        logoImageView.setPadding(0, 0, 30, 0); // 設定其邊界值
                     }
                 }
         }
-        setSupportActionBar(toolbar);
-        toolbar.setOnMenuItemClickListener(onMenuItemClick);
+        setSupportActionBar(toolbar); // 將設定好的Toolbar實體實裝
+        toolbar.setOnMenuItemClickListener(onMenuItemClick); // 設定MenuItemClickListener
 
         /* Start to create the instances of ui component in main activity */
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -261,21 +262,31 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        /* 此類別用於降低drawerItem的耦合性 */
         DrawerListSelector selector = new DrawerListSelector(this, mDrawerLayout, mDrawerList);
-        selector.logoutState();
+        if(isLogin()){
+            selector.loginState();
+        }else{
+            selector.logoutState();
+        }
+
     }
 
+    /**
+        *
+        * @return 確認是否是登入的狀態
+        */
     private boolean isLogin() {
 
         final SharedPreferences SP = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
-        String username = SP.getString(PreferenceKeys.USERNAME.toString(), ""), password = SP.getString(PreferenceKeys.PASSWORD.toString(),
+        String username = SP.getString(PreferenceKeys.USERNAME, ""), password = SP.getString(PreferenceKeys.PASSWORD,
                 "");
 
         Log.d(DEBUG_FLAG, "username : " + username);
         Log.d(DEBUG_FLAG, "password : " + password);
 
-        if ("".equals(username) || "".equals(password)) {
+        if (username.isEmpty() || password.isEmpty()) {
             return false;
         } else {
             return true;
@@ -283,14 +294,11 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
     }
 
-    public void clearTitleStack(){
-        this.titleStack.clear();
-    }
-
     /**
-     * @param serviceClass
-     * @return the service is alive or not
-     */
+        * 確認Service是否存活
+        * @param serviceClass
+        * @return the service is alive or not
+        */
     private boolean checkServicesState(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -301,21 +309,5 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         return false;
     }
 
-    /**
-     *
-     * @return check this device  can use google play service
-     */
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.i(DEBUG_FLAG, "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
+
 }

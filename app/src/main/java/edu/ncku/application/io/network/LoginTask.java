@@ -10,7 +10,11 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 import edu.ncku.application.util.ILoginResultListener;
+import edu.ncku.application.util.PreferenceKeys;
 
+/**
+ * 在背景執行登入驗證工作
+ */
 public class LoginTask extends AsyncTask<Map<String, String>, Void, Boolean> {
 	
 	private static final String DEBUG_FLAG = LoginTask.class.getName();
@@ -50,8 +54,8 @@ public class LoginTask extends AsyncTask<Map<String, String>, Void, Boolean> {
 			
 			// Set parameters ID and Password with url encode format
 			wr.writeBytes(String.format("username=%s&password=%s", URLEncoder
-					.encode((String) parametersMap.get("username"), "utf-8"),
-					URLEncoder.encode((String) parametersMap.get("password"),
+					.encode(parametersMap.get(PreferenceKeys.USERNAME), "utf-8"),
+					URLEncoder.encode(parametersMap.get(PreferenceKeys.PASSWORD),
 							"utf-8")));
 
 			wr.flush();

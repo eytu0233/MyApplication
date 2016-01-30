@@ -7,23 +7,17 @@ import android.util.Log;
 
 import java.util.concurrent.Executors;
 
-import edu.ncku.application.io.network.NetworkCheckReceiver;
 import edu.ncku.application.io.network.NewsReceiveTask;
 
 /**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
+ * 此IntentService類別是用來在背景處理NewsReceiveTask的啟動
+ * 透過靜態方法startActionONCE就可以讓NewsFragment驅動
  */
 public class DataReceiveService extends IntentService {
     // TODO: Rename actions, choose action names that describe tasks that this
     private static final String DEBUG_FLAG = DataReceiveService.class.getName();
 
-    private static final String ACTION_ONCE = "edu.ncku.testapplication.service.action.ONCE";
-
-    private NetworkCheckReceiver mNetworkStateReceiver = new NetworkCheckReceiver();
+    private static final String ACTION_ONCE = "edu.ncku.application.service.action.ONCE";
 
     public DataReceiveService() {
         super("DataReceiveService");
@@ -49,7 +43,6 @@ public class DataReceiveService extends IntentService {
             Intent intent = new Intent(context, DataReceiveService.class);
             intent.setAction(ACTION_ONCE);
             context.startService(intent);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

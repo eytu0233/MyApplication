@@ -8,7 +8,8 @@ import org.json.JSONObject;
 import java.util.LinkedHashMap;
 
 /**
- * Created by NCKU on 2015/12/1.
+ * 此類別繼承JsonReceiveTask，用來處理樓層資訊JSON資料的接收
+ * 並將其存進SD卡之中(覆蓋)。
  */
 public class FloorInfoReceiveTask extends JsonReceiveTask implements Runnable{
 

@@ -3,14 +3,17 @@ package edu.ncku.application;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +34,8 @@ import edu.ncku.application.util.PreferenceKeys;
 public class LoginDialog extends DialogFragment {
 
 	private static final String DEBUG_FLAG = LoginDialog.class.getName();
+
+	/* UI components */
 	private Button mBtnLogin, mBtnCancel;
 	private EditText mEditUsername, mEditPassword;
 	private TextView mTxtTip;
@@ -39,15 +45,32 @@ public class LoginDialog extends DialogFragment {
 	private Context context;
 	
 	private boolean runningLogin = false;
-	
-	private synchronized boolean isRunningLogin(){
-		return runningLogin;
-	}
-	
-	private synchronized void setRunningLogin(boolean runningLogin){
-		this.runningLogin = runningLogin;
-	}
 
+	private ProgressDialog progressDialog;
+
+	/**
+	 *  這個Receiver會接收來自LoginTask的廣播
+	 */
+	private BroadcastReceiver mLoginTaskReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, Intent intent) {
+			/* 關閉progressDialog */
+			(new Handler()).postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					progressDialog.dismiss();
+					Toast.makeText(context, R.string.sub_handled, Toast.LENGTH_SHORT).show();
+				}
+			}, 1000);
+		}
+	};
+
+	/**
+	 * Constructor
+	 *
+	 * @param drawerListSelector
+	 * @param context
+	 */
 	public LoginDialog(DrawerListSelector drawerListSelector, Context context) {
 		this.drawerListSelector = drawerListSelector;
 		this.context = context;
@@ -68,6 +91,7 @@ public class LoginDialog extends DialogFragment {
 
 		setEventListenner();
 
+		/* 建立AlertDialog實體 */
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		return builder.setView(v).create();
 	}
@@ -79,16 +103,19 @@ public class LoginDialog extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				setRunningLogin(true);
-				mPBLogin.setVisibility(View.VISIBLE);
-				mBtnLogin.setVisibility(View.INVISIBLE);
+				setRunningLogin(true); // 將狀態變成登入中
+				mPBLogin.setVisibility(View.VISIBLE); // 將mPBLogin顯示
+				mBtnLogin.setVisibility(View.INVISIBLE); // 將mBtnLogin隱藏
 
+				/* 從設定值取得帳號跟密碼 */
 				final String username = mEditUsername.getText().toString(), password = mEditPassword
 						.getText().toString();
+				/* 取得當前的網路連線狀態 */
 				ConnectivityManager CM = (ConnectivityManager) context
 						.getSystemService(Context.CONNECTIVITY_SERVICE);
 				NetworkInfo info = CM.getActiveNetworkInfo();
 
+				/* 判斷是否有欄位沒有填寫 */
 				if ((username != null && "".equals(username))
 						|| (password != null && "".equals(password))) {
 					mTxtTip.setText(R.string.void_account_or_password);
@@ -98,42 +125,54 @@ public class LoginDialog extends DialogFragment {
 					return;
 				}
 
+				/* 判斷網路是否有連線 */
 				if (info == null || !info.isConnected()) {
 					mTxtTip.setText(R.string.network_disconnected);
 					mPBLogin.setVisibility(View.INVISIBLE);
 					mBtnLogin.setVisibility(View.VISIBLE);
 					setRunningLogin(false);
 					return;
-				}			
-				
+				}
+
+				/* 將填好的帳好跟密碼放進參數中 */
 				final Map<String, String> params = new HashMap<String, String>();
 				params.put(PreferenceKeys.USERNAME.toString(), username);
 				params.put(PreferenceKeys.PASSWORD.toString(), password);
 
-				LoginTask loginTask = new LoginTask(new ILoginResultListener(){
+				/* 實作LoginTask中的ILoginResult介面 */
+				LoginTask loginTask = new LoginTask(new ILoginResultListener() {
 
 					@Override
-					public void loginEvent(boolean login) {
+					public void loginEvent(final boolean isLogin) {
 						// TODO Auto-generated method stub
-						mPBLogin.setVisibility(View.INVISIBLE);
-						mBtnLogin.setVisibility(View.VISIBLE);
-						if (login) {
-							drawerListSelector.loginState();
-							/*mainActivity.startMessagerService(); */
-							final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-				    		final SharedPreferences.Editor SPE = SP.edit();
-				    		
-				    		SPE.putString("username", username);
-				    		SPE.putString("password", password);
-				    		SPE.apply();
-						} else {
-							mTxtTip.setText(R.string.invalid_account_or_password);
-						}
-						
-						setRunningLogin(false);
-						LoginDialog.this.onStop();
+						/* 完成登入工作後，會藉由此方法取得結果 */
+						(new Handler()).postDelayed(new Runnable() {
+							@Override
+							public void run() {
+							/* 結束登入工作 */
+							mPBLogin.setVisibility(View.INVISIBLE);
+							mBtnLogin.setVisibility(View.VISIBLE);
+
+							/* 登入成功 */
+							if (isLogin) {
+								drawerListSelector.loginState(); // 透過drawerListSelector來改變drawer狀態
+								/* 將帳號密碼存進設定值 */
+								final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+								SP.edit().putString(PreferenceKeys.USERNAME, username).apply();
+								SP.edit().putString(PreferenceKeys.PASSWORD, password).apply();
+
+								Toast.makeText(context, R.string.login_success, Toast.LENGTH_SHORT).show();
+							} else {
+								mTxtTip.setText(R.string.invalid_account_or_password);
+							}
+
+							setRunningLogin(false);
+							LoginDialog.this.dismiss();
+
+							}
+						}, 1000);
 					}
-					
+
 				});
 				loginTask.executeOnExecutor(
 						AsyncTask.THREAD_POOL_EXECUTOR, params);
@@ -146,18 +185,27 @@ public class LoginDialog extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				onStop();
+				if(isRunningLogin()) return;
+				dismiss();
 			}
 
 		});
 	}
 
-	@Override
-	public void onStop() {
-		// TODO Auto-generated method stub
-		if(isRunningLogin()) return;
-		Log.d(DEBUG_FLAG, "onStop");
-		super.onStop();
+	/**
+	 *
+	 * @return 當前是否處在登入中的狀態
+	 */
+	private synchronized boolean isRunningLogin(){
+		return runningLogin;
+	}
+
+	/**
+	 *
+	 * @param runningLogin 設定當前是否處在登入中的狀態
+	 */
+	private synchronized void setRunningLogin(boolean runningLogin){
+		this.runningLogin = runningLogin;
 	}
 
 }

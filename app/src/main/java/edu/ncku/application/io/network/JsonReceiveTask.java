@@ -14,7 +14,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by NCKU on 2015/12/1.
+ * 此類別是父工具類別，將jsonRecieve與saveFile方法抽出而成
+ * 提供多個ReceiveTask類別去繼承並使用這兩個方法 *
  */
 public class JsonReceiveTask {
 

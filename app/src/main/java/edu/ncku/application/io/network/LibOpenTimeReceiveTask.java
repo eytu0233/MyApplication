@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by NCKU on 2015/12/1.
+ * 此類別用來接收開館時間的JSON資料，一樣儲存進檔案
  */
 public class LibOpenTimeReceiveTask extends JsonReceiveTask implements Runnable {
 
@@ -52,6 +52,13 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask implements Runnable 
         }
     }
 
+    /**
+        * 取得各系所圖書館開放時間資料
+        *
+        * @param jsonArray 從網址中取得的JSON陣列物件
+        * @return 排版過的字串List
+        * @throws Exception
+        */
     private ArrayList<String> jsonParsingServicesDeptLib(JSONArray jsonArray) throws Exception {
 
         final String SEMESTER = "學期中", VOCATION = "寒暑假";
@@ -89,6 +96,13 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask implements Runnable 
 
     }
 
+    /**
+     * 取得主圖書館開放時間資料
+     *
+     * @param jsonObject 從網址中取得的JSON物件
+     * @return 排版過的字串List
+     * @throws Exception
+     */
     private ArrayList<String> jsonParsingServicesMainLib(JSONObject jsonObject) throws Exception {
 
         ArrayList<String> services = new ArrayList<String>();
@@ -110,6 +124,13 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask implements Runnable 
 
     }
 
+    /**
+     * 取得閱覽室開放時間資料
+     *
+     * @param jsonObject 從網址中取得的JSON物件
+     * @return 排版過的字串List
+     * @throws Exception
+     */
     private ArrayList<String> jsonParsingServicesStudyHall(JSONObject jsonObject) throws Exception {
 
         String notes = "";
@@ -126,6 +147,13 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask implements Runnable 
 
     }
 
+    /**
+     * 取得醫分館開放時間資料
+     *
+     * @param jsonObject 從網址中取得的JSON物件
+     * @return 排版過的字串List
+     * @throws Exception
+     */
     private ArrayList<String> jsonParsingServicesMedLib(JSONObject jsonObject) throws Exception {
         String serviceTime = "";
         ArrayList<String> services = new ArrayList<String>();

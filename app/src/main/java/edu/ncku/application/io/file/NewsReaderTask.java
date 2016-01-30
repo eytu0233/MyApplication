@@ -13,6 +13,9 @@ import edu.ncku.application.model.News;
 import edu.ncku.application.fragments.NewsFragment;
 import edu.ncku.application.util.adapter.ListNewsAdapter;
 
+/**
+ * 此AsyncTask類別將會在最新消息頁面開啟時被執行，進行頁面資料讀取的工作
+ */
 public class NewsReaderTask extends AsyncTask<Void, Void, ListNewsAdapter>{
 
 	private static final String DEBUG_FLAG = NewsReaderTask.class.getName();
@@ -57,6 +60,7 @@ public class NewsReaderTask extends AsyncTask<Void, Void, ListNewsAdapter>{
 				return null;
 			}
 
+			// 將取得的最新消息資料包裝成Adapter物件
 			listViewAdapter = new ListNewsAdapter(newsFragment.getActivity(), readNews, show);
 		} catch (Exception e) {
 			e.printStackTrace();

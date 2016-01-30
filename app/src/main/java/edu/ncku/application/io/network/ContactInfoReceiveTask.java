@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import edu.ncku.application.model.ContactInfo;
 
 /**
- * Created by NCKU on 2015/12/1.
+ * 此類別繼承JsonReceiveTask，用來處理聯絡資訊JSON資料的接收
+ * 並將其存進SD卡之中(覆蓋)。
  */
 public class ContactInfoReceiveTask extends JsonReceiveTask implements Runnable{
 
@@ -28,8 +29,9 @@ public class ContactInfoReceiveTask extends JsonReceiveTask implements Runnable{
         ArrayList<ContactInfo> contactInfos = new ArrayList<ContactInfo>();
 
         try {
-            JSONArray jsonArray = new JSONArray(jsonRecieve(JSON_URL));
+            JSONArray jsonArray = new JSONArray(jsonRecieve(JSON_URL)); // 透過父類別方法jsonRecieve取得JSONArray物件
 
+            /* 將資料從JSON物件當中取出 */
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject json = jsonArray.getJSONObject(i);
 
@@ -40,7 +42,7 @@ public class ContactInfoReceiveTask extends JsonReceiveTask implements Runnable{
                 ));
             }
 
-            saveFile(contactInfos, FILE_NAME);
+            saveFile(contactInfos, FILE_NAME); // 存進檔案之中
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,9 +2,17 @@ package edu.ncku.application.util;
 
 /**
  * Created by NCKU on 2015/12/18.
+ * 此工具類別用來確認ISBN(10 或 13碼)是否正確，其公式參考ISBN wiki
+ * https://zh.wikipedia.org/wiki/%E5%9B%BD%E9%99%85%E6%A0%87%E5%87%86%E4%B9%A6%E5%8F%B7
  */
 public class ISBNMacher {
 
+    /**
+        * 驗證10碼ISBN
+        *
+        * @param isbn
+        * @return
+        */
     public static boolean validateIsbn10( String isbn )
     {
         if ( isbn == null )
@@ -45,6 +53,12 @@ public class ISBNMacher {
         }
     }
 
+    /**
+        * 驗證13碼ISBN
+     *
+        * @param isbn
+        * @return
+        */
     public static boolean validateIsbn13( String isbn )
     {
         if ( isbn == null )

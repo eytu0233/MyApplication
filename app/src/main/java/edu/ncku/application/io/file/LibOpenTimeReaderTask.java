@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by NCKU on 2015/12/1.
+ * 此AsyncTask類別將會在開放時間頁面開啟時被執行，進行頁面資料讀取的工作
  */
 public class LibOpenTimeReaderTask extends AsyncTask<Void, Void, Map<String, List<String>>> {
 

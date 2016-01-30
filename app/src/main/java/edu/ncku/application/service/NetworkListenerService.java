@@ -10,12 +10,19 @@ import android.util.Log;
 
 import edu.ncku.application.io.network.NetworkCheckReceiver;
 
+/**
+ * 此Service類別不會綁定本Application，意即此Service將不會隨著
+ * Activity而消滅，此Service是用來監視網路狀態的類別，將會在
+ * 網路狀態改變時被驅動，主要目的是在網路連上去的時候，在
+ * 背景執行工作。
+ */
 public class NetworkListenerService extends Service {
 
     private static final String DEBUG_FLAG = NetworkListenerService.class.getName();
 
     private final IBinder mBinder = new MyBinder();
 
+    /* 此Receiver能夠監視網路改變的狀態(需註冊) */
     private NetworkCheckReceiver mNetworkStateReceiver = new NetworkCheckReceiver();
 
     public NetworkListenerService() {
@@ -32,6 +39,7 @@ public class NetworkListenerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // TODO Auto-generated method stub
         try {
+            /* 註冊Receiver */
             IntentFilter filter = new IntentFilter();
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             registerReceiver(mNetworkStateReceiver, filter);
