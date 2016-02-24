@@ -119,7 +119,7 @@ public class ListMsgsAdapter extends BaseAdapter {
 
                     Bundle bundle = new Bundle();
                     bundle.putString("title", news.getTitle());
-                    bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format((long)news.getTimeStamp() * 1000));
+                    bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format((long)news.getPubTime() * 1000));
                     bundle.putString("unit", news.getUnit());
                     bundle.putString("contents", news.getContents().replace("\r\n", "<br>").trim());
 
@@ -142,7 +142,7 @@ public class ListMsgsAdapter extends BaseAdapter {
 
             News items = (News) getItem(position);
             SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-            int timeStamp = items.getTimeStamp();
+            int timeStamp = items.getPubTime();
             String title = items.getTitle(), date = sdFormat.format(new Date((long)timeStamp*1000)), unit = items.getUnit();
 
             holder.txtTitle.setText((title!=null)?title:"");

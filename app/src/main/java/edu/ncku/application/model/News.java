@@ -6,14 +6,16 @@ public class News implements Serializable {
 
 	private String title;
 	private String unit;
-	private int timeStamp;
+	private int pubTime;
+	private int endTime;
 	private String contents;
 
-	public News(String title, String unit, int timeStamp, String contents) {
+	public News(String title, String unit, int pubTime, int endTime, String contents) {
 		super();
 		this.title = title;
 		this.unit = unit;
-		this.timeStamp = timeStamp;
+		this.pubTime = pubTime;
+		this.endTime = endTime;
 		this.contents = contents;
 	}
 
@@ -25,8 +27,12 @@ public class News implements Serializable {
 		return unit;
 	}
 
-	public int getTimeStamp() {
-		return timeStamp;
+	public int getPubTime() {
+		return pubTime;
+	}
+
+	public int getEndTime() {
+		return endTime;
 	}
 
 	public String getContents() {

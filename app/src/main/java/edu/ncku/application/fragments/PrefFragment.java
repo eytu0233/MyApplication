@@ -40,15 +40,30 @@ public class PrefFragment extends PreferenceFragment {
 
     private ProgressDialog progressDialog;
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mSubSuccessReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
             // Get extra data included in the Intent
             (new Handler()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if(progressDialog == null) return;
                     progressDialog.dismiss();
                     Toast.makeText(context, R.string.sub_handled, Toast.LENGTH_SHORT).show();
+                }
+            }, 1000);
+        }
+    };
+
+    private BroadcastReceiver mSubFailReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+            // Get extra data included in the Intent
+            (new Handler()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(progressDialog != null) progressDialog.dismiss();
+                    Toast.makeText(context, R.string.sub_fail, Toast.LENGTH_SHORT).show();
                 }
             }, 1000);
         }
@@ -74,8 +89,9 @@ public class PrefFragment extends PreferenceFragment {
 
         final CheckBoxPreference checkboxPref = (CheckBoxPreference) getPreferenceManager().findPreference("MESSAGER_SUBSCRIPTION");
 
-        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver,
-                new IntentFilter(PreferenceKeys.SUBSCRIPTIONS_HANDLE_COMPLETE));
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
+        broadcastManager.registerReceiver(mSubSuccessReceiver, new IntentFilter(PreferenceKeys.SUBSCRIPTIONS_HANDLE_COMPLETE));
+        broadcastManager.registerReceiver(mSubFailReceiver, new IntentFilter(PreferenceKeys.SUBSCRIPTIONS_HANDLE_FAIL));
 
         final ConnectivityManager CM = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);

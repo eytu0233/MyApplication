@@ -23,9 +23,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import edu.ncku.application.io.network.LoginTask;
 import edu.ncku.application.util.DrawerListSelector;
 import edu.ncku.application.util.ILoginResultListener;
@@ -134,13 +131,10 @@ public class LoginDialog extends DialogFragment {
 					return;
 				}
 
-				/* 將填好的帳好跟密碼放進參數中 */
-				final Map<String, String> params = new HashMap<String, String>();
-				params.put(PreferenceKeys.USERNAME.toString(), username);
-				params.put(PreferenceKeys.PASSWORD.toString(), password);
-
 				/* 實作LoginTask中的ILoginResult介面 */
-				LoginTask loginTask = new LoginTask(new ILoginResultListener() {
+				final Context context = getActivity().getApplicationContext();
+				final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+				LoginTask loginTask = new LoginTask(context, new ILoginResultListener() {
 
 					@Override
 					public void loginEvent(final boolean isLogin) {
@@ -157,25 +151,23 @@ public class LoginDialog extends DialogFragment {
 							if (isLogin) {
 								drawerListSelector.loginState(); // 透過drawerListSelector來改變drawer狀態
 								/* 將帳號密碼存進設定值 */
-								final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-								SP.edit().putString(PreferenceKeys.USERNAME, username).apply();
-								SP.edit().putString(PreferenceKeys.PASSWORD, password).apply();
+								sharedPreferences.edit().putString(PreferenceKeys.USERNAME, username).apply();
+								sharedPreferences.edit().putString(PreferenceKeys.PASSWORD, password).apply();
 
 								Toast.makeText(context, R.string.login_success, Toast.LENGTH_SHORT).show();
+								LoginDialog.this.dismiss();
 							} else {
 								mTxtTip.setText(R.string.invalid_account_or_password);
 							}
 
 							setRunningLogin(false);
-							LoginDialog.this.dismiss();
-
 							}
 						}, 1000);
 					}
 
 				});
 				loginTask.executeOnExecutor(
-						AsyncTask.THREAD_POOL_EXECUTOR, params);
+						AsyncTask.THREAD_POOL_EXECUTOR, username, password);
 			}
 
 		});

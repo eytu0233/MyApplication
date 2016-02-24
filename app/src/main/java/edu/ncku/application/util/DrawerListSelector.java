@@ -70,18 +70,6 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
                 mDrawerLayout.closeDrawer(mDrawerList);
             }
         };
-        DrawerListItem logoutAdapterItem = new DrawerListItem(activity.getResources().getString(R.string.logout)) {
-            @Override
-            public void onDrawerItemClick() {
-                    final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
-
-                    SP.edit().putString(PreferenceKeys.USERNAME.toString(), "").apply();
-                    SP.edit().putString(PreferenceKeys.PASSWORD.toString(), "").apply();
-                    SP.edit().putBoolean(PreferenceKeys.SUBSCRIPTION, false).apply();
-
-                    DrawerListSelector.this.logoutState();
-            }
-        };
         DrawerListItem messengerAdapterItem = new DrawerListItem(activity.getResources().getString(R.string.messenger)) {
             @Override
             public void onDrawerItemClick() {
@@ -111,7 +99,6 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         ArrayList<DrawerListItem> loginDrawerListItems = new ArrayList<DrawerListItem>(); // 登入狀態列表
         loginDrawerListItems.add(homePageAdapterItem);
         loginDrawerListItems.add(messengerAdapterItem);
-        loginDrawerListItems.add(logoutAdapterItem);
         loginDrawerListItems.add(barcodeAdapterItem);
 
         ArrayList<DrawerListItem> logoutDrawerListItems = new ArrayList<DrawerListItem>(); // 登出狀態列表

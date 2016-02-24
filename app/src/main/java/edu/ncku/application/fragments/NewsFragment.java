@@ -25,6 +25,7 @@ import edu.ncku.application.LoadMoreListView;
 import edu.ncku.application.io.file.NewsReaderTask;
 import edu.ncku.application.service.DataReceiveService;
 import edu.ncku.application.util.IReceiverRegisterListener;
+import edu.ncku.application.util.PreferenceKeys;
 import edu.ncku.application.util.adapter.ListNewsAdapter;
 import edu.ncku.application.R;
 
@@ -115,6 +116,8 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
 
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
+
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -125,6 +128,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     } else {
                         progressBar.setVisibility(View.INVISIBLE);
                         newsTip.setVisibility(View.VISIBLE);
+                        newsTip.setText(sharedPreferences.getString(PreferenceKeys.NO_DATA_MSGS, getString(R.string.msg_empty)));
                     }
 
                 } catch (Exception e) {

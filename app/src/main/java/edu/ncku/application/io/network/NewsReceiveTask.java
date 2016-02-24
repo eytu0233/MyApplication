@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -19,6 +20,7 @@ import java.util.LinkedList;
 
 import edu.ncku.application.model.News;
 import edu.ncku.application.R;
+import edu.ncku.application.util.PreferenceKeys;
 
 /**
  * 此類別用來在背景接收最新消息的JSON資料，一樣將其存進檔案之中
@@ -145,7 +147,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 		LinkedHashSet<News> deleteNewsSet = new LinkedHashSet<News>();
 
 		for(News news : newsSet){
-			if(nowTimeStamp - (long)news.getTimeStamp() >= OUT_OF_DATE_TIMESTAMP){
+			if(nowTimeStamp - (long)news.getEndTime() >= OUT_OF_DATE_TIMESTAMP){
 				deleteNewsSet.add(news);
 			}
 		}
@@ -163,7 +165,14 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 		try {
 
-			JSONArray arr = new JSONArray(jsonRecieve(NEWS_JSON_URL));
+			JSONObject jsonObject = new JSONObject(jsonRecieve(NEWS_JSON_URL));
+			String noDataMsg = jsonObject.getString("noDataMsg");
+			Log.d(DEBUG_FLAG, "noDataMsg : " + noDataMsg);
+			if(!noDataMsg.isEmpty()){
+				PreferenceManager.getDefaultSharedPreferences(mContext).edit().putString(PreferenceKeys.NO_DATA_MSGS, noDataMsg).apply();
+				Log.d(DEBUG_FLAG, "noDataMsg saving...");
+			}
+			JSONArray arr = jsonObject.getJSONArray("NewsList");
 
 			news = new LinkedList<News>();
 
@@ -230,7 +239,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 				news.add(new News(json.getString("news_title"), json
 						.getString("publish_dept"),
-						json.getInt("publish_time"), content));
+						json.getInt("publish_time"), json.getInt("end_time"),  content));
 			}
 
 			Log.d(DEBUG_FLAG, "get news from network : " + news.size());

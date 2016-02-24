@@ -1,78 +1,81 @@
 package edu.ncku.application.io.network;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Map;
+import java.io.IOException;
 
+import edu.ncku.application.service.RegistrationIntentService;
 import edu.ncku.application.util.ILoginResultListener;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
  * 在背景執行登入驗證工作
  */
-public class LoginTask extends AsyncTask<Map<String, String>, Void, Boolean> {
+public class LoginTask extends AsyncTask<String, Void, Boolean> {
 	
 	private static final String DEBUG_FLAG = LoginTask.class.getName();
 
 	private static final String ATHU_URL = "http://reader.lib.ncku.edu.tw/login/index.php";
-	
+	private static final String SYB_SUB_URL = "http://140.116.207.24/push/subscriptionStatus.php";
+
+	private Context context;
+	private SharedPreferences sharedPreferences;
 	private ILoginResultListener resultListener;
 
-	public LoginTask(ILoginResultListener resultListener) {
+
+	public LoginTask(Context context, ILoginResultListener resultListener) {
 		super();
+		this.context = context;
 		this.resultListener = resultListener;
+		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
 	@Override
-	protected Boolean doInBackground(Map<String, String>... params) {
+	protected Boolean doInBackground(String... params) {
 		// TODO Auto-generated method stub
-		Map<String, String> parametersMap;
 
 		boolean result = false;
 
-		if (params.length != 1) {
+		if (params == null || params.length != 2 || params[0].isEmpty() || params[1].isEmpty()) {
 			return result;
-		} else {
-			parametersMap = params[0];
 		}
 
+		String username =  params[0], password = params[1];
+
 		try {
-			URL url = new URL(ATHU_URL);
-			HttpURLConnection urlConnection = (HttpURLConnection) url
-					.openConnection();
-			urlConnection.setRequestMethod("POST");
-
-			// Send post request
-			urlConnection.setDoOutput(true);
-			DataOutputStream wr = new DataOutputStream(
-					urlConnection.getOutputStream());
-			
-			// Set parameters ID and Password with url encode format
-			wr.writeBytes(String.format("username=%s&password=%s", URLEncoder
-					.encode(parametersMap.get(PreferenceKeys.USERNAME), "utf-8"),
-					URLEncoder.encode(parametersMap.get(PreferenceKeys.PASSWORD),
-							"utf-8")));
-
-			wr.flush();
-			wr.close();
-
-			InputStream input = urlConnection.getInputStream();
-			byte[] data = new byte[1024];
-			int idx = input.read(data);
-			String str = new String(data, 0, idx);
+			String str = HttpClient.sendPost(ATHU_URL, String.format("username=%s&password=%s", username, password));
 			if (str.contains("OK")) {
 				result = true;
+
+				// 如果發現DeviceID從未傳送到Server或被清除則重新從GCM Server取得DeviceID
+				if(!sharedPreferences.getBoolean(PreferenceKeys.SENT_TOKEN_TO_SERVER, false)){
+					RegistrationIntentService.subscribeAction(context);
+				}
+
+				/* 登入成功的同時，進行訂閱狀態的同步 */
+				str = HttpClient.sendPost(SYB_SUB_URL, String.format("id=%s", username));
+				if (str.contains("Y")) {
+					sharedPreferences.edit().putBoolean(PreferenceKeys.SUBSCRIPTION, true).apply();
+					Log.d(DEBUG_FLAG, "同步訂閱狀態 : Y");
+				} else if (str.contains("N")) {
+					sharedPreferences.edit().putBoolean(PreferenceKeys.SUBSCRIPTION, false).apply();
+					Log.d(DEBUG_FLAG, "同步訂閱狀態 : N");
+				} else {
+					throw new Exception("SYN_SUB_URL Fail");
+				}
 			}
-			input.close();
-		}  catch (Exception e) {
+
+		}  catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
+		}  catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return result;

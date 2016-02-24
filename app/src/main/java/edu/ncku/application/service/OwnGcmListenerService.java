@@ -4,14 +4,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import edu.ncku.application.MainActivity;
 import edu.ncku.application.R;
+import edu.ncku.application.util.PreferenceKeys;
 
 /**
  * 此類別是繼承自GcmListenerService，用來實現GCM與APP的接口
@@ -60,11 +63,15 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
     // [END receive_message]
 
     /**
-     * Create and show a simple notification containing the received GCM message.
+     * Create and show a simple notification containing the received GCM message if and only if the user
+     * has logged-in and subscribed.
      *
      * @param message GCM message received.
      */
     private void sendNotification(String message) {
+
+        if(!isSub()) return;
+
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -83,5 +90,21 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    private boolean isSub() {
+
+        final SharedPreferences SP = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
+        String username = SP.getString(PreferenceKeys.USERNAME, ""),
+               password = SP.getString(PreferenceKeys.PASSWORD, "");
+        boolean sub = SP.getBoolean(PreferenceKeys.SUBSCRIPTION, true);
+
+        if (username.isEmpty() || password.isEmpty()) {
+            return false;
+        } else {
+            return sub;
+        }
+
     }
 }

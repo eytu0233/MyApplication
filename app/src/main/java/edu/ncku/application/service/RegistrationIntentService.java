@@ -15,6 +15,7 @@ import com.google.android.gms.iid.InstanceID;
 import java.io.IOException;
 
 import edu.ncku.application.R;
+import edu.ncku.application.io.network.HttpClient;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
@@ -27,6 +28,7 @@ public class RegistrationIntentService extends IntentService {
 
     private static final String ACTION_SUB = "edu.ncku.application.service.action.sub";
     private static final String ACTION_UNSUB = "edu.ncku.application.service.action.unsub";
+    private static final String SUB_URL = "http://140.116.207.24/push/subscription.php";
 
     public RegistrationIntentService() {
         super(TAG);
@@ -111,7 +113,6 @@ public class RegistrationIntentService extends IntentService {
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             // [END get_token]
             Log.i(TAG, "GCM Registration Token: " + token);
-
             // TODO: Implement this method to send any registration to your app's servers.
             sendUnregistrationToServer(token);
 
@@ -145,10 +146,21 @@ public class RegistrationIntentService extends IntentService {
      */
     private void sendRegistrationToServer(String token) {
         // Add custom implementation, as needed.
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        try {
+            HttpClient.sendPost(SUB_URL, String.format("id=%s&sub=1", sharedPreferences.getString(PreferenceKeys.USERNAME, "")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void sendUnregistrationToServer(String token) {
-
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        try {
+            HttpClient.sendPost(SUB_URL, String.format("id=%s&sub=0", sharedPreferences.getString(PreferenceKeys.USERNAME, "")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
