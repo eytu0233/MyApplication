@@ -31,15 +31,16 @@ import edu.ncku.application.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link NewsFragment#newInstance} factory method to
+ * Use the {@link NewsFragment#getInstance} factory method to
  * create an instance of this fragment.
  */
 public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
         LoadMoreListView.OnLoadMore {
 
-    private static final String DEBUG_FLAG = NewsFragment.class.getName();
-
     public static final String FINISH_FLUSH_FLAG = "FinishFlushFlag";
+
+    private static final String DEBUG_FLAG = NewsFragment.class.getName();
+    private static final String POSITION = "POSITION";
 
     private static int PRELOAD_MSGS_NUM;
 
@@ -64,8 +65,12 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * @return A new instance of fragment NewsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewsFragment newInstance() {
-        return new NewsFragment();
+    public static NewsFragment getInstance(int position) {
+        NewsFragment instance = new NewsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(POSITION, position);
+        instance.setArguments(bundle);
+        return instance;
     }
 
     public NewsFragment() {
@@ -230,6 +235,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         Log.v(DEBUG_FLAG, "want to show : "
                 + numShowedMsgs);
 
+
         NewsReaderTask newsReaderTask = new NewsReaderTask(this, numShowedMsgs);
         newsReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         listViewAdapter = newsReaderTask.get();
@@ -239,6 +245,11 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             numShowedMsgs = listViewAdapter.getCount();
             newsTip.setVisibility(View.INVISIBLE);
             Log.v(DEBUG_FLAG, "UpdateList finish : " + numShowedMsgs);
+            int position = getArguments().getInt(POSITION);
+            Log.d(DEBUG_FLAG, "position : " + position);
+            if(position >= 0 && position < numShowedMsgs){
+                listViewAdapter.triggerViewClick(position);
+            }
             return true;
         } else {
             return false;

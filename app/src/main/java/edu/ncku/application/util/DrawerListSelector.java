@@ -2,9 +2,7 @@ package edu.ncku.application.util;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.SharedPreferences;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
@@ -17,10 +15,10 @@ import java.util.ArrayList;
 
 import edu.ncku.application.LoginDialog;
 import edu.ncku.application.MainActivity;
+import edu.ncku.application.R;
 import edu.ncku.application.fragments.HomePageFragment;
 import edu.ncku.application.fragments.MessagerFragment;
 import edu.ncku.application.fragments.ProgressFragment;
-import edu.ncku.application.R;
 import edu.ncku.application.util.adapter.DrawerListAdapter;
 
 /**
@@ -73,7 +71,7 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         DrawerListItem messengerAdapterItem = new DrawerListItem(activity.getResources().getString(R.string.messenger)) {
             @Override
             public void onDrawerItemClick() {
-                replaceFragment(MessagerFragment.newInstance(getUserName()));
+                replaceFragment(MessagerFragment.getInstance(-1));
             }
         };
         DrawerListItem barcodeAdapterItem = new DrawerListItem(activity.getResources().getString(R.string.barcode_scanner)) {
@@ -110,7 +108,17 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         loginDrawerListAdapter = new DrawerListAdapter(activity, loginDrawerListItems);
         logoutDrawerListAdapter = new DrawerListAdapter(activity, logoutDrawerListItems);
 
+        /* 初始化完成後，自動進入Homepage頁面 */
         homePageAdapterItem.onDrawerItemClick();
+    }
+
+    public void fragmentToMessager(final int position){
+        new DrawerListItem(activity.getResources().getString(R.string.messenger)) {
+            @Override
+            public void onDrawerItemClick() {
+                replaceFragment(MessagerFragment.getInstance(position));
+            }
+        }.onDrawerItemClick();
     }
 
     /**
@@ -149,16 +157,6 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         }
 
         activity.clearTitleStack();
-    }
-
-    /**
-        *
-        * @return 使用者名稱
-        */
-    private String getUserName() {
-        final SharedPreferences SP = PreferenceManager
-                .getDefaultSharedPreferences(activity);
-        return SP.getString(PreferenceKeys.USERNAME.toString(), "");
     }
 
 

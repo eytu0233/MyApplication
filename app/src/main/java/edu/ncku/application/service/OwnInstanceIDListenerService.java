@@ -17,7 +17,7 @@ public class OwnInstanceIDListenerService extends com.google.android.gms.iid.Ins
     @Override
     public void onTokenRefresh() {
         // Fetch updated Instance ID token and notify our app's server of any changes (if applicable).
-        RegistrationIntentService.subscribeAction(this);
+        RegistrationIntentService.startActionRegisterGCM(this);
     }
     // [END refresh_token]
 }

@@ -15,9 +15,9 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-import edu.ncku.application.model.News;
 import edu.ncku.application.R;
 import edu.ncku.application.fragments.NewsViewerFragment;
+import edu.ncku.application.model.Message;
 
 /**
  * Created by NCKU on 2016/1/8.
@@ -28,15 +28,15 @@ public class ListMsgsAdapter extends BaseAdapter {
     private int show;
 
     private Activity activity;
-    private LinkedList<News> AllMsgs = new LinkedList<News>(), showMsgs = new LinkedList<News>();
+    private LinkedList<Message> AllMsgs = new LinkedList<Message>(), showMsgs = new LinkedList<Message>();
 
-    public ListMsgsAdapter(Activity activity, LinkedHashSet<News> msgsSet, int localShow) {
+    public ListMsgsAdapter(Activity activity, LinkedHashSet<Message> msgsSet, int localShow) {
         this.activity = activity;
 
         this.show = (localShow > msgsSet.size()) ? msgsSet.size() : localShow;
 
-        for(News msg : msgsSet){
-            AllMsgs.add(msg);
+        for(Message msg : msgsSet){
+            AllMsgs.addFirst(msg);
         }
 
         for (int i = 0; i < show; i++) {
@@ -81,6 +81,11 @@ public class ListMsgsAdapter extends BaseAdapter {
         return moreShow;
     }
 
+    public void triggerViewClick(int offset){
+        int position = getCount() - (offset + 1);// Adapter類別取出資料的順序是倒反的
+        getView((position >= 0)?position:0, null, null).callOnClick();
+    }
+
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
@@ -115,12 +120,12 @@ public class ListMsgsAdapter extends BaseAdapter {
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
 
-                    News news = (News) getItem(position);
+                    Message news = (Message) getItem(position);
 
                     Bundle bundle = new Bundle();
                     bundle.putString("title", news.getTitle());
                     bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format((long)news.getPubTime() * 1000));
-                    bundle.putString("unit", news.getUnit());
+                    bundle.putString("unit", "");
                     bundle.putString("contents", news.getContents().replace("\r\n", "<br>").trim());
 
                     NewsViewerFragment msgViewerFragment = new NewsViewerFragment();
@@ -140,7 +145,7 @@ public class ListMsgsAdapter extends BaseAdapter {
 
             convertView.setTag(holder);
 
-            News items = (News) getItem(position);
+            Message items = (Message) getItem(position);
             SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
             int timeStamp = items.getPubTime();
             String title = items.getTitle(), date = sdFormat.format(new Date((long)timeStamp*1000)), unit = items.getUnit();

@@ -17,9 +17,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-import edu.ncku.application.model.News;
 import edu.ncku.application.R;
+import edu.ncku.application.model.News;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
@@ -58,6 +60,9 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 		if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
 
 			receiveNewsFromNetwork();
+			if(!isOnce) { // 當為背景執行，定時(每小時)執行此工作直到網路關閉為止
+				Executors.newSingleThreadScheduledExecutor().schedule(this, 1, TimeUnit.HOURS);
+			}
 
 		} else {
 			/* 廣播給NewsFragment告知網路目前無法連線 */
@@ -75,7 +80,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 	 * @param newsList 來自網路的最新消息資料
 	 * @return 新增的最新消息數量(假如都重複則為0)
 	 */
-	private int synMsgFile(LinkedList<News> newsList) {
+	private int synNewsFile(LinkedList<News> newsList) {
 
 		/* Get internal storage directory */
 		File dir = mContext.getFilesDir();
@@ -83,7 +88,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 		ObjectInputStream ois;
 		ObjectOutputStream oos;
-		LinkedHashSet<News> readNews, mergeReadNews;
+		LinkedHashSet<News> readNews/*, pushNews*/, mergeReadNews; // 宣告成有序集合(不重複且加入有順序)
 
 		int updateNum = 0;
 
@@ -99,6 +104,13 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 					readNews = new LinkedHashSet<News>();
 				}
 
+				/*pushNews = new LinkedHashSet<News>();
+				for(News news : newsList){
+					//if(!news.isPush() || readNews.contains(news)) continue; // 當該封最新消息(來自網路)無需通知或者是已經通知過了，則跳過
+
+					pushNews.add(news);
+				}*/
+
 				// record the old number of news
 				int oldNum = readNews.size();
 				// merges two news set to readNews
@@ -108,15 +120,26 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 				updateNum = mergeReadNews.size() - oldNum;
 
+				deleteOutOfDateNews(mergeReadNews); // 清除過期最新消息
+
 				// overwrite the news data to the file
 				oos = new ObjectOutputStream(new FileOutputStream(newsFile));
-				if (!isOnce) {
-					deleteOutOfDateNews(mergeReadNews);
-				}
 				oos.writeObject(mergeReadNews);
 				oos.flush();
 				if (oos != null)
 					oos.close();
+
+				/*if(pushNews != null && pushNews.size() > 0){ // 當有需要通知的訊息時，找出其在聯集後集合的順序
+					for(News news : pushNews){
+						int position = 0;
+						for(News mergeNews : mergeReadNews){
+							if(news == mergeNews) {
+								sendNotification(news.getTitle(), position);
+							}
+							++position;
+						}
+					}
+				}*/
 
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -162,6 +185,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 		LinkedList<News> news;
 
 		int numNews = 0;
+		boolean pushFlag = false;
 
 		try {
 
@@ -178,6 +202,8 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 			for (int i = 0; i < arr.length(); i++) {
 				JSONObject json = arr.getJSONObject(i);
+				String title = json.getString("news_title");
+				String publish_dept = json.getString("publish_dept");
 				String relatedLink = json.getString("related_url");
 				String att_file_1 = json.getString("att_file_1");
 				String att_file_1_des = json.getString("att_file_1_des");
@@ -189,14 +215,18 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 				String contact_unit = json.getString("contact_unit");
 				String contact_tel = json.getString("contact_tel");
 				String contact_email = json.getString("contact_email");
+				//String push = json.getString("push");
 
-				if (relatedLink.length() > 0) {
+				int publish_time = json.getInt("publish_time");
+				int end_time = json.getInt("end_time");
+
+				if (relatedLink != null && relatedLink.length() > 0) {
 					content += "<br><tr><td class=\"newslink\"><img src=\"link.png\" height=\"20\" width=\"20\"><a href="
 							+ relatedLink
 							+ " target=\"_blank\" class=\"ui-link\">相關連結</a></td></tr><br>";
 				}
 
-				if (att_file_1.length() > 0) {
+				if (att_file_1 != null && att_file_1.length() > 0) {
 					content += "<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href="
 							+ att_file_1
 							+ " target=\"_blank\" class=\"ui-link\">"
@@ -204,7 +234,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 							: "相關附件1") + "</a></td></tr><br>";
 				}
 
-				if (att_file_2.length() > 0) {
+				if (att_file_2 != null && att_file_2.length() > 0) {
 					content += "<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href="
 							+ att_file_2
 							+ " target=\"_blank\" class=\"ui-link\">"
@@ -212,7 +242,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 							: "相關附件2") + "</a></td></tr><br>";
 				}
 
-				if (att_file_3.length() > 0) {
+				if (att_file_3 != null && att_file_3.length() > 0) {
 					content += "<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href="
 							+ att_file_3
 							+ " target=\"_blank\" class=\"ui-link\">"
@@ -220,31 +250,29 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 							: "相關附件3") + "</a></td></tr><br>";
 				}
 
-				if(contact_unit.length() > 0){
+				if(contact_unit != null && contact_unit.length() > 0){
 					content += "<br>"
 							+ contact_unit;
 				}
 
-				if(contact_tel.length() > 0){
+				if(contact_tel != null && contact_tel.length() > 0){
 					content += "&nbsp;"
 							+ contact_tel
 							+ "<br>";
 				}
 
-				if(contact_email.length() > 0){
+				if(contact_email != null && contact_email.length() > 0){
 					content += "<br>"
 							+ contact_email
 							+ "<br>";
 				}
 
-				news.add(new News(json.getString("news_title"), json
-						.getString("publish_dept"),
-						json.getInt("publish_time"), json.getInt("end_time"),  content));
+				news.add(new News(title, publish_dept, publish_time, end_time, content));
 			}
 
 			Log.d(DEBUG_FLAG, "get news from network : " + news.size());
 
-			numNews = synMsgFile(news);
+			numNews = synNewsFile(news);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -257,4 +285,28 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 			mContext.sendBroadcast(mIntent);
 		}
 	}
+
+	/*private void sendNotification(String message, int position) {
+
+		Intent intent = new Intent(mContext, MainActivity.class);
+		intent.putExtra(PreferenceKeys.NEWS_EXTRA, position);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //清除之前已開啟的Activity
+		intent.setData(Uri.parse("custom://" + System.currentTimeMillis())); // 用來區分intent以避免PendingIntent覆蓋extra資料
+		PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0 , intent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+
+		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mContext)
+				.setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle(mContext.getString(R.string.app_name))
+				.setContentText(message)
+				.setAutoCancel(true)
+				.setSound(defaultSoundUri)
+				.setContentIntent(pendingIntent);
+
+		NotificationManager notificationManager =
+				(NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		notificationManager.notify(position, notificationBuilder.build());
+	}*/
 }

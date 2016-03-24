@@ -94,6 +94,10 @@ public class ListNewsAdapter extends BaseAdapter {
 		return moreShow;
 	}
 
+	public void triggerViewClick(int position){
+		getView(position, null, null).callOnClick();
+	}
+
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub

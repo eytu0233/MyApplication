@@ -19,8 +19,7 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
 	
 	private static final String DEBUG_FLAG = LoginTask.class.getName();
 
-	private static final String ATHU_URL = "http://reader.lib.ncku.edu.tw/login/index.php";
-	private static final String SYB_SUB_URL = "http://140.116.207.24/push/subscriptionStatus.php";
+	private static final String ATHU_URL = "http://140.116.207.24/push/login.php";
 
 	private Context context;
 	private SharedPreferences sharedPreferences;
@@ -40,6 +39,7 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
 
 		boolean result = false;
 
+		// 檢查參數值
 		if (params == null || params.length != 2 || params[0].isEmpty() || params[1].isEmpty()) {
 			return result;
 		}
@@ -52,20 +52,10 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
 				result = true;
 
 				// 如果發現DeviceID從未傳送到Server或被清除則重新從GCM Server取得DeviceID
-				if(!sharedPreferences.getBoolean(PreferenceKeys.SENT_TOKEN_TO_SERVER, false)){
-					RegistrationIntentService.subscribeAction(context);
-				}
-
-				/* 登入成功的同時，進行訂閱狀態的同步 */
-				str = HttpClient.sendPost(SYB_SUB_URL, String.format("id=%s", username));
-				if (str.contains("Y")) {
-					sharedPreferences.edit().putBoolean(PreferenceKeys.SUBSCRIPTION, true).apply();
-					Log.d(DEBUG_FLAG, "同步訂閱狀態 : Y");
-				} else if (str.contains("N")) {
-					sharedPreferences.edit().putBoolean(PreferenceKeys.SUBSCRIPTION, false).apply();
-					Log.d(DEBUG_FLAG, "同步訂閱狀態 : N");
-				} else {
-					throw new Exception("SYN_SUB_URL Fail");
+				String deviceID = sharedPreferences.getString(PreferenceKeys.DEVICE_TOKEN, "");
+				if(deviceID == null || deviceID.equals("")){
+					Log.d(DEBUG_FLAG, "登入時發現沒有註冊GCM，故啟動註冊背景服務");
+					RegistrationIntentService.startActionRegisterGCM(context);
 				}
 			}
 

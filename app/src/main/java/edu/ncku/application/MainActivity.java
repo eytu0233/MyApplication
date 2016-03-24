@@ -34,6 +34,7 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.LinkedList;
 
 import edu.ncku.application.fragments.IRISBNSearchFragment;
+import edu.ncku.application.fragments.NewsFragment;
 import edu.ncku.application.fragments.PrefFragment;
 import edu.ncku.application.service.NetworkListenerService;
 import edu.ncku.application.util.DrawerListSelector;
@@ -69,16 +70,6 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
                 Log.e(DEBUG_FLAG, "NetworkListenerService start fail!");
             }
         }
-
-        /*String parameters = getIntent().getStringExtra("mainActivityParameter");
-
-        if (parameters == null) {
-            selectItem(0);
-        }else if("Message Notification".equals(parameters)){
-            selectItem((isLogin())?1:0);
-        }else{
-            Log.e(DEBUG_FLAG, "parameters undefined!");
-        }*/
 
     }
 
@@ -270,6 +261,18 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
             selector.logoutState();
         }
 
+        int msgExtra = getIntent().getIntExtra(PreferenceKeys.MSGS_EXTRA, -1);
+        boolean globalExtra = getIntent().getBooleanExtra(PreferenceKeys.GLOBAL_NEWS, false);
+        if(msgExtra != -1){
+            Log.d(DEBUG_FLAG, "msgExtra : " + msgExtra);
+            selector.fragmentToMessager(msgExtra);
+        }else if(globalExtra){
+            Log.d(DEBUG_FLAG, "GLOBAL_NEWS");
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().addToBackStack(null)
+                    .add(R.id.content_frame, NewsFragment.getInstance(-1)).commit();
+            onChangeTitle(getResources().getString(R.string.homepage_ic_news));
+        }
     }
 
     /**

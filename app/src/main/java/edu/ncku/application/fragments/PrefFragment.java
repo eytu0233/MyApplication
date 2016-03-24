@@ -29,7 +29,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import edu.ncku.application.R;
-import edu.ncku.application.service.RegistrationIntentService;
+import edu.ncku.application.service.SubscribeIntentService;
 import edu.ncku.application.util.PreferenceKeys;
 
 public class PrefFragment extends PreferenceFragment {
@@ -122,11 +122,11 @@ public class PrefFragment extends PreferenceFragment {
 
                                         // Start IntentService to register this application with GCM.
                                         if (checkboxPref.isChecked()) {
-                                            RegistrationIntentService.subscribeAction(context);
-                                            Log.d(DEBUG_FLAG, "RegistrationIntentService sub start!");
+                                            SubscribeIntentService.startActionSub(context);
+                                            Log.d(DEBUG_FLAG, "SubscribeIntentService sub start!");
                                         } else {
-                                            RegistrationIntentService.unsubscribeAction(context);
-                                            Log.d(DEBUG_FLAG, "RegistrationIntentService unsub start!");
+                                            SubscribeIntentService.startActionUnsub(context);
+                                            Log.d(DEBUG_FLAG, "SubscribeIntentService unsub start!");
                                         }
                                         progressDialog = ProgressDialog.show(context, getResources().getString(R.string.please_wait), getResources().getString(R.string.handle_subscription), true);
                                     }else{

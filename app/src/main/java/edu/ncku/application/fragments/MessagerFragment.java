@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -20,14 +21,14 @@ import edu.ncku.application.util.adapter.ListMsgsAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MessagerFragment#newInstance} factory method to
+ * Use the {@link MessagerFragment#getInstance} factory method to
  * create an instance of this fragment.
  */
 public class MessagerFragment extends Fragment implements /*SwipeRefreshLayout.OnRefreshListener,*/
         LoadMoreListView.OnLoadMore{
 
     private static final String DEBUG_FLAG = MessagerFragment.class.getName();
-    private static final String USER_NAME = "USERNAME";
+    private static final String POSITION = "POSITION";
 
     private static int PRELOAD_MSGS_NUM;
 
@@ -48,12 +49,12 @@ public class MessagerFragment extends Fragment implements /*SwipeRefreshLayout.O
      * @return A new instance of fragment MessagerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MessagerFragment newInstance(String userName) {
-        MessagerFragment fragment = new MessagerFragment();
+    public static MessagerFragment getInstance(int position) {
+        MessagerFragment messagerFragment = new MessagerFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(USER_NAME, userName);
-        fragment.setArguments(bundle);
-        return fragment;
+        bundle.putInt(POSITION, position);
+        messagerFragment.setArguments(bundle);
+        return messagerFragment;
     }
 
     public MessagerFragment(){}
@@ -134,19 +135,36 @@ public class MessagerFragment extends Fragment implements /*SwipeRefreshLayout.O
         }
     }
 
+    private void setListAdapter(final ListAdapter adapter) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                listView.setAdapter(adapter);
+            }
+        });
+    }
+
     private boolean updateList() throws Exception {
         if(numShowedMsgs < PRELOAD_MSGS_NUM){
             numShowedMsgs = PRELOAD_MSGS_NUM;
         }
-        MsgsReaderTask newsReaderTask = new MsgsReaderTask(this, this.getArguments().getString(USER_NAME), numShowedMsgs);
-        newsReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        listViewAdapter = newsReaderTask.get();
+        MsgsReaderTask msgsReaderTask = new MsgsReaderTask(this, numShowedMsgs);
+        msgsReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        listViewAdapter = msgsReaderTask.get();
 
         if (listViewAdapter != null) {
+            setListAdapter(listViewAdapter);
             numShowedMsgs = listViewAdapter.getCount();
-            Log.v(DEBUG_FLAG, "UpdateList finish : " + numShowedMsgs);
+            Log.d(DEBUG_FLAG, "UpdateList finish : " + numShowedMsgs);
+            int position = getArguments().getInt(POSITION);
+            Log.d(DEBUG_FLAG, "position : " + position);
+            if(position >= 0 && position < numShowedMsgs){
+                listViewAdapter.triggerViewClick(position);
+            }
             return true;
         } else {
+            Log.e(DEBUG_FLAG, "listViewAdapter is null!");
             return false;
         }
     }

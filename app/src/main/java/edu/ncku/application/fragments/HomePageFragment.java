@@ -61,7 +61,7 @@ public class HomePageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mNewsFragment = NewsFragment.newInstance();
+        mNewsFragment = NewsFragment.getInstance(-1);
         mIRSearchFragment = IRSearchFragment.newInstance();
         mLibInfoListFragment = LibInfoListFragment.newInstance();
         mRecentActivityFragment = RecentActivityFragment.newInstance();
