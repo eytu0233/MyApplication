@@ -153,6 +153,7 @@ public class LoginDialog extends DialogFragment {
 								/* 將帳號密碼存進設定值 */
 								sharedPreferences.edit().putString(PreferenceKeys.USERNAME, username).apply();
 								sharedPreferences.edit().putString(PreferenceKeys.PASSWORD, password).apply();
+								sharedPreferences.edit().putBoolean("MESSAGER_SUBSCRIPTION", false).apply();
 
 								Toast.makeText(context, R.string.login_success, Toast.LENGTH_SHORT).show();
 								LoginDialog.this.dismiss();

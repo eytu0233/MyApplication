@@ -22,12 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.ncku.application.LoadMoreListView;
+import edu.ncku.application.R;
 import edu.ncku.application.io.file.NewsReaderTask;
 import edu.ncku.application.service.DataReceiveService;
 import edu.ncku.application.util.IReceiverRegisterListener;
 import edu.ncku.application.util.PreferenceKeys;
 import edu.ncku.application.util.adapter.ListNewsAdapter;
-import edu.ncku.application.R;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,6 +55,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private ListNewsAdapter listViewAdapter;
     private SharedPreferences sp;
     private IReceiverRegisterListener receiverRegisterListener;
+    private String noDataMsg = "None";
 
     private int numShowedMsgs = 0;
 
@@ -86,6 +87,8 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if (PRELOAD_MSGS_NUM <= 0) {
             Log.e(DEBUG_FLAG, "PRELOAD_MSGS_NUM is smaller than zero");
         }
+
+        noDataMsg = sp.getString(PreferenceKeys.NO_DATA_MSGS, getString(R.string.msg_empty));
         super.onCreate(savedInstanceState);
     }
 
@@ -120,14 +123,16 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onActivityCreated(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
+        Log.d(DEBUG_FLAG, "Refresh");
+        onceActiveUpdateMessageData();
 
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
+        /*final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
 
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Log.d(DEBUG_FLAG, "ReaderTask start!");
+                    Log.d(DEBUG_FLAG, "Refresh");
                     if (updateList()) {
                         progressBar.setVisibility(View.INVISIBLE);
                     } else {
@@ -141,7 +146,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     e.printStackTrace();
                 }
             }
-        }, 500);
+        }, 500);*/
 
     }
 
@@ -156,7 +161,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            receiverRegisterListener = (IReceiverRegisterListener)activity;
+            receiverRegisterListener = (IReceiverRegisterListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement ITitleChangeListener");
@@ -197,7 +202,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 public void run() {
                     onceActiveUpdateMessageData();
                 }
-            }, 500);
+            }, 300);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -228,8 +233,8 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private boolean updateList() throws Exception {
-		/* Read data in background and reflesh the listview of this activity */
-        if(numShowedMsgs < PRELOAD_MSGS_NUM){
+        /* Read data in background and reflesh the listview of this activity */
+        if (numShowedMsgs < PRELOAD_MSGS_NUM) {
             numShowedMsgs = PRELOAD_MSGS_NUM;
         }
         Log.v(DEBUG_FLAG, "want to show : "
@@ -247,7 +252,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             Log.v(DEBUG_FLAG, "UpdateList finish : " + numShowedMsgs);
             int position = getArguments().getInt(POSITION);
             Log.d(DEBUG_FLAG, "position : " + position);
-            if(position >= 0 && position < numShowedMsgs){
+            if (position >= 0 && position < numShowedMsgs) {
                 listViewAdapter.triggerViewClick(position);
             }
             return true;
@@ -264,15 +269,18 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private class NewsReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+
             try {
-                Bundle bundle = intent.getExtras();
-                int numMsgs = bundle.getInt("numNews");
-                if (numMsgs > 0) {
-                    Log.v(DEBUG_FLAG, "Get new messages : " + numMsgs);
-                    numShowedMsgs += numMsgs;
-                    updateList();
+
+                if (updateList()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                } else {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    newsTip.setVisibility(View.VISIBLE);
+                    newsTip.setText(noDataMsg);
                 }
 
+                Bundle bundle = intent.getExtras();
                 String flag = bundle.getString("flag");
                 if (null != flag) {
                     if (!FINISH_FLUSH_FLAG.equals(flag)) {

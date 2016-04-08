@@ -16,6 +16,7 @@ import edu.ncku.application.R;
  * A simple {@link Fragment} subclass.
  * Use the {@link NewsViewerFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * 此頁面是用來顯示最新消息或最新訊息的內容
  */
 public class NewsViewerFragment extends Fragment {
 

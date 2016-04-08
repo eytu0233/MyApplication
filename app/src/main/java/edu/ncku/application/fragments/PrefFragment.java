@@ -25,9 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-
 import edu.ncku.application.R;
 import edu.ncku.application.service.SubscribeIntentService;
 import edu.ncku.application.util.PreferenceKeys;
@@ -35,8 +32,6 @@ import edu.ncku.application.util.PreferenceKeys;
 public class PrefFragment extends PreferenceFragment {
 
     private static final String DEBUG_FLAG = PrefFragment.class.getName();
-
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private ProgressDialog progressDialog;
 
@@ -118,7 +113,7 @@ public class PrefFragment extends PreferenceFragment {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     if(info != null && info.isConnected()) {
-                                        if (!checkPlayServices()) return;
+                                        //if (!checkPlayServices()) return;
 
                                         // Start IntentService to register this application with GCM.
                                         if (checkboxPref.isChecked()) {
@@ -165,27 +160,6 @@ public class PrefFragment extends PreferenceFragment {
             load_list_preference.setValueIndex(0);
         }
 
-    }
-
-    /**
-     *
-     * @return check this device  can use google play service
-     */
-    private boolean checkPlayServices() {
-
-        final Context context = this.getActivity().getApplicationContext();
-
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this.getActivity(), PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.i(DEBUG_FLAG, "This device is not supported.");
-                Toast.makeText(context, R.string.device_unsupport, Toast.LENGTH_SHORT).show();
-            }
-            return false;
-        }
-        return true;
     }
 
     private boolean isLogin() {

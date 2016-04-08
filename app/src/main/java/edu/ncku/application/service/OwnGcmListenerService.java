@@ -132,7 +132,7 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(position /* ID of notification */, notificationBuilder.build());
     }
 
     private void sendGlobalNotification(String message){
@@ -155,7 +155,7 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(message.hashCode() /* ID of notification */, notificationBuilder.build());
     }
 
     private int synMsgFile(String username, Message message) {

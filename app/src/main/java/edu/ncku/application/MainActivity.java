@@ -184,30 +184,38 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
     }
 
     /**
-        *  清空標題堆疊
-        */
-    public void clearTitleStack(){
+     * 清空標題堆疊
+     */
+    public void clearTitleStack() {
         this.titleStack.clear();
     }
 
     /**
-        *  初始化MainActivity的UI元件
-        */
+     * 初始化MainActivity的UI元件
+     */
     private void initUI() {
+
+        final String setting = getResources().getString(R.string.setting);
 
         /* ToolBar configuration */
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
+
                 switch (menuItem.getItemId()) {
                     case R.id.imageViewLayout:
-                        getFragmentManager().beginTransaction().addToBackStack(null)
-                                .addToBackStack(null).add(R.id.content_frame, mSettingFragment).commit();
-                        setTitle(R.string.setting);
+                        if (!mTitle.toString().equals(setting)) {
+                            getFragmentManager().beginTransaction().addToBackStack(null)
+                                    .addToBackStack(null).add(R.id.content_frame, mSettingFragment).commit();
+                            setTitle(setting);
+                        } else {
+                            onBackPressed();
+                        }
                         return true;
+                    default:
+                        return false;
                 }
-                return true;
             }
         };
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
@@ -255,18 +263,18 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
         /* 此類別用於降低drawerItem的耦合性 */
         DrawerListSelector selector = new DrawerListSelector(this, mDrawerLayout, mDrawerList);
-        if(isLogin()){
+        if (isLogin()) {
             selector.loginState();
-        }else{
+        } else {
             selector.logoutState();
         }
 
         int msgExtra = getIntent().getIntExtra(PreferenceKeys.MSGS_EXTRA, -1);
         boolean globalExtra = getIntent().getBooleanExtra(PreferenceKeys.GLOBAL_NEWS, false);
-        if(msgExtra != -1){
+        if (msgExtra != -1) {
             Log.d(DEBUG_FLAG, "msgExtra : " + msgExtra);
             selector.fragmentToMessager(msgExtra);
-        }else if(globalExtra){
+        } else if (globalExtra) {
             Log.d(DEBUG_FLAG, "GLOBAL_NEWS");
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().addToBackStack(null)
@@ -276,9 +284,8 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
     }
 
     /**
-        *
-        * @return 確認是否是登入的狀態
-        */
+     * @return 確認是否是登入的狀態
+     */
     private boolean isLogin() {
 
         final SharedPreferences SP = PreferenceManager
@@ -298,10 +305,11 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
     }
 
     /**
-        * 確認Service是否存活
-        * @param serviceClass
-        * @return the service is alive or not
-        */
+     * 確認Service是否存活
+     *
+     * @param serviceClass
+     * @return the service is alive or not
+     */
     private boolean checkServicesState(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {

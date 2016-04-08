@@ -11,6 +11,7 @@ import java.io.IOException;
 import edu.ncku.application.service.RegistrationIntentService;
 import edu.ncku.application.util.ILoginResultListener;
 import edu.ncku.application.util.PreferenceKeys;
+import edu.ncku.application.util.Security;
 
 /**
  * 在背景執行登入驗證工作
@@ -47,7 +48,7 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
 		String username =  params[0], password = params[1];
 
 		try {
-			String str = HttpClient.sendPost(ATHU_URL, String.format("username=%s&password=%s", username, password));
+			String str = HttpClient.sendPost(ATHU_URL, String.format("username=%s&password=%s", username, (new Security()).encrypt(password)));
 			if (str.contains("OK")) {
 				result = true;
 

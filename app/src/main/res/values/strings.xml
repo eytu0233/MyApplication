@@ -2,6 +2,7 @@
     <string name="app_name">成功大學圖書館</string>
     <string name="action_settings">設定</string>
 
+    <!-- 設定值 -->
     <string-array name="unit_array">
         <item>系統管理組</item>
         <item>典藏組</item>
@@ -59,18 +60,20 @@
         <item>6</item>
     </string-array>
 
-
+    <!-- 側滑選單 -->
     <string name="home_page">首頁</string>
     <string name="messenger">推播訊息</string>
     <string name="login">登錄</string>
     <string name="barcode_scanner">BarcodeScanner</string>
 
-
+    <!-- 主頁功能名稱 -->
     <string name="homepage_ic_info">本館資訊</string>
     <string name="homepage_ic_news">最新消息</string>
     <string name="homepage_ic_search">館藏查詢</string>
     <string name="homepage_ic_barrow">個人借閱</string>
     <string name="homepage_ic_activity">近期活動</string>
+
+    <!-- 設定或Toast訊息 -->
     <string name="dialog_subscription">請問確定要改變訂閱狀態嗎？</string>
     <string name="dialog_close_confirm">請問確定要結束嗎？</string>
     <string name="messenger_network_disconnected">目前網路尚未開啟,無法更新訊息</string>
@@ -86,8 +89,28 @@
     <string name="title">標題</string>
     <string name="unit">單位</string>
     <string name="time">時間</string>
+    <string name="no_maps">無法使用GoogleMap</string>
+    <string name="map_network">請打開網路，方便使用GoogleMap</string>
+    <string name="drawer_open">打開</string>
+    <string name="drawer_close">關閉</string>
+    <string name="search_bar_hint">輸入關鍵字以查詢本館館藏</string>
+    <string name="not_match_isbn">錯誤的ISBN，請掃描書背面的Barcode</string>
+    <string name="msg_empty">沒有任何推播訊息</string>
+    <string name="undefine">未定義</string>
+    <string name="device_unsupport">很抱歉，此裝置不支援訂閱功能</string>
+    <string name="please_wait">請稍後</string>
+    <string name="handle_subscription">正在處理您的訂閱</string>
+    <string name="sub_handled">訂閱處理完成</string>
+    <string name="login_success">登入成功</string>
+    <string name="sub_fail">訂閱處理失敗，請重新嘗試</string>
 
+    <!-- 系統用無需翻譯 -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps" translatable="false">Map</string>
+    <string name="gcm_defaultSenderId">645919590322</string>
+    <string name="subscription">MESSAGER_SUBSCRIPTION</string>
 
+    <!-- 本館資訊預設值 -->
     <string name="open_time_main_lib"><p class="hoursp">*週一至週五　08:20-22:00\n\n</p><p class="hoursp">*週六及週日　09:00-22:00\n\n</p><p class="hoursp">*借還書、辦證（一樓流通櫃檯）\n<br></br> <span class="hourscolor">週一~週五 08：20 – 21：40\n</span><br></br><span class="hourscolor">週六~週日 09：00 – 21：40\n\n</span></p><p class="hoursp">*研究小間 / 討論室\n<br></br> <span class="hourscolor">週一~週五 08：20 – 21：30\n</span><br></br> <span class="hourscolor">週六~週日 09：00 – 21：30\n\n</span></p><p class="hoursp">*期刊服務（二樓服務台）\n<br /><span class="hourscolor">週一~週五 08：20 – 20：30\n</span><br></br> <span class="hourscolor">週六~週日 09：00 – 16：30\n\n</span></p><p class="hoursp">*期刊服務/館際合作（三樓服務台）\n<br /> <span class="hourscolor">週一~週五 08：20 – 21：40\n</span><br></br><span class="hourscolor">週六~週日 09：00 – 21：40\n\n</span></p><p class="hoursp">*期刊服務（B2服務台）\n<br /> <span class="hourscolor">週一~週五 08：20 – 21：40\n</span><br></br> <span class="hourscolor">週六~週日 09：00 – 21：40\n\n</span></p> <p class="hoursp">*多媒體中心\n<br /> <span class="hourscolor">週一~週五 08：30 – 21：30\n</span><br></br> <span class="hourscolor">週六~週日 09：00 – 21：30\n\n</span></p> <p class="hoursps">*國定假日閉館、寒暑假開放時間另訂</p></string>
     <string name="open_time_self_studying_reading_room"><p class="hoursp">＊07：00 – 23：00（依學校行事曆，每學期期末考前至少一個月~期末考當週，24小時開放）\n\n</p><p class="hoursps">*國定假日、寒暑假照常開放（春節年除夕、初一、初二  閉館）。</p></string>
     <string name="open_time_medical_branch_lib"><p class="hoursp">*週一至週五 <span class="hourscolor">\t08：20 – 21：30\n\n</span></p><p class="hoursp">*週六<span class="hourscolor">\t09：00 – 17：00\n\n</span></p><p class="hoursp">*週日<span class="hourscolor">\t12：00 – 17：00\n\n</span></p><p class="hoursps">*國定假日閉館、寒暑假開放時間另訂</p></string>
@@ -115,24 +138,4 @@
 <img src="dept.png">醫學院&nbsp;<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2353535,5120');">06-2353535 # 5120</a></span><br />
 <a href="mailto:medref@libmail.lib.ncku.edu.tw">medref@libmail.lib.ncku.edu.tw</a><br /><br />
 ]]></string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_maps" translatable="false">Map</string>
-    <string name="no_maps">無法使用GoogleMap</string>
-    <string name="map_network">請打開網路，方便使用GoogleMap</string>
-    <string name="drawer_open">打開</string>
-    <string name="drawer_close">關閉</string>
-    <string name="search_bar_hint">輸入關鍵字以查詢本館館藏</string>
-    <string name="not_match_isbn">錯誤的ISBN，請掃描書背面的Barcode</string>
-    <string name="msg_empty">沒有任何推播訊息</string>
-    <string name="undefine">未定義</string>
-    <string name="gcm_defaultSenderId">645919590322</string>
-    <string name="device_unsupport">很抱歉，此裝置不支援訂閱功能</string>
-    <string name="please_wait">請稍後</string>
-    <string name="handle_subscription">正在處理您的訂閱</string>
-    <string name="sub_handled">訂閱處理完成</string>
-    <string name="login_success">登入成功</string>
-    <string name="subscription">MESSAGER_SUBSCRIPTION</string>
-    <string name="sub_fail">訂閱處理失敗，請重新嘗試</string>
 </resources>

@@ -104,19 +104,12 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 					readNews = new LinkedHashSet<News>();
 				}
 
-				/*pushNews = new LinkedHashSet<News>();
-				for(News news : newsList){
-					//if(!news.isPush() || readNews.contains(news)) continue; // 當該封最新消息(來自網路)無需通知或者是已經通知過了，則跳過
-
-					pushNews.add(news);
-				}*/
-
 				// record the old number of news
 				int oldNum = readNews.size();
 				// merges two news set to readNews
 				mergeReadNews = new LinkedHashSet<News>();
-				mergeReadNews.addAll(newsList);
 				mergeReadNews.addAll(readNews);
+				mergeReadNews.addAll(newsList);
 
 				updateNum = mergeReadNews.size() - oldNum;
 
@@ -285,28 +278,4 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 			mContext.sendBroadcast(mIntent);
 		}
 	}
-
-	/*private void sendNotification(String message, int position) {
-
-		Intent intent = new Intent(mContext, MainActivity.class);
-		intent.putExtra(PreferenceKeys.NEWS_EXTRA, position);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //清除之前已開啟的Activity
-		intent.setData(Uri.parse("custom://" + System.currentTimeMillis())); // 用來區分intent以避免PendingIntent覆蓋extra資料
-		PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0 , intent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-
-		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mContext)
-				.setSmallIcon(R.drawable.ic_launcher)
-				.setContentTitle(mContext.getString(R.string.app_name))
-				.setContentText(message)
-				.setAutoCancel(true)
-				.setSound(defaultSoundUri)
-				.setContentIntent(pendingIntent);
-
-		NotificationManager notificationManager =
-				(NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-
-		notificationManager.notify(position, notificationBuilder.build());
-	}*/
 }

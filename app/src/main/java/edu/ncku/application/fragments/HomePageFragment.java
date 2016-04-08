@@ -26,6 +26,7 @@ import edu.ncku.application.util.ITitleChangeListener;
  * A simple {@link Fragment} subclass.
  * Use the {@link HomePageFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * 主頁面，提供使用者選擇六個主要功能(最新消息、館藏查詢、個人借閱、本館資訊、最近活動、書籍掃描)
  */
 public class HomePageFragment extends Fragment {
 
@@ -47,7 +48,7 @@ public class HomePageFragment extends Fragment {
 
     private Context context;
     private Activity activity;
-    private ITitleChangeListener titleChangeListener;
+    private ITitleChangeListener titleChangeListener; //標題變更的監聽介面(實體由MainActivity
 
     // TODO: Rename and change types and number of parameters
     public static HomePageFragment newInstance() {
