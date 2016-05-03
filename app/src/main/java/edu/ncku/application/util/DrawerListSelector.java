@@ -2,14 +2,11 @@ package edu.ncku.application.util;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.os.Handler;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
-import com.google.zxing.integration.android.IntentIntegrator;
 
 import java.util.ArrayList;
 
@@ -18,7 +15,6 @@ import edu.ncku.application.MainActivity;
 import edu.ncku.application.R;
 import edu.ncku.application.fragments.HomePageFragment;
 import edu.ncku.application.fragments.MessagerFragment;
-import edu.ncku.application.fragments.ProgressFragment;
 import edu.ncku.application.util.adapter.DrawerListAdapter;
 
 /**
@@ -74,35 +70,15 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
                 replaceFragment(MessagerFragment.getInstance(-1));
             }
         };
-        DrawerListItem barcodeAdapterItem = new DrawerListItem(activity.getResources().getString(R.string.barcode_scanner)) {
-            @Override
-            public void onDrawerItemClick() {
-                final ProgressFragment progressFragment = ProgressFragment.newInstance();
-
-                clearBackStackFragment();
-                fragmentManager.beginTransaction().addToBackStack(null)
-                        .add(R.id.content_frame, progressFragment).commit();
-                (new Handler()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        fragmentManager.popBackStack();
-                        IntentIntegrator integrator = new IntentIntegrator(activity);
-                        integrator.initiateScan();
-                    }
-                }, 500);
-            }
-        };
 
         /* 將點擊事件物件加進各狀態列表之中 */
         ArrayList<DrawerListItem> loginDrawerListItems = new ArrayList<DrawerListItem>(); // 登入狀態列表
         loginDrawerListItems.add(homePageAdapterItem);
         loginDrawerListItems.add(messengerAdapterItem);
-        loginDrawerListItems.add(barcodeAdapterItem);
 
         ArrayList<DrawerListItem> logoutDrawerListItems = new ArrayList<DrawerListItem>(); // 登出狀態列表
         logoutDrawerListItems.add(homePageAdapterItem);
         logoutDrawerListItems.add(loginAdapterItem);
-        logoutDrawerListItems.add(barcodeAdapterItem);
 
         /* 將狀態列表放進各Adapter之中，之後將透過Adapters來進行列表狀態轉換 */
         loginDrawerListAdapter = new DrawerListAdapter(activity, loginDrawerListItems);

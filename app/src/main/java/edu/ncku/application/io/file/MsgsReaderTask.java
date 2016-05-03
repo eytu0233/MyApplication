@@ -9,7 +9,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import edu.ncku.application.fragments.MessagerFragment;
 import edu.ncku.application.model.Message;
@@ -23,25 +23,23 @@ public class MsgsReaderTask extends AsyncTask<Void, Void, ListMsgsAdapter> {
     private static final String DEBUG_FLAG = MsgsReaderTask.class.getName();
     private static final String SUB_FILE_NAME = ".messages";
 
-    private int show;
     private String fileName;
 
     private Context context;
     private Activity activity;
     private ListMsgsAdapter listViewAdapter;
 
-    public MsgsReaderTask(MessagerFragment fragment, int show) {
+    public MsgsReaderTask(MessagerFragment fragment) {
         this.activity = fragment.getActivity();
         this.context = activity.getApplicationContext();
         String username = PreferenceManager
                 .getDefaultSharedPreferences(context).getString(PreferenceKeys.USERNAME, "");
         this.fileName = username + SUB_FILE_NAME;
-        this.show = show;
     }
 
     @Override
     protected ListMsgsAdapter doInBackground(Void... params) {
-        LinkedHashSet<Message> readMessages = null;
+        LinkedList<Message> readMessages = null;
         ObjectInputStream ois = null;
         File inputFile = null;
 
@@ -52,7 +50,7 @@ public class MsgsReaderTask extends AsyncTask<Void, Void, ListMsgsAdapter> {
                 Log.d(DEBUG_FLAG, "file is not exist.");
             } else {
                 ois = new ObjectInputStream(new FileInputStream(inputFile));
-                readMessages = (LinkedHashSet<Message>) ois.readObject();
+                readMessages = (LinkedList<Message>) ois.readObject();
                 Log.d(DEBUG_FLAG,
                         "Read msgs from file : " + readMessages.size());
                 if (ois != null)
@@ -63,7 +61,7 @@ public class MsgsReaderTask extends AsyncTask<Void, Void, ListMsgsAdapter> {
                 return null;
             }
 
-            listViewAdapter = new ListMsgsAdapter(activity, readMessages, show);
+            listViewAdapter = new ListMsgsAdapter(activity, readMessages);
         } catch (Exception e) {
             e.printStackTrace();
         }

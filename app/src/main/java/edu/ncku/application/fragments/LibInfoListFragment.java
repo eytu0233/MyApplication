@@ -93,7 +93,7 @@ public class LibInfoListFragment extends Fragment {
                         break;
                 }
 
-                if (fragment != null) {
+                if (fragment != null && !fragment.isAdded()) {
                     FragmentManager fragmentManager = getActivity()
                             .getFragmentManager();
                     fragmentManager.beginTransaction().addToBackStack(null)
@@ -115,14 +115,6 @@ public class LibInfoListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-    }
-
-    private boolean checkNetwork() {
-        if (currentNetworkInfo == null || !currentNetworkInfo.isConnected()) {
-            return false;
-        }
-
-        return true;
     }
 
     private boolean checkNetwork(String toast) {

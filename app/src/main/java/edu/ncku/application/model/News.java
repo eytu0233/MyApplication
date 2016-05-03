@@ -44,7 +44,7 @@ public class News implements Serializable {
 	}
 
 	public int hashCode() {
-		return title.hashCode();
+		return title.hashCode() + pubTime;
 	}
 	
 }

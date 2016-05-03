@@ -109,8 +109,9 @@ public class LoadMoreListView extends ListView implements OnScrollListener{
     	mIsLoadTextView.setVisibility(View.GONE);
     	mProgressBar.setVisibility(View.GONE);
         isLoading = false;  
-    }  
-      
+    }
+
+
     public interface OnLoadMore{  
         public void loadMore();  
     }  

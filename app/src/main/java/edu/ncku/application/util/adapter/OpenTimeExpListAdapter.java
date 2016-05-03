@@ -99,7 +99,7 @@ public class OpenTimeExpListAdapter extends BaseExpandableListAdapter {
 					R.layout.fragment_lib_info_item, null);
 		}
 
-		convertView.findViewById(R.id.icEnterImgView).setVisibility(
+		convertView.findViewById(R.id.itemStateIcon).setVisibility(
 				View.INVISIBLE);
 
 		/* 設置標題 */

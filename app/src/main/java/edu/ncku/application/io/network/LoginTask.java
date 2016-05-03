@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import java.io.IOException;
+import java.net.URLEncoder;
 
 import edu.ncku.application.service.RegistrationIntentService;
 import edu.ncku.application.util.ILoginResultListener;
@@ -48,7 +48,10 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
 		String username =  params[0], password = params[1];
 
 		try {
-			String str = HttpClient.sendPost(ATHU_URL, String.format("username=%s&password=%s", username, (new Security()).encrypt(password)));
+			Log.d(DEBUG_FLAG, "username : " + username);
+			Log.d(DEBUG_FLAG, "password : " + (new Security()).encrypt(password));
+			String str = HttpClient.sendPost(ATHU_URL, String.format("username=%s&password=%s", username, URLEncoder.encode((new Security()).encrypt(password)), "UTF-8"));
+			Log.d(DEBUG_FLAG, "str : " + str);
 			if (str.contains("OK")) {
 				result = true;
 
@@ -60,13 +63,9 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
 				}
 			}
 
-		}  catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}  catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(DEBUG_FLAG, e.toString());
 		}
 
 		return result;

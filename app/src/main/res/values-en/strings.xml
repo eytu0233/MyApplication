@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">成功大學圖書館</string>
-    <string name="action_settings">設定</string>
+    <string name="app_name">NCKU Library</string>
+    <string name="action_settings">setting</string>
 
     <!-- 設定值 -->
     <string-array name="unit_array">
@@ -15,57 +16,57 @@
         <item>閱覽組</item>
     </string-array>
     <string-array name="lib_info_list">
-        <item>開放時間</item>
-        <item>樓層簡介</item>
-        <item>聯絡資訊</item>
-        <item>地理位置</item>
+        <item>Open Hours</item>
+        <item>Floor Plan</item>
+        <item>Contact</item>
+        <item>Location</item>
     </string-array>
     <string-array name="lib_open_time_unit_list">
-        <item>總圖書館</item>
-        <item>自修閱覽室（K館）</item>
-        <item>醫學院圖書分館</item>
-        <item>各系所及院圖</item>
+        <item>Main Library</item>
+        <item>Study Hall</item>
+        <item>Medical Library</item>
+        <item>Department Libraries</item>
     </string-array>
 
     <!-- 側滑選單 -->
-    <string name="home_page">首頁</string>
-    <string name="messenger">推播訊息</string>
-    <string name="login">登入</string>
+    <string name="home_page">Home</string>
+    <string name="messenger">View Push Notification</string>
+    <string name="login">Login</string>
 
     <!-- 主頁功能名稱 -->
-    <string name="homepage_ic_info">本館資訊</string>
-    <string name="homepage_ic_news">最新消息</string>
-    <string name="homepage_ic_search">館藏查詢</string>
-    <string name="homepage_ic_barrow">個人借閱</string>
-    <string name="homepage_ic_activity">近期活動</string>
+    <string name="homepage_ic_info">Library Guide</string>
+    <string name="homepage_ic_news">News</string>
+    <string name="homepage_ic_search">Catalogs</string>
+    <string name="homepage_ic_barrow">My Account</string>
+    <string name="homepage_ic_activity">Upcoming Events</string>
 
     <!-- 設定或Toast訊息 -->
-    <string name="subcriptionTitle">訂閱推播訊息</string>
-    <string name="dialog_subscription">請問確定要改變訂閱狀態嗎？</string>
-    <string name="dialog_close_confirm">請問確定要結束嗎？</string>
-    <string name="messenger_network_disconnected">請保持網路暢通，才能取得最新消息</string>
-    <string name="network_disconnected">此功能需要網路連線，請連上網路後重試</string>
-    <string name="invalid_account_or_password">錯誤的帳號或密碼</string>
-    <string name="login_tip">目前僅開放本校教職員工生登入。帳密同成功入口。</string>
-    <string name="confirm">確定</string>
-    <string name="cancel">取消</string>
-    <string name="setting">設定</string>
-    <string name="is_loading">正在加載</string>
-    <string name="reloading">下拉或點擊可以加載</string>
-    <string name="news_empty">沒有任何最新消息</string>
-    <string name="no_maps">無法使用GoogleMap</string>
-    <string name="map_network">請打開網路，方便使用GoogleMap</string>
-    <string name="search_bar_hint">輸入關鍵字以查詢本館館藏</string>
-    <string name="not_match_isbn">錯誤的ISBN，請掃描書背面的Barcode</string>
-    <string name="msg_empty">沒有任何推播訊息</string>
-    <string name="subcriptionTip">完成離校/職手續後，則自動取消推播通知</string>
-    <string name="please_wait">請稍後</string>
-    <string name="handle_subscription">正在處理您的訂閱</string>
-    <string name="sub_handled">訂閱處理完成</string>
-    <string name="login_success">登入成功</string>
-    <string name="sub_fail">訂閱處理失敗，請重新嘗試</string>
-    <string name="delete">刪除</string>
-    <string name="multiSelect">多選</string>
+    <string name="login_success">login successful</string>
+    <string name="subcriptionTitle">Subscribe Push Notification</string>
+    <string name="dialog_subscription">Sure to change the subscription settings?</string>
+    <string name="dialog_close_confirm">Exit?</string>
+    <string name="messenger_network_disconnected">Please keep network working, in order to get the latest news.</string>
+    <string name="network_disconnected">Network connection required, please try again</string>
+    <string name="invalid_account_or_password">wrong account  or password</string>
+    <string name="login_tip">This function currently open to faculty and students of NCKU. Use the account and password as in NCKU Portal.</string>
+    <string name="confirm">yes</string>
+    <string name="cancel">cancel</string>
+    <string name="setting">Settings</string>
+    <string name="is_loading">refresh</string>
+    <string name="reloading">scroll down or tapto refresh</string>
+    <string name="news_empty">No latest news</string>
+    <string name="no_maps">unable to us Google Maps APP</string>
+    <string name="map_network">Please connetct to network in order to use Google Maps APP conveniently.</string>
+    <string name="search_bar_hint">Key in keyword to search catalog</string>
+    <string name="not_match_isbn">Invalid ISBN, please scan the barcode on the back cover</string>
+    <string name="msg_empty">No messages</string>
+    <string name="subcriptionTip">Push notifications will be automatically canceled after finishing departure from school procedure. </string>
+    <string name="please_wait">Please wait,</string>
+    <string name="handle_subscription">Subscription in process</string>
+    <string name="sub_handled">Subscription complete</string>
+    <string name="sub_fail">Subscription failed, please try again</string>
+    <string name="delete">delete</string>
+    <string name="multiSelect">multiSelect</string>
 
     <!-- 系統用無需翻譯 -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -2,6 +2,7 @@ package edu.ncku.application.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,14 +17,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+
 import edu.ncku.application.LoadMoreListView;
+import edu.ncku.application.MainActivity;
 import edu.ncku.application.R;
 import edu.ncku.application.io.file.NewsReaderTask;
+import edu.ncku.application.model.News;
 import edu.ncku.application.service.DataReceiveService;
 import edu.ncku.application.util.IReceiverRegisterListener;
 import edu.ncku.application.util.PreferenceKeys;
@@ -45,6 +51,8 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private static int PRELOAD_MSGS_NUM;
 
     private Handler mHandler = new Handler();
+
+    private MainActivity activity;
 
     private ProgressBar progressBar;
     private TextView newsTip;
@@ -80,7 +88,8 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        this.sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        this.activity = (MainActivity) getActivity();
+        this.sp = PreferenceManager.getDefaultSharedPreferences(activity);
         PRELOAD_MSGS_NUM = Integer.valueOf(sp.getString("PRELOAD_MSGS_MAX",
                 "10"));
 
@@ -103,6 +112,13 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         newsTip = (TextView) rootView.findViewById(R.id.newsTip);
         listView = (LoadMoreListView) rootView.findViewById(R.id.listView);
         listView.setLoadMoreListen(this);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(DEBUG_FLAG, "position : " + position);
+                changeToNewsViewer(position);
+            }
+        });
         swipe = (SwipeRefreshLayout) rootView.findViewById(R.id.swip_index);
         swipe.setOnRefreshListener(this);
         swipe.setColorSchemeResources(android.R.color.holo_blue_light,
@@ -125,29 +141,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         super.onActivityCreated(savedInstanceState);
         Log.d(DEBUG_FLAG, "Refresh");
         onceActiveUpdateMessageData();
-
-        /*final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
-
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Log.d(DEBUG_FLAG, "Refresh");
-                    if (updateList()) {
-                        progressBar.setVisibility(View.INVISIBLE);
-                    } else {
-                        progressBar.setVisibility(View.INVISIBLE);
-                        newsTip.setVisibility(View.VISIBLE);
-                        newsTip.setText(sharedPreferences.getString(PreferenceKeys.NO_DATA_MSGS, getString(R.string.msg_empty)));
-                    }
-
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }, 500);*/
-
     }
 
     @Override
@@ -208,6 +201,25 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
+    private void changeToNewsViewer(int position) {
+        News news = (News) listViewAdapter.getItem(position);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("title", news.getTitle());
+        bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format((long) news.getPubTime() * 1000));
+        bundle.putString("unit", news.getUnit());
+        bundle.putString("contents", news.getContents().replace("\r\n", "<br>").trim());
+
+        NewsViewerFragment msgViewerFragment = new NewsViewerFragment();
+        msgViewerFragment.setArguments(bundle);
+
+        activity.setTitle(news.getTitle());
+        FragmentManager fragmentManager = activity.getFragmentManager();
+        fragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .add(R.id.content_frame, msgViewerFragment).commit();
+    }
+
     private void setListAdapter(final ListAdapter adapter) {
         mHandler.post(new Runnable() {
             @Override
@@ -229,7 +241,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             public void run() {
                 swipe.setRefreshing(false);
             }
-        }, 2000);
+        }, 800);
     }
 
     private boolean updateList() throws Exception {
@@ -250,11 +262,11 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             numShowedMsgs = listViewAdapter.getCount();
             newsTip.setVisibility(View.INVISIBLE);
             Log.v(DEBUG_FLAG, "UpdateList finish : " + numShowedMsgs);
-            int position = getArguments().getInt(POSITION);
+            /*int position = getArguments().getInt(POSITION);
             Log.d(DEBUG_FLAG, "position : " + position);
             if (position >= 0 && position < numShowedMsgs) {
                 listViewAdapter.triggerViewClick(position);
-            }
+            }*/
             return true;
         } else {
             return false;

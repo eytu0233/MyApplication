@@ -15,10 +15,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import edu.ncku.application.R;
 import edu.ncku.application.model.News;
@@ -60,9 +58,9 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 		if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
 
 			receiveNewsFromNetwork();
-			if(!isOnce) { // 當為背景執行，定時(每小時)執行此工作直到網路關閉為止
+			/*if(!isOnce) { // 當為背景執行，定時(每小時)執行此工作直到網路關閉為止
 				Executors.newSingleThreadScheduledExecutor().schedule(this, 1, TimeUnit.HOURS);
-			}
+			}*/
 
 		} else {
 			/* 廣播給NewsFragment告知網路目前無法連線 */
@@ -74,13 +72,12 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 	}
 
 	/**
-	 *  將最新消息資料存進檔案，但之中有重複的最新消息
-	 *  不會多次存取只留一個。並且刪除超過保存時間的最新消息。
+	 *  將最新消息資料覆蓋至檔案
 	 *
 	 * @param newsList 來自網路的最新消息資料
-	 * @return 新增的最新消息數量(假如都重複則為0)
+	 * @return 新增的最新消息數量
 	 */
-	private int synNewsFile(LinkedList<News> newsList) {
+	private int rewriteNewsFile(LinkedList<News> newsList) {
 
 		/* Get internal storage directory */
 		File dir = mContext.getFilesDir();
@@ -88,7 +85,8 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 		ObjectInputStream ois;
 		ObjectOutputStream oos;
-		LinkedHashSet<News> readNews/*, pushNews*/, mergeReadNews; // 宣告成有序集合(不重複且加入有順序)
+		LinkedList<News> readNews;
+		HashSet<News> newsIntersection;
 
 		int updateNum = 0;
 
@@ -97,49 +95,32 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 				// read news data from file
 				if (newsFile.exists()) {
 					ois = new ObjectInputStream(new FileInputStream(newsFile));
-					readNews = (LinkedHashSet<News>) ois.readObject();
+					readNews = (LinkedList<News>) ois.readObject();
 					if (ois != null)
 						ois.close();
 				} else{
-					readNews = new LinkedHashSet<News>();
+					readNews = new LinkedList<News>();
 				}
 
-				// record the old number of news
-				int oldNum = readNews.size();
-				// merges two news set to readNews
-				mergeReadNews = new LinkedHashSet<News>();
-				mergeReadNews.addAll(readNews);
-				mergeReadNews.addAll(newsList);
-
-				updateNum = mergeReadNews.size() - oldNum;
-
-				deleteOutOfDateNews(mergeReadNews); // 清除過期最新消息
+				newsIntersection = new HashSet<News>(newsList);
+				newsIntersection.retainAll(readNews);
 
 				// overwrite the news data to the file
 				oos = new ObjectOutputStream(new FileOutputStream(newsFile));
-				oos.writeObject(mergeReadNews);
+				oos.writeObject(newsList);
 				oos.flush();
 				if (oos != null)
 					oos.close();
 
-				/*if(pushNews != null && pushNews.size() > 0){ // 當有需要通知的訊息時，找出其在聯集後集合的順序
-					for(News news : pushNews){
-						int position = 0;
-						for(News mergeNews : mergeReadNews){
-							if(news == mergeNews) {
-								sendNotification(news.getTitle(), position);
-							}
-							++position;
-						}
-					}
-				}*/
+				updateNum =  newsList.size() - newsIntersection.size();
 
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				Log.e(DEBUG_FLAG, "The read object can't be found.");
-				newsList = null;
+				return 0;
 			} catch (Exception e) {
 				e.printStackTrace();
+				return 0;
 			}
 
 		}
@@ -153,10 +134,10 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 	 *
 	 * @param newsSet
 	 */
-	private void deleteOutOfDateNews(LinkedHashSet<News> newsSet){
+	/*private void deleteOutOfDateNews(LinkedHashSet<News> newsSet){
 		final long ALIVE_DAYS = 90; // 存活天數
 		final long SECONDS_OF_A_DAY = 24 * 60 * 60; // 一天秒數
-		final long OUT_OF_DATE_TIMESTAMP = ALIVE_DAYS * SECONDS_OF_A_DAY; // 時間戳記的差值
+		final long OUT_OF_DATE_TIMESTAMP = 0; // 時間戳記的差值(2016/4/12改成過期立刻刪除)
 
 		long nowTimeStamp = System.currentTimeMillis() / 1000L; // 取得當前時間戳記
 
@@ -169,7 +150,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 		}
 
 		if(!deleteNewsSet.isEmpty()) newsSet.removeAll(deleteNewsSet); // 刪除過期最新消息
-	}
+	}*/
 
 	/**
 	 * 從網路接收最新消息
@@ -178,7 +159,6 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 		LinkedList<News> news;
 
 		int numNews = 0;
-		boolean pushFlag = false;
 
 		try {
 
@@ -208,7 +188,6 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 				String contact_unit = json.getString("contact_unit");
 				String contact_tel = json.getString("contact_tel");
 				String contact_email = json.getString("contact_email");
-				//String push = json.getString("push");
 
 				int publish_time = json.getInt("publish_time");
 				int end_time = json.getInt("end_time");
@@ -265,10 +244,11 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 
 			Log.d(DEBUG_FLAG, "get news from network : " + news.size());
 
-			numNews = synNewsFile(news);
+			numNews = rewriteNewsFile(news);
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			return;
 		}
 
 		/* 當使用者刷新最新消息頁面時，通知其更新頁面 */

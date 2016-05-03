@@ -7,10 +7,10 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
-import edu.ncku.application.model.News;
 import edu.ncku.application.fragments.NewsFragment;
+import edu.ncku.application.model.News;
 import edu.ncku.application.util.adapter.ListNewsAdapter;
 
 /**
@@ -37,7 +37,7 @@ public class NewsReaderTask extends AsyncTask<Void, Void, ListNewsAdapter>{
 	@Override
 	protected ListNewsAdapter doInBackground(Void... params) {
 		// TODO Auto-generated method stub
-		LinkedHashSet<News> readNews = null;
+		LinkedList<News> readNews = null;
 		ObjectInputStream ois = null;
 		File inputFile = null;
 
@@ -49,7 +49,7 @@ public class NewsReaderTask extends AsyncTask<Void, Void, ListNewsAdapter>{
 				Log.d(DEBUG_FLAG, "file is not exist.");
 			} else {
 				ois = new ObjectInputStream(new FileInputStream(inputFile));
-				readNews = (LinkedHashSet<News>) ois.readObject();
+				readNews = (LinkedList<News>) ois.readObject();
 				Log.v(DEBUG_FLAG,
 						"Read msgs from file : " + readNews.size());
 				if (ois != null)

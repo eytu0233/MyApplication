@@ -115,7 +115,7 @@ public class LoginDialog extends DialogFragment {
 				/* 判斷是否有欄位沒有填寫 */
 				if ((username != null && "".equals(username))
 						|| (password != null && "".equals(password))) {
-					mTxtTip.setText(R.string.void_account_or_password);
+					mTxtTip.setText(R.string.invalid_account_or_password);
 					mPBLogin.setVisibility(View.INVISIBLE);
 					mBtnLogin.setVisibility(View.VISIBLE);
 					setRunningLogin(false);

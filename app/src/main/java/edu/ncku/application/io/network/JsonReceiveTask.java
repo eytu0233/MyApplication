@@ -20,7 +20,7 @@ import java.net.URL;
 public class JsonReceiveTask {
 
     private static final String DEBUG_FLAG = JsonReceiveTask.class.getName();
-    private Context mContext;
+    protected Context mContext;
 
     public JsonReceiveTask(Context mContext) {
         this.mContext = mContext;

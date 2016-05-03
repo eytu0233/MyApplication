@@ -7,6 +7,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
 
 import edu.ncku.application.R;
 import edu.ncku.application.util.ITitleChangeListener;
@@ -84,13 +87,7 @@ public class HomePageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                if (mLibInfoListFragment != null) {
-                    FragmentManager fragmentManager = getActivity()
-                            .getFragmentManager();
-                    fragmentManager.beginTransaction().addToBackStack(null)
-                            .add(R.id.content_frame, mLibInfoListFragment).commit();
-                    titleChangeListener.onChangeTitle(getResources().getString(R.string.homepage_ic_info));
-                }
+                addFragment(mLibInfoListFragment, getResources().getString(R.string.homepage_ic_info));
             }
 
         });
@@ -102,13 +99,7 @@ public class HomePageFragment extends Fragment {
                 // TODO Auto-generated method stub
                 if(!checkNetworkToast()) return;
 
-                if (mIRSearchFragment != null) {
-                    FragmentManager fragmentManager = getActivity()
-                            .getFragmentManager();
-                    fragmentManager.beginTransaction().addToBackStack(null)
-                            .add(R.id.content_frame, mIRSearchFragment).commit();
-                    titleChangeListener.onChangeTitle(getResources().getString(R.string.homepage_ic_search));
-                }
+                addFragment(mIRSearchFragment, getResources().getString(R.string.homepage_ic_search));
             }
 
         });
@@ -118,13 +109,7 @@ public class HomePageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                if (mRecentActivityFragment != null) {
-                    FragmentManager fragmentManager = getActivity()
-                            .getFragmentManager();
-                    fragmentManager.beginTransaction().addToBackStack(null)
-                            .add(R.id.content_frame, mRecentActivityFragment).commit();
-                    titleChangeListener.onChangeTitle(getResources().getString(R.string.homepage_ic_activity));
-                }
+                addFragment(mRecentActivityFragment, getResources().getString(R.string.homepage_ic_activity));
             }
 
         });
@@ -134,13 +119,7 @@ public class HomePageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                if (mNewsFragment != null) {
-                    FragmentManager fragmentManager = getActivity()
-                            .getFragmentManager();
-                    fragmentManager.beginTransaction().addToBackStack(null)
-                            .add(R.id.content_frame, mNewsFragment).commit();
-                    titleChangeListener.onChangeTitle(getResources().getString(R.string.homepage_ic_news));
-                }
+                addFragment(mNewsFragment, getResources().getString(R.string.homepage_ic_news));
             }
 
         });
@@ -150,13 +129,27 @@ public class HomePageFragment extends Fragment {
             public void onClick(View v) {
                 if(!checkNetworkToast()) return;
 
-                if(mPersonalBorrowFragment != null) {
-                    FragmentManager fragmentManager = getActivity()
-                            .getFragmentManager();
-                    fragmentManager.beginTransaction().addToBackStack(null)
-                            .add(R.id.content_frame, mPersonalBorrowFragment).commit();
-                    titleChangeListener.onChangeTitle(getResources().getString(R.string.homepage_ic_barrow));
-                }
+                addFragment(mPersonalBorrowFragment, getResources().getString(R.string.homepage_ic_barrow));
+            }
+        });
+        mScannerImageView = (ImageView) rootView.findViewById(R.id.isbnImgBtn);
+        mScannerImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final ProgressFragment progressFragment = ProgressFragment.newInstance();
+
+                final FragmentManager fragmentManager = getActivity()
+                        .getFragmentManager();
+                fragmentManager.beginTransaction().addToBackStack(null)
+                        .add(R.id.content_frame, progressFragment).commit();
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        fragmentManager.popBackStack();
+                        IntentIntegrator integrator = new IntentIntegrator(activity);
+                        integrator.initiateScan();
+                    }
+                }, 500);
             }
         });
         searchBarEditText = (EditText) rootView.findViewById(R.id.searchBarEditText);
@@ -169,11 +162,7 @@ public class HomePageFragment extends Fragment {
                     case EditorInfo.IME_NULL:
                     case EditorInfo.IME_ACTION_SEND:
                     case EditorInfo.IME_ACTION_DONE:
-                        FragmentManager fragmentManager = getActivity()
-                                .getFragmentManager();
-                        fragmentManager.beginTransaction().addToBackStack(null)
-                                .add(R.id.content_frame, IRSearchFragment.newInstance(v.getText().toString())).commit();
-                        titleChangeListener.onChangeTitle(getResources().getString(R.string.homepage_ic_search));
+                        addFragment(IRSearchFragment.newInstance(v.getText().toString()), getResources().getString(R.string.homepage_ic_search));
                         v.setText("");
                         View view = activity.getCurrentFocus();
                         if (view != null) {
@@ -185,6 +174,7 @@ public class HomePageFragment extends Fragment {
                 return true;
             }
         });
+
         return rootView;
     }
 
@@ -205,10 +195,20 @@ public class HomePageFragment extends Fragment {
         titleChangeListener = null;
     }
 
+    private void addFragment(Fragment fragment, String title){
+        if(fragment != null && !fragment.isAdded()) {
+            FragmentManager fragmentManager = getActivity()
+                    .getFragmentManager();
+            fragmentManager.beginTransaction().addToBackStack(null)
+                    .add(R.id.content_frame, fragment).commit();
+            if(title != null && !title.isEmpty()) titleChangeListener.onChangeTitle(title);
+        }
+    }
+
     /**
         * 確認當前網路狀態
         *
-        *@return
+        *@return conntected or not
         */
     private boolean checkNetworkToast() {
         NetworkInfo currentNetworkInfo = ((ConnectivityManager) context

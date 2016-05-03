@@ -43,9 +43,8 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
             /* 當連上網路時，在背景執行資料更新的工作 */
             if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
 
-                Log.d(DEBUG_FLAG, "連上網路");
+                Log.d(DEBUG_FLAG, "連上網路，自動更新資料");
 
-                scheduledExecutorService.submit(new NewsReceiveTask(context, false));
                 scheduledExecutorService.submit(new LibOpenTimeReceiveTask(context));
                 scheduledExecutorService.submit(new RecentActivityReceiveTask(context));
                 scheduledExecutorService.submit(new FloorInfoReceiveTask(context));
@@ -57,40 +56,6 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
                 }else{
                     Log.d(DEBUG_FLAG, "GCM已註冊，故不重複註冊");
                 }
-                /*scheduledExecutorService.submit(new Runnable() {
-                    public static final String SYN_SUB_URL = "http://140.116.207.24/push/subscription.php";
-
-                    @Override
-                    public void run() {
-                        ConnectivityManager connectivityManager = ((ConnectivityManager) context
-                                .getSystemService(Context.CONNECTIVITY_SERVICE));
-                        currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-                        // 判斷網路是否連線
-                        if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
-                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-                            String username = sharedPreferences.getString(PreferenceKeys.USERNAME, "");
-                            if (username.isEmpty()) return;
-                            try {
-                                String str = HttpClient.sendPost(SYN_SUB_URL, String.format("id=%s", username));
-
-                                if (str.contains("Y")) {
-                                    sharedPreferences.edit().putBoolean(PreferenceKeys.SUBSCRIPTION, true).apply();
-                                    Log.d(DEBUG_FLAG, "同步訂閱狀態 : Y");
-                                } else if (str.contains("N")) {
-                                    sharedPreferences.edit().putBoolean(PreferenceKeys.SUBSCRIPTION, false).apply();
-                                    Log.d(DEBUG_FLAG, "同步訂閱狀態 : N");
-                                }
-
-                                // 定時(每小時)執行此工作直到網路關閉為止
-                                Executors.newSingleThreadScheduledExecutor().schedule(this, 1, TimeUnit.HOURS);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                Log.e(DEBUG_FLAG, "同步訂閱狀態異常");
-                            }
-                        }
-                    }
-                });*/
             }
         } catch (Exception e) {
             e.printStackTrace();

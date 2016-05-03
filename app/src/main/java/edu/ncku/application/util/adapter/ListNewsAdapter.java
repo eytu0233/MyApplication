@@ -1,13 +1,10 @@
 package edu.ncku.application.util.adapter;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -15,12 +12,10 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-import edu.ncku.application.model.News;
 import edu.ncku.application.R;
-import edu.ncku.application.fragments.NewsViewerFragment;
+import edu.ncku.application.model.News;
 
 public class ListNewsAdapter extends BaseAdapter {
 
@@ -32,19 +27,14 @@ public class ListNewsAdapter extends BaseAdapter {
 
 	private int show;
 
-	public ListNewsAdapter(Activity activity, LinkedHashSet<News> newsSet,
+	public ListNewsAdapter(Activity activity, LinkedList<News> newsSet,
 						   int localShow) {
 		super();
 		this.activity = activity;
 		this.context = activity.getApplicationContext();
 		this.show = (localShow > newsSet.size()) ? newsSet.size() : localShow;
-		
-		for(News news : newsSet){
-			AllNews.add(news);
-		}
-		
-		//Log.d(DEBUG_TAG, "The number of messages : " +  newsSet.size());
-		//Log.d(DEBUG_TAG, "show : " + show);
+
+		AllNews.addAll(newsSet);
 		
 		for (int i = 0; i < show; i++) {
 			showNews.add(AllNews.get(i));
@@ -94,9 +84,9 @@ public class ListNewsAdapter extends BaseAdapter {
 		return moreShow;
 	}
 
-	public void triggerViewClick(int position){
+	/*public void triggerViewClick(int position){
 		getView(position, null, null).callOnClick();
-	}
+	}*/
 
 	@Override
 	public int getCount() {
@@ -127,29 +117,6 @@ public class ListNewsAdapter extends BaseAdapter {
 		try {
 			convertView = mInflater
 					.inflate(R.layout.fragment_news_list_item, null);
-			convertView.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-
-					News news = (News) getItem(position);
-
-					Bundle bundle = new Bundle();
-					bundle.putString("title", news.getTitle());
-					bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format((long)news.getPubTime() * 1000));
-					bundle.putString("unit", news.getUnit());
-					bundle.putString("contents", news.getContents().replace("\r\n", "<br>").trim());
-
-					NewsViewerFragment msgViewerFragment = new NewsViewerFragment();
-					msgViewerFragment.setArguments(bundle);
-					
-					FragmentManager fragmentManager = activity.getFragmentManager();
-					fragmentManager.beginTransaction()
-							.addToBackStack(null)
-							.add(R.id.content_frame, msgViewerFragment).commit();
-				}
-			});
 
 			holder = new ViewHolder();
 			holder.txtTitle = (TextView) convertView

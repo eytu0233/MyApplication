@@ -204,12 +204,11 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
             public boolean onMenuItemClick(MenuItem menuItem) {
 
                 switch (menuItem.getItemId()) {
-                    case R.id.imageViewLayout:
-                        if (!mTitle.toString().equals(setting)) {
-                            getFragmentManager().beginTransaction().addToBackStack(null)
-                                    .addToBackStack(null).add(R.id.content_frame, mSettingFragment).commit();
+                    case R.id.settingMenuItem:
+                        if(!mSettingFragment.isAdded()){
+                            getFragmentManager().beginTransaction().addToBackStack(null).add(R.id.content_frame, mSettingFragment).commit();
                             setTitle(setting);
-                        } else {
+                        }else{
                             onBackPressed();
                         }
                         return true;
@@ -269,8 +268,9 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
             selector.logoutState();
         }
 
-        int msgExtra = getIntent().getIntExtra(PreferenceKeys.MSGS_EXTRA, -1);
-        boolean globalExtra = getIntent().getBooleanExtra(PreferenceKeys.GLOBAL_NEWS, false);
+        /* 透過Notification取得是否要進入特定頁面(推播或最新消息) */
+        int msgExtra = getIntent().getIntExtra(PreferenceKeys.MSGS_EXTRA, -1); // 是否是特定推播訊息
+        boolean globalExtra = getIntent().getBooleanExtra(PreferenceKeys.GLOBAL_NEWS, false); // 是否有警急通知
         if (msgExtra != -1) {
             Log.d(DEBUG_FLAG, "msgExtra : " + msgExtra);
             selector.fragmentToMessager(msgExtra);
