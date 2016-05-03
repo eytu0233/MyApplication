@@ -53,6 +53,7 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
 
             @Override
             public void onDrawerItemClick() {
+                clearBackStackFragment();
                 activity.setTitle(R.string.app_name);
                 replaceFragment(mHomePageFragment);
             }
@@ -67,6 +68,8 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         DrawerListItem messengerAdapterItem = new DrawerListItem(activity.getResources().getString(R.string.messenger)) {
             @Override
             public void onDrawerItemClick() {
+                clearBackStackFragment();
+                activity.setTitle(R.string.messenger);
                 replaceFragment(MessagerFragment.getInstance(-1));
             }
         };
@@ -116,7 +119,7 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         * @param fragment 要轉換的頁面
         */
     private void replaceFragment(Fragment fragment){
-        if (fragment != null) {
+        if (fragment != null && !fragment.isAdded()) {
             clearBackStackFragment();
             fragmentManager.beginTransaction()
                     .replace(R.id.content_frame, fragment).commit();

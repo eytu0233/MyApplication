@@ -107,4 +107,5 @@
 <img src="dept.png">醫學院&nbsp;<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2353535,5120');">06-2353535 # 5120</a></span><br />
 <a href="mailto:medref@libmail.lib.ncku.edu.tw">medref@libmail.lib.ncku.edu.tw</a><br /><br />
 ]]></string>
+    <string name="account">Account</string>
 </resources>

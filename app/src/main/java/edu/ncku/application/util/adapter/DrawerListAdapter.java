@@ -54,6 +54,7 @@ public class DrawerListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.drawerString = (TextView) convertView
                     .findViewById(R.id.txtDrawer);
+            holder.drawerString.setTextSize(holder.drawerString.getTextSize()/4);
             holder.drawerString.setText(((DrawerListItem)getItem(position)).getItemString());
 
             convertView.setTag(holder);

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.ncku.application.R;
+
 /**
  * 此類別用來接收開館時間的JSON資料，一樣儲存進檔案
  */
@@ -33,17 +35,19 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask implements Runnable 
     public void run() {
 
         try {
-            serviceMap.put("總圖書館", jsonParsingServicesMainLib(new JSONObject(jsonRecieve(JSON_MAIN_LIB_URL))));
-            Log.d(DEBUG_FLAG, "總圖書館Json");
-            serviceMap.put("自修閱覽室（K館）",
+            String[] title = mContext.getResources().getStringArray(
+                    R.array.lib_open_time_unit_list);
+            serviceMap.put(title[0], jsonParsingServicesMainLib(new JSONObject(jsonRecieve(JSON_MAIN_LIB_URL))));
+            Log.d(DEBUG_FLAG, title[0] + " Json");
+            serviceMap.put(title[1],
                     jsonParsingServicesStudyHall(new JSONObject(jsonRecieve(JSON_STUDY_HALL_URL))));
-            Log.d(DEBUG_FLAG, "自修閱覽室（K館Json");
-            serviceMap.put("醫學院圖書分館",
+            Log.d(DEBUG_FLAG, title[1] + " Json");
+            serviceMap.put(title[2],
                     jsonParsingServicesMedLib(new JSONObject(jsonRecieve(JSON_MED_LIB_URL))));
-            Log.d(DEBUG_FLAG, "醫學院圖書分館Json");
-            serviceMap.put("各系所及院圖",
+            Log.d(DEBUG_FLAG, title[2] + " Json");
+            serviceMap.put(title[3],
                     jsonParsingServicesDeptLib(new JSONArray(jsonRecieve(JSON_DEPT_LIB_URL))));
-            Log.d(DEBUG_FLAG, "各系所及院圖Json");
+            Log.d(DEBUG_FLAG, title[3] + " Json");
 
             saveFile(serviceMap, FILE_NAME);
 

@@ -4,7 +4,7 @@
     <PreferenceCategory
         android:key="ACCOUNT_RELATION"
         android:summary="帳號相關"
-        android:title="帳號相關" >
+        android:title="@string/account" >
         <CheckBoxPreference
             android:key="@string/subscription"
             android:title="@string/subcriptionTitle"

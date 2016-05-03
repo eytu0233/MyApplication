@@ -3,6 +3,7 @@ package edu.ncku.application.fragments;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,13 +16,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
+import edu.ncku.application.R;
 import edu.ncku.application.io.file.LibOpenTimeReaderTask;
 import edu.ncku.application.util.adapter.OpenTimeExpListAdapter;
-import edu.ncku.application.R;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +57,6 @@ public class LibInfoOpenTimeFragment extends Fragment {
 
         // 準備列表資料
         prepareListData();
-
     }
 
     @Override
@@ -92,17 +90,28 @@ public class LibInfoOpenTimeFragment extends Fragment {
                 .setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
 
                     @Override
-                    public void onGroupCollapse(int groupPosition) {
-                        TextView title = mOpenTimeExpListAdapter.getGroupHeaderView(groupPosition);
-                        title.setTextColor(android.graphics.Color.rgb(0, 0, 0));
+                    public void onGroupCollapse(final int groupPosition) {
+                        (new Handler()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView title = mOpenTimeExpListAdapter.getGroupHeaderView(groupPosition);
+                                title.setTextColor(android.graphics.Color.rgb(0, 0, 0));
+                            }
+                        });
+
                     }
                 });
-        mOpenTimeExpListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener(){
+        mOpenTimeExpListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
             @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                TextView title = (TextView) v.findViewById(R.id.txtTitle);
-                title.setTextColor(android.graphics.Color.rgb(247, 80, 0));
+            public boolean onGroupClick(ExpandableListView parent, final View v, int groupPosition, long id) {
+                (new Handler()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView title = (TextView) v.findViewById(R.id.txtTitle);
+                        title.setTextColor(android.graphics.Color.rgb(247, 80, 0));
+                    }
+                });
                 return false;
             }
         });
@@ -123,11 +132,7 @@ public class LibInfoOpenTimeFragment extends Fragment {
             openTimeReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             mListDataChild = openTimeReaderTask.get(3, TimeUnit.SECONDS);
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -136,7 +141,7 @@ public class LibInfoOpenTimeFragment extends Fragment {
             mListDataHeader.add(openTimeHeader);
         }
 
-        if(mListDataChild == null || mListDataChild.keySet().size() != mListDataHeader.size()) {
+        if (mListDataChild == null || mListDataChild.keySet().size() != mListDataHeader.size()) {
             Log.d(DEBUG_FLAG, "預設值");
             main_lib.add(getString(R.string.open_time_main_lib));
             self_studying
@@ -149,7 +154,6 @@ public class LibInfoOpenTimeFragment extends Fragment {
             mListDataChild.put(mListDataHeader.get(2), medical_branch);
             mListDataChild.put(mListDataHeader.get(3), departments);
         }
-
 
     }
 
