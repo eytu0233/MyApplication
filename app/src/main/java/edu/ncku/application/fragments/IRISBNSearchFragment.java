@@ -14,6 +14,7 @@ import edu.ncku.application.R;
  * A simple {@link Fragment} subclass.
  * Use the {@link IRISBNSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * 使用ISBN參數來向IR搜尋網頁取得相關資訊
  */
 public class IRISBNSearchFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match

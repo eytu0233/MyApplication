@@ -133,6 +133,7 @@ public class NewsReceiveTask extends JsonReceiveTask implements Runnable {
 	 *  保存時間依照使用者給予的設定
 	 *
 	 * @param newsSet
+	 * 已捨棄
 	 */
 	/*private void deleteOutOfDateNews(LinkedHashSet<News> newsSet){
 		final long ALIVE_DAYS = 90; // 存活天數

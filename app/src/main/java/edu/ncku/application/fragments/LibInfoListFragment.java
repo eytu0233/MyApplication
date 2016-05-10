@@ -15,20 +15,19 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import edu.ncku.application.R;
-import edu.ncku.application.util.adapter.ListViewInfoAdapter;
+import edu.ncku.application.adapter.ListViewInfoAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link LibInfoListFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * 圖書館相關資訊列表頁面，讓使用者選擇開放時間、樓層簡介、聯絡資訊、地理位置等頁面
  */
 public class LibInfoListFragment extends Fragment {
 
     private String DEBUG_FLAG = LibInfoListFragment.class.getName();
 
     private ListView listview;
-
-    private NetworkInfo currentNetworkInfo;
 
     /**
      * Use this factory method to create a new instance of
@@ -48,9 +47,6 @@ public class LibInfoListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
-        ConnectivityManager connectivityManager = ((ConnectivityManager) getActivity().getApplicationContext()
-                .getSystemService(Context.CONNECTIVITY_SERVICE));
-        currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
     }
 
     @Override
@@ -86,7 +82,7 @@ public class LibInfoListFragment extends Fragment {
                         break;
                     case 3:
                         if (checkNetwork(getString(R.string.map_network))) {
-                            fragment = LibMapFragment.newInstance();
+                            fragment = LibMapFragment.getInstance();
                         }
                         break;
                     default:
@@ -117,7 +113,17 @@ public class LibInfoListFragment extends Fragment {
         super.onDetach();
     }
 
+    /**
+     * 確認網路狀態
+     *
+     * @param toast 當網路無法連結時，要顯示的Toast
+     * @return
+     */
     private boolean checkNetwork(String toast) {
+        ConnectivityManager connectivityManager = ((ConnectivityManager) getActivity().getApplicationContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE));
+        NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
         if (currentNetworkInfo == null || !currentNetworkInfo.isConnected()) {
             Toast.makeText(getActivity().getApplicationContext(), toast, Toast.LENGTH_LONG).show();
             return false;

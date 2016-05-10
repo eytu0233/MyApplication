@@ -33,7 +33,7 @@ import edu.ncku.application.model.News;
 import edu.ncku.application.service.DataReceiveService;
 import edu.ncku.application.util.IReceiverRegisterListener;
 import edu.ncku.application.util.PreferenceKeys;
-import edu.ncku.application.util.adapter.ListNewsAdapter;
+import edu.ncku.application.adapter.ListNewsAdapter;
 
 /**
  * A simple {@link Fragment} subclass.

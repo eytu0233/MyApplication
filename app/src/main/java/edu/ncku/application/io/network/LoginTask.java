@@ -27,10 +27,10 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
 	private ILoginResultListener resultListener;
 
 
-	public LoginTask(Context context, ILoginResultListener resultListener) {
+	public LoginTask(Context context/*, ILoginResultListener resultListener*/) {
 		super();
 		this.context = context;
-		this.resultListener = resultListener;
+//		this.resultListener = resultListener;
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
@@ -74,7 +74,7 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
 	@Override
 	protected void onPostExecute(Boolean result) {
 		// TODO Auto-generated method stub
-		if(resultListener != null) resultListener.loginEvent(result);
+//		if(resultListener != null) resultListener.loginEvent(result);
 		super.onPostExecute(result);
 	}
 

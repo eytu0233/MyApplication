@@ -27,6 +27,7 @@ import edu.ncku.application.util.PreferenceKeys;
 
 /**
  * Created by NCKU on 2016/4/25.
+ * 透過來自GCM傳送的資料(msgNo)，向圖書館伺服器取得推播訊息的內容
  */
 public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
 
@@ -37,7 +38,7 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
 
     private String username;
     private String json_url;
-    private int publishTimestamp;
+    private int publishTimestamp; // 時間戳記
 
     public MsgReceiveTask(Context mContext, String username, String msgNo, int publishTimestamp) {
         super(mContext);
@@ -51,8 +52,8 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
         try {
             JSONObject json = new JSONObject(jsonRecieve(json_url)); // 透過父類別方法jsonRecieve取得JSON物件
 
-            String title = json.getString("Title");
-            String content = json.getString("Content");
+            String title = json.getString("Title"); // 從Json的物件當中取得標題
+            String content = json.getString("Content"); // 從Json的物件當中取得內容
 
             int position = synMsgFile(username, new Message(title, publishTimestamp, content));
             Log.d(DEBUG_FLAG, "position : " + position);
@@ -64,8 +65,7 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
     }
 
     /**
-     * Create and show a simple notification containing the received GCM message if and only if the user
-     * has logged-in and subscribed.
+     * 發送Notification，並夾帶該封推播訊息的位置，以方便之後的點擊事件
      *
      * @param message GCM message received.
      */
@@ -95,6 +95,12 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
         notificationManager.notify(position /* ID of notification */, notificationBuilder.build());
     }
 
+    /**
+     * 回傳該使用者是否有訂閱
+     *
+     * @param notifyUsername 使用者
+     * @return
+     */
     private boolean isSub(String notifyUsername) {
 
         final SharedPreferences SP = PreferenceManager
@@ -111,6 +117,13 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
 
     }
 
+    /**
+     * 將取得的推播訊息存進檔案之中
+     *
+     * @param username 使用者名稱
+     * @param message 封裝好的推播訊息物件
+     * @return 該封推播訊息在檔案中的位置
+     */
     private int synMsgFile(String username, Message message) {
 
 		/* Get internal storage directory */

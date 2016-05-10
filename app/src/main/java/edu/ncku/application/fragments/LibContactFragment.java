@@ -13,16 +13,16 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
-import edu.ncku.application.model.ContactInfo;
-import edu.ncku.application.io.file.ContactInfoReaderTask;
 import edu.ncku.application.R;
+import edu.ncku.application.io.file.ContactInfoReaderTask;
+import edu.ncku.application.model.ContactInfo;
 
-
+/**
+ * 將聯絡資訊利用網頁(Webview)的形式顯示，並實現點擊電話的超連結撥打電話(Javascript)
+ */
 public class LibContactFragment extends Fragment {
 
     private static final String DEBUG_FLAG = LibContactFragment.class.getName();
@@ -38,10 +38,12 @@ public class LibContactFragment extends Fragment {
 
     private String html = "";
 
+    /**
+     * 實現Javascript的類別，使用@JavascriptInterface的這個Annotation，呼叫電話撥打的Intent
+     */
     public class PhoneCall{
 
         //After API 17, you will have to annotate each method with @JavascriptInterface within your class that you'd like to access from Javascript.
-
         @JavascriptInterface
         public void telext(String telStr) {
             Log.d(DEBUG_FLAG, telStr);
@@ -96,12 +98,6 @@ public class LibContactFragment extends Fragment {
                     }
                 }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,10 +112,16 @@ public class LibContactFragment extends Fragment {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(phoneCall, "PhoneCall");
         webView.loadDataWithBaseURL("file:///android_asset/", CSS_STYLE + ((html != null) ? html : this.getString(R.string.lib_contact_info)), "text/html",
-                "utf-8", null);
+                "utf-8", null); // 網頁圖片資源取得(本地)
         return rootView;
     }
 
+    /**
+     * 將電話號碼裡有分機的進行轉換以便撥打電話，將#取代為,
+     *
+     * @param s
+     * @return
+     */
     private String convert2Telext(String s){
         return Pattern.compile("[^0-9#]").matcher(s).replaceAll("").replace('#', ',');
     }

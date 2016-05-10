@@ -18,6 +18,7 @@ import edu.ncku.application.util.PreferenceKeys;
 
 /**
  * Created by NCKU on 2016/4/19.
+ * 此AsyncTask類別將會在使用者點擊多選刪除時執行，用來刪除在檔案裏面的推播訊息
  */
 public class MsgRemoveTask extends AsyncTask<List<Integer>, Void, Void> {
 
@@ -29,6 +30,7 @@ public class MsgRemoveTask extends AsyncTask<List<Integer>, Void, Void> {
 
     public MsgRemoveTask(Context context) {
         this.context = context;
+        // 每個使用者(學號)都有各自的推播訊息檔案
         this.fileName = PreferenceManager
                 .getDefaultSharedPreferences(context).getString(PreferenceKeys.USERNAME, "") + SUB_FILE_NAME;
     }
@@ -41,7 +43,7 @@ public class MsgRemoveTask extends AsyncTask<List<Integer>, Void, Void> {
             return null;
         }
 
-        Log.d(DEBUG_FLAG, "List size : " + params[0].size());
+        Log.d(DEBUG_FLAG, "List size : " + params[0].size()); // 要刪除的推播訊息用一個整數陣列(由小到大排序)
 
         LinkedList<Message> readMsgs = null, removeMsgs = new LinkedList<Message>();
         ObjectInputStream ois = null;
@@ -62,16 +64,15 @@ public class MsgRemoveTask extends AsyncTask<List<Integer>, Void, Void> {
                 Log.d(DEBUG_FLAG, "剩下" + readMsgs.size()  + "個訊息");
 
                 int counter = 0;
-                for(int i : params[0]){
-//                    removeMsgs.add(readMsgs.get(i));
-                    readMsgs.remove(i - counter);
+                for(int index : params[0]){
+                    readMsgs.remove(index - counter); // 因為刪除後index會減1，故實際index為原本index - counter
                     counter++;
-                    Log.d(DEBUG_FLAG, "remove " + i + " from sd");
+                    Log.d(DEBUG_FLAG, "remove " + index + " from sd");
                 }
-//                readMsgs.removeAll(removeMsgs);
 
                 Log.d(DEBUG_FLAG, "刪除完後剩下" + readMsgs.size() + "個訊息");
 
+                /* 將刪除後的推播訊息寫回檔案 */
                 oos = new ObjectOutputStream(new FileOutputStream(msgFile));
                 oos.writeObject(readMsgs);
                 oos.flush();

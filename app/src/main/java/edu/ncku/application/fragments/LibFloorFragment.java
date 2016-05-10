@@ -10,13 +10,14 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import edu.ncku.application.R;
 import edu.ncku.application.io.file.FloorInfoReaderTask;
 
+/**
+ * 將樓層資訊利用網頁(Webview)的形式顯示
+ */
 public class LibFloorFragment extends Fragment {
 
     private static final String DEBUG_FLAG = LibFloorFragment.class.getName();
@@ -56,12 +57,6 @@ public class LibFloorFragment extends Fragment {
                     html += floorInfo.get(key) + "<br><br>";
                 }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -76,7 +71,7 @@ public class LibFloorFragment extends Fragment {
 
         WebView webView = (WebView) rootView.findViewById(R.id.lib_floor_webView);
         webView.loadDataWithBaseURL("file:///android_asset/", "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://m.lib.ncku.edu.tw/css/mobile.css\" />" + ((html!=null)?html:this.getString(R.string.lib_floor_info)) , "text/html",
-                "utf-8", null);
+                "utf-8", null); // 網頁圖片資源取得(本地)
         return rootView;
     }
 

@@ -14,10 +14,10 @@ import java.util.LinkedList;
 import edu.ncku.application.fragments.MessagerFragment;
 import edu.ncku.application.model.Message;
 import edu.ncku.application.util.PreferenceKeys;
-import edu.ncku.application.util.adapter.ListMsgsAdapter;
+import edu.ncku.application.adapter.ListMsgsAdapter;
 
 /**
- *
+ *此AsyncTask類別將會在推播訊息頁面被打開時執行，從檔案讀取推播訊息資料
  */
 public class MsgsReaderTask extends AsyncTask<Void, Void, ListMsgsAdapter> {
     private static final String DEBUG_FLAG = MsgsReaderTask.class.getName();
@@ -34,7 +34,7 @@ public class MsgsReaderTask extends AsyncTask<Void, Void, ListMsgsAdapter> {
         this.context = activity.getApplicationContext();
         String username = PreferenceManager
                 .getDefaultSharedPreferences(context).getString(PreferenceKeys.USERNAME, "");
-        this.fileName = username + SUB_FILE_NAME;
+        this.fileName = username + SUB_FILE_NAME; // 每個使用者(學號)都有各自的推播訊息檔案
     }
 
     @Override
@@ -61,7 +61,7 @@ public class MsgsReaderTask extends AsyncTask<Void, Void, ListMsgsAdapter> {
                 return null;
             }
 
-            listViewAdapter = new ListMsgsAdapter(activity, readMessages);
+            listViewAdapter = new ListMsgsAdapter(activity, readMessages); // 將資料包成ListMsgsAdapter
         } catch (Exception e) {
             e.printStackTrace();
         }

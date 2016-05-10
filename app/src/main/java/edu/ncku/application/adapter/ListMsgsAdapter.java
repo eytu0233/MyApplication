@@ -1,4 +1,4 @@
-package edu.ncku.application.util.adapter;
+package edu.ncku.application.adapter;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -56,6 +56,7 @@ public class ListMsgsAdapter extends BaseAdapter {
      * @param moreShow the number of the news which want to show more
      * @return the number of the news which show more
      */
+    @Deprecated
     public int showMoreOldMessage(int moreShow) {
         try {
             int original = this.getCount();

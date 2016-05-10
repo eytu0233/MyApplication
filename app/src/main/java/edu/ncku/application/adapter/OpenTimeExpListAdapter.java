@@ -1,4 +1,4 @@
-package edu.ncku.application.util.adapter;
+package edu.ncku.application.adapter;
 
 import android.content.Context;
 import android.graphics.Color;

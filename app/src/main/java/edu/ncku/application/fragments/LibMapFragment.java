@@ -2,14 +2,14 @@ package edu.ncku.application.fragments;
 
 import android.app.Dialog;
 import android.app.Fragment;
-import android.content.Intent;
-import android.net.Uri;
-import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +31,9 @@ import edu.ncku.application.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link LibMapFragment#newInstance} factory method to
+ * Use the {@link LibMapFragment#getInstance} factory method to
  * create an instance of this fragment.
+ * 顯示地利位置的頁面，預設以Google Map顯示，假如開啟失敗則以網頁形式顯示
  */
 public class LibMapFragment extends Fragment {
     private static final String TAG = LibMapFragment.class.getName();
@@ -43,8 +44,12 @@ public class LibMapFragment extends Fragment {
 
     private GoogleMap mMap;
 
+    /**
+     *  為避免發生例外，此Fragment將只有單一實體
+     * @return LibMapFragment實體
+     */
     // TODO: Rename and change types and number of parameters
-    public static LibMapFragment newInstance() {
+    public static LibMapFragment getInstance() {
         if(instance == null)
             instance = new LibMapFragment();
         return instance;
@@ -56,7 +61,6 @@ public class LibMapFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
     }
 
@@ -79,9 +83,10 @@ public class LibMapFragment extends Fragment {
         Context context = getActivity().getApplicationContext();
         int status = checker.isGooglePlayServicesAvailable(context);
 
+
         if (status == ConnectionResult.SUCCESS) {
             if (getVersionFromPackageManager(context) >= 2) {
-                return(true);
+                return(true); // 成功開啟Google Map
             }
             else {
                 Toast.makeText(context, R.string.no_maps, Toast.LENGTH_LONG).show();
@@ -89,6 +94,7 @@ public class LibMapFragment extends Fragment {
             }
         }
         else {
+            /* 開啟失敗，打開地理位置網頁 */
             Toast.makeText(context, R.string.no_maps, Toast.LENGTH_LONG).show();
             getActivity().getFragmentManager().beginTransaction().remove(this).commit();
             Uri uri=Uri.parse("http://m.lib.ncku.edu.tw/map.html");
@@ -99,6 +105,9 @@ public class LibMapFragment extends Fragment {
         return(false);
     }
 
+    /**
+     * 暫時沒有用到，請無視這個DialogFragment類別
+     */
     public static class ErrorDialogFragment extends DialogFragment {
         static final String ARG_ERROR_CODE="errorCode";
 
@@ -130,6 +139,9 @@ public class LibMapFragment extends Fragment {
         }
     }
 
+    /**
+     * 初始化Google Map
+     */
     private void initializeMap() {
         if (mMap == null) {
             mMap = ((MapFragment) getFragmentManager().findFragmentById(
@@ -145,7 +157,11 @@ public class LibMapFragment extends Fragment {
         }
     }
 
-    // 移動地圖到參數指定的位置
+    /**
+     * 移動地圖到參數指定的經緯度座標
+     *
+     * @param place 經緯度座標
+     */
     private void moveMap(LatLng place) {
         // 建立地圖攝影機的位置物件
         CameraPosition cameraPosition =
@@ -158,8 +174,10 @@ public class LibMapFragment extends Fragment {
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    /**
+     * 設置地標
+     */
     private void setUpMap() {
-
         // 建立位置的座標物件
         LatLng place = new LatLng(22.999770,120.219925);
         // 移動地圖
@@ -168,7 +186,13 @@ public class LibMapFragment extends Fragment {
         addMarker(place, "國立成功大學總圖書館", "台灣台南市東區大學路1號");
     }
 
-    // 在地圖加入指定位置與標題的標記
+    /**
+     * 在地圖加入指定位置與標題的標記Icon
+     *
+      * @param place 經緯度座標
+     * @param title 標題
+     * @param snippet 副標題
+     */
     private void addMarker(LatLng place, String title, String snippet) {
         BitmapDescriptor icon =
                 BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher);

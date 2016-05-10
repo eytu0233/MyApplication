@@ -1,4 +1,4 @@
-package edu.ncku.application.util.adapter;
+package edu.ncku.application.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -49,7 +49,6 @@ public class DrawerListAdapter extends BaseAdapter {
         try {
             convertView = mInflater
                     .inflate(R.layout.fragment_drawer_list_item, null);
-
 
             holder = new ViewHolder();
             holder.drawerString = (TextView) convertView

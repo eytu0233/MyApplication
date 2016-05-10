@@ -3,28 +3,31 @@
     package="edu.ncku.application">
 
     <!-- [START App 權限] -->
-    <uses-permission android:name="android.permission.CAMERA" />
     <!-- 相機權限 : ISBN掃描使用 -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <!-- 網路權限 -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- 不進入待機權限 -->
-    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
+    <!-- 取得行動裝置資訊(錯誤回報使用) -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- 通話權限 : 通訊錄使用 -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <!-- 取得帳戶權限 : GCM使用 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <!-- 取得網路狀態權限 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 外部空間寫入權限 -->
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- SD卡存取權限 -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <!-- 獲取開機事件權限 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <!-- [END App 權限] -->
 
 
     <!-- [START GCM 權限] -->
+    <!-- 取得帳戶資料權限 -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <permission
@@ -40,7 +43,7 @@
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality. 
-    -->
+        -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
@@ -154,14 +157,11 @@
                 You need a different API key for each encryption key, including the release key that is used to
                 sign the APK for publishing.
                 You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
+                 -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <service
-            android:name=".service.SubscribeIntentService"
-            android:exported="false"></service>
     </application>
 
 </manifest>

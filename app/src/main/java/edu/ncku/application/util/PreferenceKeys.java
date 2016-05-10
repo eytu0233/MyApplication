@@ -2,10 +2,9 @@ package edu.ncku.application.util;
 
 /**
  * Created by NCKU on 2016/1/5.
+ * 常數靜態類別
  */
 public class PreferenceKeys {
-    public static final String SUBSCRIPTIONS_HANDLE_COMPLETE = "subscriptionsHandleComplete";
-    public static final String SUBSCRIPTIONS_HANDLE_FAIL = "subscriptionsFail";
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String SUBSCRIPTION = "MESSAGER_SUBSCRIPTION";

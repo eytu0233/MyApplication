@@ -11,6 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Created by NCKU on 2016/3/25.
+ * 安全工具類別，使用AES CBC加密密碼
  */
 public class Security {
 
@@ -30,6 +31,10 @@ public class Security {
         spec = getIV();
     }
 
+    /**
+     * 取得Initail Vector
+     * @return
+     */
     public AlgorithmParameterSpec getIV() {
         byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
         IvParameterSpec ivParameterSpec;
@@ -37,6 +42,13 @@ public class Security {
         return ivParameterSpec;
     }
 
+    /**
+     * 加密明文
+     *
+     * @param plainText 明文
+     * @return
+     * @throws Exception
+     */
     public String encrypt(String plainText) throws Exception {
         cipher.init(Cipher.ENCRYPT_MODE, key, spec);
         byte[] encrypted = cipher.doFinal(plainText.getBytes("UTF-8"));
@@ -45,6 +57,13 @@ public class Security {
         return encryptedText;
     }
 
+    /**
+     * 解密密文
+     *
+     * @param cryptedText 密文
+     * @return
+     * @throws Exception
+     */
     public String decrypt(String cryptedText) throws Exception {
         cipher.init(Cipher.DECRYPT_MODE, key, spec);
         byte[] bytes = Base64.decode(cryptedText, Base64.DEFAULT);

@@ -37,6 +37,7 @@ import edu.ncku.application.fragments.IRISBNSearchFragment;
 import edu.ncku.application.fragments.NewsFragment;
 import edu.ncku.application.fragments.PrefFragment;
 import edu.ncku.application.service.NetworkListenerService;
+import edu.ncku.application.util.CollapseHandler;
 import edu.ncku.application.util.DrawerListSelector;
 import edu.ncku.application.util.IReceiverRegisterListener;
 import edu.ncku.application.util.ISBNMacher;
@@ -51,18 +52,20 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
     private CharSequence mTitle; // 當前App的標題
 
-    private Fragment mSettingFragment = new PrefFragment();
+    private Fragment mSettingFragment = new PrefFragment(); // 設定頁面實體
     private ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Thread.setDefaultUncaughtExceptionHandler(new CollapseHandler(this)); // 註冊程式崩潰事件監聽
 
         mTitle = getTitle();
 
         initUI();
 
+        /* 檢查NetworkListenerService是否開啟，如果否，則啟動該Service */
         if (!checkServicesState(NetworkListenerService.class)) {
             if (startService(new Intent(this, NetworkListenerService.class)) != null) {
                 Log.d(DEBUG_FLAG, "NetworkListenerService start!");
@@ -70,16 +73,19 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
                 Log.e(DEBUG_FLAG, "NetworkListenerService start fail!");
             }
         }
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // 為了讓 Toolbar 的 Menu 有作用，這邊的程式不可以拿掉
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    /**
+     * 覆寫標題變更事件，MainActivity實作ITitleChangeListener，並由其他Fragment驅動此方法
+     *
+     * @param title 要變更的標題
+     */
     @Override
     public void setTitle(CharSequence title) {
         titleStack.push(mTitle.toString());
@@ -162,6 +168,14 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    /**
+     * 此方法根據https://github.com/dm77/barcodescanner參考實作Google的QR Code專案ZXing，處理QR Code或Barcode的資訊
+     * 將會過濾不符合ISBN10或ISBN13的格式
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param intent
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         switch (requestCode) {
@@ -205,10 +219,10 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
                 switch (menuItem.getItemId()) {
                     case R.id.settingMenuItem:
-                        if(!mSettingFragment.isAdded()){
+                        if (!mSettingFragment.isAdded()) {
                             getFragmentManager().beginTransaction().addToBackStack(null).add(R.id.content_frame, mSettingFragment).commit();
                             setTitle(setting);
-                        }else{
+                        } else {
                             onBackPressed();
                         }
                         return true;

@@ -2,6 +2,8 @@ package edu.ncku.application.util;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
@@ -15,7 +17,7 @@ import edu.ncku.application.MainActivity;
 import edu.ncku.application.R;
 import edu.ncku.application.fragments.HomePageFragment;
 import edu.ncku.application.fragments.MessagerFragment;
-import edu.ncku.application.util.adapter.DrawerListAdapter;
+import edu.ncku.application.adapter.DrawerListAdapter;
 
 /**
  * Created by NCKU on 2016/1/12.
@@ -65,6 +67,16 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
                 mDrawerLayout.closeDrawer(mDrawerList);
             }
         };
+        DrawerListItem logoutAdapterItem = new DrawerListItem("登出") {
+            @Override
+            public void onDrawerItemClick() {
+                final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+                sharedPreferences.edit().remove(PreferenceKeys.USERNAME).apply();
+                sharedPreferences.edit().remove(PreferenceKeys.PASSWORD).apply();
+                mDrawerLayout.closeDrawer(mDrawerList);
+                logoutState();
+            }
+        };
         DrawerListItem messengerAdapterItem = new DrawerListItem(activity.getResources().getString(R.string.messenger)) {
             @Override
             public void onDrawerItemClick() {
@@ -78,6 +90,8 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         ArrayList<DrawerListItem> loginDrawerListItems = new ArrayList<DrawerListItem>(); // 登入狀態列表
         loginDrawerListItems.add(homePageAdapterItem);
         loginDrawerListItems.add(messengerAdapterItem);
+        loginDrawerListItems.add(logoutAdapterItem);
+
 
         ArrayList<DrawerListItem> logoutDrawerListItems = new ArrayList<DrawerListItem>(); // 登出狀態列表
         logoutDrawerListItems.add(homePageAdapterItem);

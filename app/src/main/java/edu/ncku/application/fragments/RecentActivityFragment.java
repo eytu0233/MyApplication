@@ -24,13 +24,14 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import edu.ncku.application.io.file.RecentActivityReaderTask;
 import edu.ncku.application.R;
+import edu.ncku.application.io.file.RecentActivityReaderTask;
 
+/**
+ * 顯示最近活動頁面(背景為透明)
+ */
 public class RecentActivityFragment extends Fragment {
 
 	private static final String DEBUG_FLAG = RecentActivityFragment.class
@@ -59,11 +60,7 @@ public class RecentActivityFragment extends Fragment {
 			if(tempMap != null && !tempMap.isEmpty()){
 				imgSuperLinks = tempMap;
 			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		} catch (TimeoutException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -72,7 +69,7 @@ public class RecentActivityFragment extends Fragment {
 			imgSuperLinks.put("", "");
 		}
 		imgURLs = new String[imgSuperLinks.keySet().size()];
-		imgSuperLinks.keySet().toArray(imgURLs);
+		imgSuperLinks.keySet().toArray(imgURLs); // 取得各個最近活動的網址
 	}
 
 	@Override
@@ -83,26 +80,28 @@ public class RecentActivityFragment extends Fragment {
 
 		gallery = (Gallery) rootView.findViewById(R.id.gallery);
 		gallery.setAdapter(new ImageAdapter(getActivity()));
+        /* 註冊點擊事件 */
 		gallery.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Log.d(DEBUG_FLAG, "position : " + position % imgURLs.length);
-				Uri uri=Uri.parse(imgSuperLinks.get(imgURLs[position % imgURLs.length]));
-				Intent i = new Intent(Intent.ACTION_VIEW,uri);
-				startActivity(i); 
-			}
-		});
-		gallery.post(new Runnable(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Log.d(DEBUG_FLAG, "position : " + position % imgURLs.length);
+                /* 顯示該網址的網頁 */
+                Uri uri = Uri.parse(imgSuperLinks.get(imgURLs[position % imgURLs.length]));
+                Intent i = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(i);
+            }
+        });
+		gallery.post(new Runnable() {
 
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				gallery.setSelected(true);
-				gallery.setSelection(Integer.MAX_VALUE / 2);
-			}
-			
-		});
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                gallery.setSelected(true);
+                gallery.setSelection(Integer.MAX_VALUE / 2);
+            }
+
+        });
 
 		return rootView;
 	}
@@ -118,6 +117,7 @@ public class RecentActivityFragment extends Fragment {
 		ImageAdapter(Context context) {
 			inflater = LayoutInflater.from(context);
 
+            /* ImageLoader選項 */
 			options = new DisplayImageOptions.Builder()
 					.showImageOnLoading(R.drawable.ic_stub)
 					.showImageForEmptyUri(R.drawable.ic_empty)
@@ -126,14 +126,14 @@ public class RecentActivityFragment extends Fragment {
 					.bitmapConfig(Bitmap.Config.RGB_565)
 					.displayer(new RoundedBitmapDisplayer(20)).build();
 			
-			imageLoader = ImageLoader.getInstance();
+			imageLoader = ImageLoader.getInstance(); // 取得ImageLoader實體
 			imageLoader.init(ImageLoaderConfiguration.createDefault(inflater
-					.getContext()));
+					.getContext())); // ImageLoader初始化
 		}
 
 		@Override
 		public int getCount() {
-			return Integer.MAX_VALUE;
+			return Integer.MAX_VALUE; // 設置模擬無限左右滑動
 		}
 
 		@Override
@@ -153,14 +153,14 @@ public class RecentActivityFragment extends Fragment {
 			if (imageView == null) {
 				imageView = (ImageView) inflater.inflate(
 						R.layout.item_gallery_image, parent, false);
-			}			
+			}
 			
 			int width = gallery.getWidth() * 2 / 3, height = gallery.getHeight() * 2 / 3;
 			
 			imageView.setAdjustViewBounds(true);
 			imageView.setLayoutParams(new Gallery.LayoutParams(width, height));
 
-			imageLoader.displayImage(imgURLs[position % imgURLs.length], imageView, options);
+			imageLoader.displayImage(imgURLs[position % imgURLs.length], imageView, options); // 使用ImageLoader套件顯示圖片(具有自動cache網路圖片功能，提高效能)
 			return imageView;
 		}
 	}

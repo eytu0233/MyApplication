@@ -2,11 +2,9 @@ package edu.ncku.application.fragments;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -27,21 +25,20 @@ import java.text.SimpleDateFormat;
 import edu.ncku.application.LoadMoreListView;
 import edu.ncku.application.MainActivity;
 import edu.ncku.application.R;
+import edu.ncku.application.adapter.ListMsgsAdapter;
 import edu.ncku.application.io.file.MsgsReaderTask;
 import edu.ncku.application.model.Message;
-import edu.ncku.application.util.adapter.ListMsgsAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MessagerFragment#getInstance} factory method to
  * create an instance of this fragment.
+ * 顯示推播訊息的列表頁面，當參數大於等於0時，進入該位置的推播訊息
  */
 public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoadMore{
 
     private static final String DEBUG_FLAG = MessagerFragment.class.getName();
     private static final String POSITION = "POSITION";
-
-    private static int PRELOAD_MSGS_NUM;
 
     private MainActivity activity;
 
@@ -50,9 +47,6 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
     private LoadMoreListView listView;
     private Handler mHandler = new Handler();
     private ListMsgsAdapter listViewAdapter;
-    private SharedPreferences sp;
-
-    private int numShowedMsgs = 0;
 
     /**
      * Use this factory method to create a new instance of
@@ -75,13 +69,6 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.activity = (MainActivity) getActivity();
-        this.sp = PreferenceManager.getDefaultSharedPreferences(activity);
-        PRELOAD_MSGS_NUM = Integer.valueOf(sp.getString("PRELOAD_MSGS_MAX",
-                "10"));
-
-        if (PRELOAD_MSGS_NUM <= 0) {
-            Log.e(DEBUG_FLAG, "PRELOAD_MSGS_NUM is smaller than zero");
-        }
     }
 
     @Override
@@ -99,8 +86,10 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 changeToMsgViewer(position);
             }
-        });
-        listView.setLoadMoreListen(this);
+        }); // 註冊點擊事件
+        listView.setLoadMoreListen(this); // 此功能已失效，但未移除
+
+        /* 實現多選刪除功能 */
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
@@ -165,7 +154,6 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
 
         });
 
-
         return rootView;
     }
 
@@ -197,23 +185,7 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
 
     @Override
     public void loadMore() {
-        try {
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    listViewAdapter.showMoreOldMessage(Integer.valueOf(sp
-                            .getString("LOAD_MSGS_MAX", "10")));
-                    numShowedMsgs = listViewAdapter.getCount();
-                    Log.v("MessageListActivity", "show : " + numShowedMsgs);
-
-                    listView.onLoadComplete();
-
-                }
-            }, 100);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // 原本的設計是將部分的推播訊息顯示，直到使用者往下拉才會載入更多，此功能已取消
     }
 
     private void setListAdapter(final ListAdapter adapter) {
@@ -226,22 +198,24 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
         });
     }
 
+    /**
+     * 從檔案讀入推播訊息，並顯示出來
+     *
+     * @return 載入推播訊息是否成功
+     * @throws Exception
+     */
     private boolean updateList() throws Exception {
-        if(numShowedMsgs < PRELOAD_MSGS_NUM){
-            numShowedMsgs = PRELOAD_MSGS_NUM;
-        }
         MsgsReaderTask msgsReaderTask = new MsgsReaderTask(this);
         msgsReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         listViewAdapter = msgsReaderTask.get();
 
         if (listViewAdapter != null) {
             setListAdapter(listViewAdapter);
-            numShowedMsgs = listViewAdapter.getCount();
-            Log.d(DEBUG_FLAG, "UpdateList finish : " + numShowedMsgs);
             int position = getArguments().getInt(POSITION);
 
+            /* 當有來自Notification的位置參數，將會自動轉入該推播訊息 */
             Log.d(DEBUG_FLAG, "position : " + position);
-            if(position >= 0 && position < numShowedMsgs){
+            if(position >= 0 && position < listViewAdapter.getCount()){
                 int realPosition = listViewAdapter.getCount() - (position + 1);
                 changeToMsgViewer(realPosition);
                 getArguments().putInt(POSITION, -1);
@@ -253,13 +227,18 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
         }
     }
 
+    /**
+     * 進入該推播訊息內容頁面
+     *
+     * @param position 推播訊息位置
+     */
     private void changeToMsgViewer(int position){
         Message news = (Message) listViewAdapter.getItem(position);
 
         Bundle bundle = new Bundle();
         bundle.putString("title", news.getTitle());
         bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format((long) news.getPubTime() * 1000));
-        bundle.putString("unit", "");
+        bundle.putString("unit", ""); // 推播訊息沒有單位
         bundle.putString("contents", news.getContents().replace("\r\n", "<br>").trim());
 
         NewsViewerFragment msgViewerFragment = new NewsViewerFragment();

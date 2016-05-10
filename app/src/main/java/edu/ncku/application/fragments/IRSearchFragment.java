@@ -9,11 +9,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import edu.ncku.application.R;
+import edu.ncku.application.util.EnvChecker;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link IRSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * 開啟IR搜尋網頁，如果有關鍵字的參數則一併輸入，同時會檢查語言環境
  */
 public class IRSearchFragment extends Fragment {
 
@@ -22,7 +24,7 @@ public class IRSearchFragment extends Fragment {
     public static final String KEYWORD = "keyword";
 
     private static final String SEARCH_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordSearch.php";
-    private static final String BIB_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordbibSearch.php?lan=cht&Keyword=";
+    private static final String BIB_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordbibSearch.php?lan=%s&Keyword=%s";
 
     private String url;
 
@@ -53,7 +55,8 @@ public class IRSearchFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            url = BIB_URL + getArguments().getString(KEYWORD);
+//            url = BIB_URL + getArguments().getString(KEYWORD);
+            url = String.format(BIB_URL, (EnvChecker.isLunarSetting())?"cht":"eng", getArguments().getString(KEYWORD));
         } else {
             url = SEARCH_URL;
         }

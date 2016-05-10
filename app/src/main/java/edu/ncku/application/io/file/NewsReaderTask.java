@@ -11,7 +11,7 @@ import java.util.LinkedList;
 
 import edu.ncku.application.fragments.NewsFragment;
 import edu.ncku.application.model.News;
-import edu.ncku.application.util.adapter.ListNewsAdapter;
+import edu.ncku.application.adapter.ListNewsAdapter;
 
 /**
  * 此AsyncTask類別將會在最新消息頁面開啟時被執行，進行頁面資料讀取的工作

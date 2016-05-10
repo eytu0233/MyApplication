@@ -8,6 +8,7 @@ import java.net.URL;
 
 /**
  * Created by NCKU on 2016/2/23.
+ * 工具靜態類別，處理Http Request
  */
 public class HttpClient {
 

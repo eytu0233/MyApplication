@@ -20,12 +20,13 @@ import java.util.concurrent.TimeUnit;
 
 import edu.ncku.application.R;
 import edu.ncku.application.io.file.LibOpenTimeReaderTask;
-import edu.ncku.application.util.adapter.OpenTimeExpListAdapter;
+import edu.ncku.application.adapter.OpenTimeExpListAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link LibInfoOpenTimeFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * 圖書館開放時間頁面，使用ExpandableListView顯示
  */
 public class LibInfoOpenTimeFragment extends Fragment {
 
@@ -119,6 +120,9 @@ public class LibInfoOpenTimeFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * 準備列表資料，預設從文字資源檔取得，假如有檔案(來自網路)則優先讀取
+     */
     private void prepareListData() {
         // TODO Auto-generated method stub
         mListDataHeader = new ArrayList<String>();
@@ -141,6 +145,7 @@ public class LibInfoOpenTimeFragment extends Fragment {
             mListDataHeader.add(openTimeHeader);
         }
 
+        /* 當應用程式尚未連上網頁時，將以預設值(文字資源)顯示 */
         if (mListDataChild == null || mListDataChild.keySet().size() != mListDataHeader.size()) {
             Log.d(DEBUG_FLAG, "預設值");
             main_lib.add(getString(R.string.open_time_main_lib));

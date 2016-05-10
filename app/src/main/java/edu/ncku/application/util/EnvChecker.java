@@ -4,9 +4,14 @@ import java.util.Locale;
 
 /**
  * Created by NCKU on 2016/5/3.
+ * 工具靜態類別，用來取得一些環境參數
  */
 public class EnvChecker {
 
+    /**
+     * 判斷是否為(簡繁)中文環境
+     * @return
+     */
     public static boolean isLunarSetting() {
         String language = getLanguageEnv();
 
@@ -17,6 +22,10 @@ public class EnvChecker {
             return false;
     }
 
+    /**
+     * 取得語言環境參數
+     * @return
+     */
     private static String getLanguageEnv() {
         Locale l = Locale.getDefault();
         String language = l.getLanguage();

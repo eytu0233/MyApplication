@@ -14,6 +14,7 @@ import edu.ncku.application.R;
  * A simple {@link Fragment} subclass.
  * Use the {@link PersonalBorrowFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * 顯示個人借閱網頁頁面
  */
 public class PersonalBorrowFragment extends Fragment {
     private static final String DEBUG_FLAG = IRSearchFragment.class.getName();

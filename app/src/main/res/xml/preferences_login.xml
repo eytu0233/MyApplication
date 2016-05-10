@@ -5,11 +5,10 @@
         android:key="ACCOUNT_RELATION"
         android:summary="帳號相關"
         android:title="@string/account" >
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="@string/subscription"
             android:title="@string/subcriptionTitle"
-            android:summary="@string/subcriptionTip"
-            />
+            android:summary="@string/subcriptionTip" />
     </PreferenceCategory>
 
 </PreferenceScreen>

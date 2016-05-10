@@ -178,6 +178,11 @@ public class HomePageFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * 註冊ITitleChangeListener介面的標題變更方法
+     *
+     * @param activity
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -195,6 +200,12 @@ public class HomePageFragment extends Fragment {
         titleChangeListener = null;
     }
 
+    /**
+     * 新增Fragment堆疊，驅動標題變更事件方法
+     *
+     * @param fragment
+     * @param title 標題
+     */
     private void addFragment(Fragment fragment, String title){
         if(fragment != null && !fragment.isAdded()) {
             FragmentManager fragmentManager = getActivity()

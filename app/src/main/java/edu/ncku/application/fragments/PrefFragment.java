@@ -1,67 +1,37 @@
 package edu.ncku.application.fragments;
 
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.concurrent.ExecutionException;
+
 import edu.ncku.application.R;
-import edu.ncku.application.service.SubscribeIntentService;
+import edu.ncku.application.io.network.SubscribeTask;
 import edu.ncku.application.util.PreferenceKeys;
 
+/**
+ * 設定頁面，會根據登入狀態來決定要載入的XML資源檔
+ */
 public class PrefFragment extends PreferenceFragment {
 
     private static final String DEBUG_FLAG = PrefFragment.class.getName();
 
     private ProgressDialog progressDialog;
-
-    private BroadcastReceiver mSubSuccessReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, Intent intent) {
-            // Get extra data included in the Intent
-            (new Handler()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(progressDialog == null) return;
-                    progressDialog.dismiss();
-                    Toast.makeText(context, R.string.sub_handled, Toast.LENGTH_SHORT).show();
-                }
-            }, 1000);
-        }
-    };
-
-    private BroadcastReceiver mSubFailReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, Intent intent) {
-            // Get extra data included in the Intent
-            (new Handler()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(progressDialog != null) progressDialog.dismiss();
-                    Toast.makeText(context, R.string.sub_fail, Toast.LENGTH_SHORT).show();
-                }
-            }, 1000);
-        }
-    };
 
     private Context context;
 
@@ -81,67 +51,63 @@ public class PrefFragment extends PreferenceFragment {
 
         this.addPreferencesFromResource((isLogin()) ? R.xml.preferences_login : R.xml.preferences_logout);
 
-        final CheckBoxPreference checkboxPref = (CheckBoxPreference) getPreferenceManager().findPreference("MESSAGER_SUBSCRIPTION");
-
-        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
-        broadcastManager.registerReceiver(mSubSuccessReceiver, new IntentFilter(PreferenceKeys.SUBSCRIPTIONS_HANDLE_COMPLETE));
-        broadcastManager.registerReceiver(mSubFailReceiver, new IntentFilter(PreferenceKeys.SUBSCRIPTIONS_HANDLE_FAIL));
+        final SwitchPreference switchPref = (SwitchPreference) getPreferenceManager().findPreference(PreferenceKeys.SUBSCRIPTION);
 
         final ConnectivityManager CM = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        if (switchPref != null) // 註冊switchPref的狀態改變事件
+            switchPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
-        if (checkboxPref != null)
-            checkboxPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-                final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-                public boolean onPreferenceChange(final Preference preference, Object newValue) {
-
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Log.d(DEBUG_FLAG, "" + switchPref.isChecked());
                     final NetworkInfo info = CM.getActiveNetworkInfo();
 
-                    new AlertDialog.Builder(getActivity())
-                            .setMessage(R.string.dialog_subscription)
-                            .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    checkboxCancel();
-                                }
-                            })
-                            .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    if(info != null && info.isConnected()) {
-                                        //if (!checkPlayServices()) return;
+                    /* 判斷網路狀態 */
+                    if (info != null && info.isConnected()) {
 
-                                        // Start IntentService to register this application with GCM.
-                                        if (checkboxPref.isChecked()) {
-                                            SubscribeIntentService.startActionSub(context);
-                                            Log.d(DEBUG_FLAG, "SubscribeIntentService sub start!");
-                                        } else {
-                                            SubscribeIntentService.startActionUnsub(context);
-                                            Log.d(DEBUG_FLAG, "SubscribeIntentService unsub start!");
-                                        }
-                                        progressDialog = ProgressDialog.show(context, getResources().getString(R.string.please_wait), getResources().getString(R.string.handle_subscription), true);
-                                    }else{
-                                        checkboxCancel();
-                                        Toast.makeText(context, R.string.network_disconnected, Toast.LENGTH_SHORT).show();
-                                    }
+                        // Start IntentService to register this application with GCM.
+                        progressDialog = ProgressDialog.show(context, getResources().getString(R.string.please_wait), getResources().getString(R.string.handle_subscription), true); // 顯示處理中的Dialog
+                        SubscribeTask subscribeTask = new SubscribeTask(context);
+                        subscribeTask.execute(!switchPref.isChecked());
+                        Boolean check;
+                        try {
+                            check = subscribeTask.get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            check = false;
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                            check = false;
+                        }
 
-                                }
-                            }).create().show();
-                    return true;
-                }
+                        if (check == null) check = false;
 
-                private void checkboxCancel() {
-                    boolean sub = sharedPreferences.getBoolean(PreferenceKeys.SUBSCRIPTION, true);
-                    sharedPreferences.edit().putBoolean(PreferenceKeys.SUBSCRIPTION, !sub).apply();
-                    checkboxPref.setChecked(!sub);
+                        final boolean transCheck = check;
+                        /* 更新UI */
+                        (new Handler()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (progressDialog != null) progressDialog.dismiss(); // 關閉顯示處理中的Dialog
+                                Toast.makeText(context, (transCheck) ? R.string.sub_handled : R.string.sub_fail, Toast.LENGTH_LONG).show(); // 顯示Toast
+                            }
+                        }, 1000);
+
+                        return transCheck;
+                    } else {
+                        Toast.makeText(context, R.string.network_disconnected, Toast.LENGTH_LONG).show();
+                        return false;
+                    }
                 }
             });
-
     }
 
+    /**
+     * 是否已登入
+     *
+     * @return
+     */
     private boolean isLogin() {
 
         final SharedPreferences SP = PreferenceManager
