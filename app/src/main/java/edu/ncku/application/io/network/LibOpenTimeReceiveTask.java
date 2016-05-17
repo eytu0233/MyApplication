@@ -11,17 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.ncku.application.R;
+import edu.ncku.application.util.EnvChecker;
 
 /**
  * 此類別用來接收開館時間的JSON資料，一樣儲存進檔案
  */
-public class LibOpenTimeReceiveTask extends JsonReceiveTask implements Runnable {
+public class LibOpenTimeReceiveTask extends JsonReceiveTask {
 
     private static final String DEBUG_FLAG = LibOpenTimeReceiveTask.class.getName();
-    private static final String JSON_MAIN_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webMainLib&lan=cht";
-    private static final String JSON_STUDY_HALL_URL = "http://140.116.207.24/libweb/index.php?item=webStudyHall&lan=cht";
-    private static final String JSON_MED_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webMedLib&lan=cht";
-    private static final String JSON_DEPT_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webDeptLib&lan=cht";
+    private static final String JSON_MAIN_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webMainLib&lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng");
+    private static final String JSON_STUDY_HALL_URL = "http://140.116.207.24/libweb/index.php?item=webStudyHall&lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng");
+    private static final String JSON_MED_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webMedLib&lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng");
+    private static final String JSON_DEPT_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webDeptLib&lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng");
     private static final String FILE_NAME = "NCKU_Lib_Open_Time";
 
 

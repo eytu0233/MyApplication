@@ -5,6 +5,7 @@ package edu.ncku.application.util;
  * 常數靜態類別
  */
 public class PreferenceKeys {
+    public static final String NAME = "name";
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String SUBSCRIPTION = "MESSAGER_SUBSCRIPTION";

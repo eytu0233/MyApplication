@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 
-import edu.ncku.application.LoadMoreListView;
 import edu.ncku.application.MainActivity;
 import edu.ncku.application.R;
 import edu.ncku.application.adapter.ListMsgsAdapter;
@@ -35,7 +34,7 @@ import edu.ncku.application.model.Message;
  * create an instance of this fragment.
  * 顯示推播訊息的列表頁面，當參數大於等於0時，進入該位置的推播訊息
  */
-public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoadMore{
+public class MessagerFragment extends Fragment{
 
     private static final String DEBUG_FLAG = MessagerFragment.class.getName();
     private static final String POSITION = "POSITION";
@@ -44,7 +43,7 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
 
     private ProgressBar progressBar;
     private TextView textView;
-    private LoadMoreListView listView;
+    private ListView listView;
     private Handler mHandler = new Handler();
     private ListMsgsAdapter listViewAdapter;
 
@@ -80,14 +79,13 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
 
         progressBar = (ProgressBar) rootView.findViewById(R.id.msgProgressBar);
         textView = (TextView) rootView.findViewById(R.id.msgTip);
-        listView = (LoadMoreListView) rootView.findViewById(R.id.msgListView);
+        listView = (ListView) rootView.findViewById(R.id.msgListView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 changeToMsgViewer(position);
             }
         }); // 註冊點擊事件
-        listView.setLoadMoreListen(this); // 此功能已失效，但未移除
 
         /* 實現多選刪除功能 */
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -183,11 +181,6 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
         }, 500);
     }
 
-    @Override
-    public void loadMore() {
-        // 原本的設計是將部分的推播訊息顯示，直到使用者往下拉才會載入更多，此功能已取消
-    }
-
     private void setListAdapter(final ListAdapter adapter) {
         mHandler.post(new Runnable() {
             @Override
@@ -237,7 +230,7 @@ public class MessagerFragment extends Fragment implements LoadMoreListView.OnLoa
 
         Bundle bundle = new Bundle();
         bundle.putString("title", news.getTitle());
-        bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format((long) news.getPubTime() * 1000));
+        bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd HH:mm").format((long) news.getPubTime() * 1000));
         bundle.putString("unit", ""); // 推播訊息沒有單位
         bundle.putString("contents", news.getContents().replace("\r\n", "<br>").trim());
 

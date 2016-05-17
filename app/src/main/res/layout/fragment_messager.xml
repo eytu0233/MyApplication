@@ -27,12 +27,12 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:visibility="invisible" />
 
-    <edu.ncku.application.LoadMoreListView
+    <ListView
         android:id="@+id/msgListView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:divider="#FFEEEEEE"
         android:dividerHeight="1dip" >
-    </edu.ncku.application.LoadMoreListView>
+    </ListView>
 
 </RelativeLayout>

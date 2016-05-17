@@ -10,18 +10,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -39,9 +36,11 @@ import edu.ncku.application.fragments.PrefFragment;
 import edu.ncku.application.service.NetworkListenerService;
 import edu.ncku.application.util.CollapseHandler;
 import edu.ncku.application.util.DrawerListSelector;
+import edu.ncku.application.util.EnvChecker;
 import edu.ncku.application.util.IReceiverRegisterListener;
 import edu.ncku.application.util.ISBNMacher;
 import edu.ncku.application.util.ITitleChangeListener;
+import edu.ncku.application.util.Preference;
 import edu.ncku.application.util.PreferenceKeys;
 
 public class MainActivity extends AppCompatActivity implements ITitleChangeListener, IReceiverRegisterListener {
@@ -73,12 +72,8 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
                 Log.e(DEBUG_FLAG, "NetworkListenerService start fail!");
             }
         }
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        Log.d(DEBUG_FLAG, "env : " + EnvChecker.isLunarSetting());
     }
 
     /**
@@ -98,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
             Log.e(DEBUG_FLAG, "getSupportActionBar null");
             return;
         }
+        Log.d(DEBUG_FLAG, "Add TitleStack : " + title);
         getSupportActionBar().setTitle(mTitle);
     }
 
@@ -135,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
             getFragmentManager().popBackStack();
         } else { // 不應該發生的異常狀況
             Log.e(DEBUG_FLAG, "TitleStack Error");
-            super.onBackPressed();
         }
     }
 
@@ -276,8 +271,8 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
 
         /* 此類別用於降低drawerItem的耦合性 */
         DrawerListSelector selector = new DrawerListSelector(this, mDrawerLayout, mDrawerList);
-        if (isLogin()) {
-            selector.loginState();
+        if (Preference.isLoggin(getApplicationContext())) {
+            selector.loginState(Preference.getLoginName(getApplicationContext()));
         } else {
             selector.logoutState();
         }
@@ -295,27 +290,6 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
                     .add(R.id.content_frame, NewsFragment.getInstance(-1)).commit();
             onChangeTitle(getResources().getString(R.string.homepage_ic_news));
         }
-    }
-
-    /**
-     * @return 確認是否是登入的狀態
-     */
-    private boolean isLogin() {
-
-        final SharedPreferences SP = PreferenceManager
-                .getDefaultSharedPreferences(getApplicationContext());
-        String username = SP.getString(PreferenceKeys.USERNAME, ""), password = SP.getString(PreferenceKeys.PASSWORD,
-                "");
-
-        Log.d(DEBUG_FLAG, "username : " + username);
-        Log.d(DEBUG_FLAG, "password : " + password);
-
-        if (username.isEmpty() || password.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
-
     }
 
     /**

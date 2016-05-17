@@ -108,4 +108,9 @@
 ]]></string>
     <string name="account">帳號相關</string>
     <string name="login_sub_tip">恭喜登入成功，請設定是否要訂閱推播訊息。之後依然可以在設定當中改變訂閱狀態。</string>
+    <string name="link">相關連結</string>
+    <string name="additional">相關附件</string>
+    <string name="contact_phone">聯絡電話</string>
+    <string name="default_name">使用者</string>
+    <string name="login_title">歡迎您</string>
 </resources>

@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -65,6 +67,8 @@ public class HomePageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
         mNewsFragment = NewsFragment.getInstance(-1);
         mIRSearchFragment = IRSearchFragment.newInstance();
         mLibInfoListFragment = LibInfoListFragment.newInstance();
@@ -176,6 +180,16 @@ public class HomePageFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        /* 只有在Home頁面時，才顯示設定按鈕 */
+        if (menu != null) {
+            menu.findItem(R.id.settingMenuItem).setVisible(true);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     /**

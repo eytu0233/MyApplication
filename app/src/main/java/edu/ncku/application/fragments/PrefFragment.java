@@ -2,14 +2,12 @@ package edu.ncku.application.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -49,7 +47,7 @@ public class PrefFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         context = this.getActivity().getWindow().getContext();
 
-        this.addPreferencesFromResource((isLogin()) ? R.xml.preferences_login : R.xml.preferences_logout);
+        this.addPreferencesFromResource((edu.ncku.application.util.Preference.isLoggin(context)) ? R.xml.preferences_login : R.xml.preferences_logout);
 
         final SwitchPreference switchPref = (SwitchPreference) getPreferenceManager().findPreference(PreferenceKeys.SUBSCRIPTION);
 
@@ -101,28 +99,5 @@ public class PrefFragment extends PreferenceFragment {
                     }
                 }
             });
-    }
-
-    /**
-     * 是否已登入
-     *
-     * @return
-     */
-    private boolean isLogin() {
-
-        final SharedPreferences SP = PreferenceManager
-                .getDefaultSharedPreferences(context);
-        String username = SP.getString(PreferenceKeys.USERNAME, ""), password = SP.getString(PreferenceKeys.PASSWORD,
-                "");
-
-        Log.d(DEBUG_FLAG, "username : " + username);
-        Log.d(DEBUG_FLAG, "password : " + password);
-
-        if (username.isEmpty() || password.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
-
     }
 }

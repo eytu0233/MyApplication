@@ -30,8 +30,9 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
 
     private static final String DEBUG_FLAG = DrawerListSelector.class.getName();
 
-    private final DrawerListAdapter loginDrawerListAdapter;
+//    private final DrawerListAdapter loginDrawerListAdapter;
     private final DrawerListAdapter logoutDrawerListAdapter;
+    private final ArrayList<DrawerListItem> loginDrawerListItems;
 
     private MainActivity activity;
     private DrawerLayout mDrawerLayout;
@@ -55,8 +56,8 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
 
             @Override
             public void onDrawerItemClick() {
-                clearBackStackFragment();
                 activity.setTitle(R.string.app_name);
+                clearBackStackFragment();
                 replaceFragment(mHomePageFragment);
             }
         };
@@ -87,7 +88,7 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         };
 
         /* 將點擊事件物件加進各狀態列表之中 */
-        ArrayList<DrawerListItem> loginDrawerListItems = new ArrayList<DrawerListItem>(); // 登入狀態列表
+        loginDrawerListItems = new ArrayList<DrawerListItem>(); // 登入狀態列表
         loginDrawerListItems.add(homePageAdapterItem);
         loginDrawerListItems.add(messengerAdapterItem);
         loginDrawerListItems.add(logoutAdapterItem);
@@ -98,8 +99,8 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         logoutDrawerListItems.add(loginAdapterItem);
 
         /* 將狀態列表放進各Adapter之中，之後將透過Adapters來進行列表狀態轉換 */
-        loginDrawerListAdapter = new DrawerListAdapter(activity, loginDrawerListItems);
-        logoutDrawerListAdapter = new DrawerListAdapter(activity, logoutDrawerListItems);
+//        loginDrawerListAdapter = new DrawerListAdapter(activity, loginDrawerListItems);
+        logoutDrawerListAdapter = new DrawerListAdapter(activity, logoutDrawerListItems, false);
 
         /* 初始化完成後，自動進入Homepage頁面 */
         homePageAdapterItem.onDrawerItemClick();
@@ -117,8 +118,18 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
     /**
         * 轉換成登入狀態列表
         */
-    public void loginState() {
-        mDrawerList.setAdapter(loginDrawerListAdapter);
+    public void loginState(String name) {
+
+        ArrayList<DrawerListItem> copy = (ArrayList<DrawerListItem>) loginDrawerListItems.clone();
+        copy.add(0, new DrawerListItem(activity.getString(R.string.login_title) + " " + name){
+
+            @Override
+            public void onDrawerItemClick() {
+
+            }
+        });
+        mDrawerList.setAdapter(new DrawerListAdapter(activity, copy, true));
+
     }
 
     /**

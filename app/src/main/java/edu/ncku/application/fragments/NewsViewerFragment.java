@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import edu.ncku.application.R;
@@ -21,6 +22,7 @@ import edu.ncku.application.R;
 public class NewsViewerFragment extends Fragment {
 
     private static final String DEBUG_FLAG = NewsViewerFragment.class.getName();
+    private RelativeLayout msgViewer;
     private WebView msgContents;
     private TextView msgTitle, msgUnit, msgDate;
 
@@ -50,6 +52,14 @@ public class NewsViewerFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_news_viewer, container,
                 false);
+
+        msgViewer = (RelativeLayout) rootView.findViewById(R.id.msgViewer);
+        msgViewer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 覆蓋掉推播訊息的長按事件，避免進入刪除模式
+            }
+        });
 
         msgTitle = (TextView) rootView.findViewById(R.id.txtMsgTitle);
         msgTitle.setText(getArguments().getString("title"));

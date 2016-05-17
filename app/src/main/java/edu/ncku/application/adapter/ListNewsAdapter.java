@@ -128,7 +128,7 @@ public class ListNewsAdapter extends BaseAdapter {
 
             /* 取得各個最新消息資料 */
             News items = (News) getItem(position);
-            SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");
             int timeStamp = items.getPubTime(); // 取得最新消息時間戳記
             /* 日期格式化，取得標題跟單位 */
             String title = items.getTitle(), date = sdFormat.format(new Date((long) timeStamp * 1000)), unit = items.getUnit();

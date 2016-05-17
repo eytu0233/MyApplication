@@ -28,7 +28,7 @@ public class LibContactFragment extends Fragment {
     private static final String DEBUG_FLAG = LibContactFragment.class.getName();
 
     public final static String CSS_STYLE ="<link rel=\"stylesheet\" type=\"text/css\" href=\"http://m.lib.ncku.edu.tw/css/mobile.css\" /><style>* {font-size:20px;line-height:20px;} p {color:#333;} a {color:#3E62A6;} img {max-width:310px;}pre {font-size:9pt;line-height:12pt;font-family:Courier New,Arial;border:1px solid #ddd;border-left:5px solid #6CE26C;background:#f6f6f6;padding:5px;}</style>";
-    private static final String CONTACT_PHONE = "聯絡電話";
+//    private static final String CONTACT_PHONE = "聯絡電話";
     private static final String CONTACT_IMG = "<img src=\"contact.png\">";
     private static final String CONTACT_PHONE_SUPER_LINK = "<a href=\"#\" onClick=\"window.PhoneCall.telext('%s');\">%s</a><br />";
     private static final String DEPT_IMG = "<img src=\"dept.png\">";
@@ -73,6 +73,8 @@ public class LibContactFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final String CONTACT_PHONE = getString(R.string.contact_phone);
 
         try {
             ContactInfoReaderTask contactInfoReaderTask = new ContactInfoReaderTask(getActivity().getApplicationContext());

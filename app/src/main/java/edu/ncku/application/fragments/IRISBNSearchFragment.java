@@ -9,6 +9,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import edu.ncku.application.R;
+import edu.ncku.application.util.EnvChecker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,7 +23,7 @@ public class IRISBNSearchFragment extends Fragment {
 
     private static final String ISBN = "ISBN";
 
-    private static final String ISBN_SEARCH_URL = "http://m.lib.ncku.edu.tw/catalogs/ISBNBibSearch.php?lan=cht&ISBN=";
+    private static final String ISBN_SEARCH_URL = "http://m.lib.ncku.edu.tw/catalogs/ISBNBibSearch.php?lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng") + "&ISBN=";
 
     // TODO: Rename and change types of parameters
     private String isbn;

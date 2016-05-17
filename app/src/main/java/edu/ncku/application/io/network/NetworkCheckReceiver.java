@@ -31,14 +31,11 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
-
         try {
-
             if (context == null) return;
 
             ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
             currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
 
             /* 當連上網路時，在背景執行資料更新的工作 */
             if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {

@@ -15,33 +15,34 @@ import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 
-import edu.ncku.application.LoadMoreListView;
 import edu.ncku.application.MainActivity;
 import edu.ncku.application.R;
+import edu.ncku.application.adapter.ListNewsAdapter;
 import edu.ncku.application.io.file.NewsReaderTask;
 import edu.ncku.application.model.News;
 import edu.ncku.application.service.DataReceiveService;
 import edu.ncku.application.util.IReceiverRegisterListener;
 import edu.ncku.application.util.PreferenceKeys;
-import edu.ncku.application.adapter.ListNewsAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link NewsFragment#getInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
-        LoadMoreListView.OnLoadMore {
+public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     public static final String FINISH_FLUSH_FLAG = "FinishFlushFlag";
 
@@ -56,7 +57,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private ProgressBar progressBar;
     private TextView newsTip;
-    private LoadMoreListView listView;
+    private ListView listView;
     private SwipeRefreshLayout swipe;
 
     private NewsReceiver receiver;
@@ -88,6 +89,9 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
         this.activity = (MainActivity) getActivity();
         this.sp = PreferenceManager.getDefaultSharedPreferences(activity);
         PRELOAD_MSGS_NUM = Integer.valueOf(sp.getString("PRELOAD_MSGS_MAX",
@@ -98,7 +102,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
 
         noDataMsg = sp.getString(PreferenceKeys.NO_DATA_MSGS, getString(R.string.msg_empty));
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -110,8 +113,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         progressBar = (ProgressBar) rootView.findViewById(R.id.newsProgressBar);
         newsTip = (TextView) rootView.findViewById(R.id.newsTip);
-        listView = (LoadMoreListView) rootView.findViewById(R.id.listView);
-        listView.setLoadMoreListen(this);
+        listView = (ListView) rootView.findViewById(R.id.listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -133,6 +135,16 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         receiverRegisterListener.onReceiverRegister(receiver, filter);
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.d(DEBUG_FLAG, "onCreateOptionsMenu");
+//        inflater.inflate(R.menu.menu_empty, menu);
+        if (menu != null) {
+            menu.findItem(R.id.settingMenuItem).setVisible(false);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -168,26 +180,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
-    public void loadMore() {
-        try {
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    listViewAdapter.showMoreOldMessaage(Integer.valueOf(sp
-                            .getString("LOAD_MSGS_MAX", "10")));
-                    numShowedMsgs = listViewAdapter.getCount();
-                    Log.v("MessageListActivity", "show : " + numShowedMsgs);
-
-                    listView.onLoadComplete();
-                }
-            }, 100);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public void onRefresh() {
         try {
             mHandler.postDelayed(new Runnable() {
@@ -206,7 +198,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         Bundle bundle = new Bundle();
         bundle.putString("title", news.getTitle());
-        bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format((long) news.getPubTime() * 1000));
+        bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd").format((long) news.getPubTime() * 1000));
         bundle.putString("unit", news.getUnit());
         bundle.putString("contents", news.getContents().replace("\r\n", "<br>").trim());
 
@@ -262,11 +254,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             numShowedMsgs = listViewAdapter.getCount();
             newsTip.setVisibility(View.INVISIBLE);
             Log.v(DEBUG_FLAG, "UpdateList finish : " + numShowedMsgs);
-            /*int position = getArguments().getInt(POSITION);
-            Log.d(DEBUG_FLAG, "position : " + position);
-            if (position >= 0 && position < numShowedMsgs) {
-                listViewAdapter.triggerViewClick(position);
-            }*/
             return true;
         } else {
             return false;
@@ -281,9 +268,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private class NewsReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             try {
-
                 if (updateList()) {
                     progressBar.setVisibility(View.INVISIBLE);
                 } else {

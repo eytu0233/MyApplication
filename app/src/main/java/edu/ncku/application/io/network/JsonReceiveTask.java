@@ -14,10 +14,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * 此類別是父工具類別，將jsonRecieve與saveFile方法抽出而成
- * 提供多個ReceiveTask類別去繼承並使用這兩個方法 *
+ * 此抽象類別是父工具類別，將jsonRecieve與saveFile方法抽出而成
+ * 提供多個ReceiveTask類別去繼承並使用這兩個方法，並實作run方法 *
  */
-public class JsonReceiveTask {
+public abstract class JsonReceiveTask implements Runnable{
 
     private static final String DEBUG_FLAG = JsonReceiveTask.class.getName();
     protected Context mContext;
@@ -58,20 +58,16 @@ public class JsonReceiveTask {
             throw new NullPointerException("argument data is null.");
         }
 
-        try {
-            /* Get internal storage directory */
-            File dir = mContext.getFilesDir();
-            File activityFile = new File(dir, fileName);
+        /* Get internal storage directory */
+        File dir = mContext.getFilesDir();
+        File activityFile = new File(dir, fileName);
 
-            ObjectOutputStream oos = null;
+        ObjectOutputStream oos = null;
 
-            oos = new ObjectOutputStream(new FileOutputStream(activityFile));
-            oos.writeObject(data);
-            oos.flush();
-            oos.close();
-        } catch (IOException e) {
-            throw e;
-        }
+        oos = new ObjectOutputStream(new FileOutputStream(activityFile));
+        oos.writeObject(data);
+        oos.flush();
+        oos.close();
     }
 
 }

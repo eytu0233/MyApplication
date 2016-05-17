@@ -8,15 +8,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import edu.ncku.application.model.ContactInfo;
+import edu.ncku.application.util.EnvChecker;
 
 /**
  * 此類別繼承JsonReceiveTask，用來處理聯絡資訊JSON資料的接收
  * 並將其存進SD卡之中(覆蓋)。
  */
-public class ContactInfoReceiveTask extends JsonReceiveTask implements Runnable{
+public class ContactInfoReceiveTask extends JsonReceiveTask{
 
     private static final String DEBUG_FLAG = ContactInfoReceiveTask.class.getName();
-    private static final String JSON_URL = "http://140.116.207.24/libweb/index.php?item=webOrganization&lan=cht";
+    private static final String JSON_URL = "http://140.116.207.24/libweb/index.php?item=webOrganization&lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng");
     private static final String FILE_NAME = "NCKU_Lib_Contact_Info";
 
     public ContactInfoReceiveTask(Context mContext) {
