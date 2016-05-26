@@ -10,6 +10,8 @@ import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.Map;
 
+import edu.ncku.application.util.EnvChecker;
+
 /**
  * 此AsyncTask類別將會在開放時間頁面開啟時被執行，進行頁面資料讀取的工作
  */
@@ -34,7 +36,7 @@ public class LibOpenTimeReaderTask extends AsyncTask<Void, Void, Map<String, Lis
 
         try {
             inputFile = new File(mContext
-                    .getFilesDir(), FILE_NAME);
+                    .getFilesDir(), FILE_NAME + ((EnvChecker.isLunarSetting())?"_cht":"_eng"));
 
             if (!inputFile.exists()) {
                 Log.d(DEBUG_FLAG, "file is not exist.");

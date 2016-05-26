@@ -28,13 +28,11 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 
-import edu.ncku.application.MainActivity;
 import edu.ncku.application.R;
 import edu.ncku.application.adapter.ListNewsAdapter;
 import edu.ncku.application.io.file.NewsReaderTask;
 import edu.ncku.application.model.News;
 import edu.ncku.application.service.DataReceiveService;
-import edu.ncku.application.util.IReceiverRegisterListener;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
@@ -53,7 +51,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private Handler mHandler = new Handler();
 
-    private MainActivity activity;
+    private Activity activity;
 
     private ProgressBar progressBar;
     private TextView newsTip;
@@ -63,7 +61,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private NewsReceiver receiver;
     private ListNewsAdapter listViewAdapter;
     private SharedPreferences sp;
-    private IReceiverRegisterListener receiverRegisterListener;
     private String noDataMsg = "None";
 
     private int numShowedMsgs = 0;
@@ -92,7 +89,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        this.activity = (MainActivity) getActivity();
+        this.activity = getActivity();
         this.sp = PreferenceManager.getDefaultSharedPreferences(activity);
         PRELOAD_MSGS_NUM = Integer.valueOf(sp.getString("PRELOAD_MSGS_MAX",
                 "10"));
@@ -101,7 +98,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             Log.e(DEBUG_FLAG, "PRELOAD_MSGS_NUM is smaller than zero");
         }
 
-        noDataMsg = sp.getString(PreferenceKeys.NO_DATA_MSGS, getString(R.string.msg_empty));
+        noDataMsg = sp.getString(PreferenceKeys.NO_DATA_MSGS, getString(R.string.news_empty));
     }
 
     @Override
@@ -113,7 +110,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         progressBar = (ProgressBar) rootView.findViewById(R.id.newsProgressBar);
         newsTip = (TextView) rootView.findViewById(R.id.newsTip);
-        listView = (ListView) rootView.findViewById(R.id.listView);
+        listView = (ListView) rootView.findViewById(R.id.newsListView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -121,7 +118,8 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 changeToNewsViewer(position);
             }
         });
-        swipe = (SwipeRefreshLayout) rootView.findViewById(R.id.swip_index);
+
+        swipe = (SwipeRefreshLayout) rootView.findViewById(R.id.swip);
         swipe.setOnRefreshListener(this);
         swipe.setColorSchemeResources(android.R.color.holo_blue_light,
                 android.R.color.holo_red_light,
@@ -132,15 +130,13 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         receiver = new NewsReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.intent.action.MY_RECEIVER");
-        receiverRegisterListener.onReceiverRegister(receiver, filter);
+        activity.registerReceiver(receiver, filter);
 
         return rootView;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.d(DEBUG_FLAG, "onCreateOptionsMenu");
-//        inflater.inflate(R.menu.menu_empty, menu);
         if (menu != null) {
             menu.findItem(R.id.settingMenuItem).setVisible(false);
         }
@@ -158,25 +154,8 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onDestroy() {
         // TODO Auto-generated method stub
-        receiverRegisterListener.onReceiverUnregister(receiver);
+        activity.unregisterReceiver(receiver);
         super.onDestroy();
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            receiverRegisterListener = (IReceiverRegisterListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement ITitleChangeListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        receiverRegisterListener = null;
     }
 
     @Override

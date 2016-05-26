@@ -5,11 +5,9 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -37,13 +35,12 @@ import edu.ncku.application.service.NetworkListenerService;
 import edu.ncku.application.util.CollapseHandler;
 import edu.ncku.application.util.DrawerListSelector;
 import edu.ncku.application.util.EnvChecker;
-import edu.ncku.application.util.IReceiverRegisterListener;
 import edu.ncku.application.util.ISBNMacher;
 import edu.ncku.application.util.ITitleChangeListener;
 import edu.ncku.application.util.Preference;
 import edu.ncku.application.util.PreferenceKeys;
 
-public class MainActivity extends AppCompatActivity implements ITitleChangeListener, IReceiverRegisterListener {
+public class MainActivity extends AppCompatActivity implements ITitleChangeListener {
 
     private static final String DEBUG_FLAG = MainActivity.class.getName();
 
@@ -73,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
             }
         }
 
-        Log.d(DEBUG_FLAG, "env : " + EnvChecker.isLunarSetting());
+        Log.d(DEBUG_FLAG, "中文環境 : " + EnvChecker.isLunarSetting());
     }
 
     /**
@@ -137,16 +134,6 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
     @Override
     public void onChangeTitle(String title) {
         setTitle(title);
-    }
-
-    @Override
-    public void onReceiverRegister(BroadcastReceiver receiver, IntentFilter filter) {
-        registerReceiver(receiver, filter);
-    }
-
-    @Override
-    public void onReceiverUnregister(BroadcastReceiver receiver) {
-        unregisterReceiver(receiver);
     }
 
     @Override
@@ -272,19 +259,19 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         /* 此類別用於降低drawerItem的耦合性 */
         DrawerListSelector selector = new DrawerListSelector(this, mDrawerLayout, mDrawerList);
         if (Preference.isLoggin(getApplicationContext())) {
-            selector.loginState(Preference.getLoginName(getApplicationContext()));
+            selector.loginState(Preference.getName(getApplicationContext()));
         } else {
             selector.logoutState();
         }
 
         /* 透過Notification取得是否要進入特定頁面(推播或最新消息) */
         int msgExtra = getIntent().getIntExtra(PreferenceKeys.MSGS_EXTRA, -1); // 是否是特定推播訊息
-        boolean globalExtra = getIntent().getBooleanExtra(PreferenceKeys.GLOBAL_NEWS, false); // 是否有警急通知
+        boolean globalExtra = getIntent().getBooleanExtra(PreferenceKeys.GLOBAL_NEWS, false); // 是否有緊急通知
         if (msgExtra != -1) {
-            Log.d(DEBUG_FLAG, "msgExtra : " + msgExtra);
+            Log.d(DEBUG_FLAG, "特定推播訊息 : " + msgExtra);
             selector.fragmentToMessager(msgExtra);
         } else if (globalExtra) {
-            Log.d(DEBUG_FLAG, "GLOBAL_NEWS");
+            Log.d(DEBUG_FLAG, "緊急通知");
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().addToBackStack(null)
                     .add(R.id.content_frame, NewsFragment.getInstance(-1)).commit();

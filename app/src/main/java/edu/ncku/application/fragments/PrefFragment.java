@@ -47,7 +47,7 @@ public class PrefFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         context = this.getActivity().getWindow().getContext();
 
-        this.addPreferencesFromResource((edu.ncku.application.util.Preference.isLoggin(context)) ? R.xml.preferences_login : R.xml.preferences_logout);
+        this.addPreferencesFromResource(R.xml.preferences_login);
 
         final SwitchPreference switchPref = (SwitchPreference) getPreferenceManager().findPreference(PreferenceKeys.SUBSCRIPTION);
 

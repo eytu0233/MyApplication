@@ -3,12 +3,15 @@ package edu.ncku.application.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import edu.ncku.application.R;
+import edu.ncku.application.util.EnvChecker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,7 +22,7 @@ import edu.ncku.application.R;
 public class PersonalBorrowFragment extends Fragment {
     private static final String DEBUG_FLAG = IRSearchFragment.class.getName();
 
-    private static final String URL = "http://m.lib.ncku.edu.tw/patroninfo/login_my_account.php";
+    private static final String URL = "http://m.lib.ncku.edu.tw/patroninfo/login_my_account%s.php";
 
     private WebView webView;
 
@@ -62,9 +65,17 @@ public class PersonalBorrowFragment extends Fragment {
             }
 
         });
-        webView.loadUrl(URL);
+        webView.loadUrl(String.format(URL, (EnvChecker.isLunarSetting())?"":"_eng"));
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (menu != null) {
+            menu.findItem(R.id.settingMenuItem).setVisible(false);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 }

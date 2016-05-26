@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 import edu.ncku.application.model.ContactInfo;
+import edu.ncku.application.util.EnvChecker;
 
 /**
  * 此AsyncTask類別將會在聯絡資訊頁面開啟時被執行，進行頁面資料讀取的工作
@@ -33,7 +34,7 @@ public class ContactInfoReaderTask extends AsyncTask<Void, Void, ArrayList<Conta
 
         try {
             inputFile = new File(mContext
-                    .getFilesDir(), FILE_NAME);
+                    .getFilesDir(), FILE_NAME + ((EnvChecker.isLunarSetting())?"_cht":"_eng"));
 
             if (!inputFile.exists()) {
                 Log.d(DEBUG_FLAG, "file is not exist.");

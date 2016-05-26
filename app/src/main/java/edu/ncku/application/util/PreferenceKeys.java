@@ -14,4 +14,5 @@ public class PreferenceKeys {
     public static final String MSGS_EXTRA = "MSGS_EXTRA";
     public static final String DEVICE_TOKEN = "edu.ncku.application.key.deviceToken";
     public static final String GLOBAL_NEWS = "GLOBAL_NEWS";
+    public static final String VISITOR = "VISITOR";
 }

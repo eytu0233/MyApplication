@@ -69,5 +69,4 @@ public abstract class JsonReceiveTask implements Runnable{
         oos.flush();
         oos.close();
     }
-
 }

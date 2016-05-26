@@ -68,7 +68,7 @@ public class ListMsgsAdapter extends BaseAdapter {
                 for (int i = original; i < allMsgs.size(); i++) {
                     showMsgs.addLast(allMsgs.get(i));
                 }
-                this.notifyDataSetChanged();	// 通知更新UI
+                this.notifyDataSetChanged();    // 通知更新UI
                 Log.v(DEBUG_TAG, "return "
                         + (this.getCount() - original));
 
@@ -92,20 +92,20 @@ public class ListMsgsAdapter extends BaseAdapter {
         try {
             LinkedList<Integer> removeList = new LinkedList<Integer>();
 
-            for(int i = 0; i < checkedItemPositions.size(); i++){
-                if(checkedItemPositions.get(checkedItemPositions.keyAt(i))){
+            for (int i = 0; i < checkedItemPositions.size(); i++) {
+                if (checkedItemPositions.get(checkedItemPositions.keyAt(i))) {
                     int key = checkedItemPositions.keyAt(i);
-                    Log.d(DEBUG_TAG,  "remove " + key);
+                    Log.d(DEBUG_TAG, "remove " + key);
                     removeList.add(key);
                 }
             }
 
-            Log.d(DEBUG_TAG,  "start MsgRemoveTask");
+            Log.d(DEBUG_TAG, "start MsgRemoveTask");
 
             MsgRemoveTask msgsRemoveTask = new MsgRemoveTask(activity);
             msgsRemoveTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, removeList);
             msgsRemoveTask.get();
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -131,34 +131,32 @@ public class ListMsgsAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        if(convertView == null) {
-            ViewHolder holder;
-            LayoutInflater mInflater = (LayoutInflater) activity.getApplicationContext()
-                    .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        ViewHolder holder;
+        LayoutInflater mInflater = (LayoutInflater) activity.getApplicationContext()
+                .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
-            try {
-                convertView = mInflater
-                        .inflate(R.layout.fragment_msgs_list_item, null);
+        try {
+            convertView = mInflater
+                    .inflate(R.layout.fragment_msgs_list_item, null);
 
-                holder = new ViewHolder();
-                holder.txtTitle = (TextView) convertView
-                        .findViewById(R.id.txtTitle);
-                holder.txtDate = (TextView) convertView.findViewById(R.id.txtDate);
-                holder.itemStateIcon = (ImageView) convertView.findViewById(R.id.itemStateIcon);
+            holder = new ViewHolder();
+            holder.txtTitle = (TextView) convertView
+                    .findViewById(R.id.txtTitle);
+            holder.txtDate = (TextView) convertView.findViewById(R.id.txtDate);
+            holder.itemStateIcon = (ImageView) convertView.findViewById(R.id.itemStateIcon);
 
-                convertView.setTag(holder);
+            convertView.setTag(holder);
 
-                Message items = (Message) getItem(position);
-                SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-                int timeStamp = items.getPubTime();
-                String title = items.getTitle(), date = sdFormat.format(new Date((long) timeStamp * 1000));
+            Message items = (Message) getItem(position);
+            SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            int timeStamp = items.getPubTime();
+            String title = items.getTitle(), date = sdFormat.format(new Date((long) timeStamp * 1000));
 
-                holder.txtTitle.setText((title != null) ? title : "");
-                holder.txtDate.setText((date != null) ? date : "");
+            holder.txtTitle.setText((title != null) ? title : "");
+            holder.txtDate.setText((date != null) ? date : "");
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return convertView;

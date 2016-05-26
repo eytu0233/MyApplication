@@ -51,7 +51,7 @@ public class CollapseHandler implements Thread.UncaughtExceptionHandler {
             final Writer result = new StringWriter();
             final PrintWriter printWriter = new PrintWriter(result);
             ex.printStackTrace(printWriter);
-            String errorReport = String.format("[%s]AndroidVersion=%s\nIMEI=%s\n%s", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()), getIMEI(), VERSION.RELEASE, result.toString());
+            String errorReport = String.format("[%s]AndroidVersion=%s\nIMEI=%s\n%s", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()), VERSION.RELEASE, getIMEI(), result.toString());
 
             Log.e(LOGTAG, errorReport);
 

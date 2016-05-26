@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.ncku.application.R;
-import edu.ncku.application.util.EnvChecker;
 
 /**
  * 此類別用來接收開館時間的JSON資料，一樣儲存進檔案
@@ -19,14 +18,12 @@ import edu.ncku.application.util.EnvChecker;
 public class LibOpenTimeReceiveTask extends JsonReceiveTask {
 
     private static final String DEBUG_FLAG = LibOpenTimeReceiveTask.class.getName();
-    private static final String JSON_MAIN_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webMainLib&lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng");
-    private static final String JSON_STUDY_HALL_URL = "http://140.116.207.24/libweb/index.php?item=webStudyHall&lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng");
-    private static final String JSON_MED_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webMedLib&lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng");
-    private static final String JSON_DEPT_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webDeptLib&lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng");
+    private static final String JSON_MAIN_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webMainLib&lan=";
+    private static final String JSON_STUDY_HALL_URL = "http://140.116.207.24/libweb/index.php?item=webStudyHall&lan=";
+    private static final String JSON_LEARN_COMM_URL = "http://140.116.207.24/libweb/index.php?item=webLearnComm&lan=";
+    private static final String JSON_MED_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webMedLib&lan=";
+    private static final String JSON_DEPT_LIB_URL = "http://140.116.207.24/libweb/index.php?item=webDeptLib&lan=";
     private static final String FILE_NAME = "NCKU_Lib_Open_Time";
-
-
-    Map<String, ArrayList<String>> serviceMap = new HashMap<String, ArrayList<String>>();
 
     public LibOpenTimeReceiveTask(Context mContext) {
         super(mContext);
@@ -36,25 +33,53 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask {
     public void run() {
 
         try {
-            String[] title = mContext.getResources().getStringArray(
-                    R.array.lib_open_time_unit_list);
-            serviceMap.put(title[0], jsonParsingServicesMainLib(new JSONObject(jsonRecieve(JSON_MAIN_LIB_URL))));
-            Log.d(DEBUG_FLAG, title[0] + " Json");
-            serviceMap.put(title[1],
-                    jsonParsingServicesStudyHall(new JSONObject(jsonRecieve(JSON_STUDY_HALL_URL))));
-            Log.d(DEBUG_FLAG, title[1] + " Json");
-            serviceMap.put(title[2],
-                    jsonParsingServicesMedLib(new JSONObject(jsonRecieve(JSON_MED_LIB_URL))));
-            Log.d(DEBUG_FLAG, title[2] + " Json");
-            serviceMap.put(title[3],
-                    jsonParsingServicesDeptLib(new JSONArray(jsonRecieve(JSON_DEPT_LIB_URL))));
-            Log.d(DEBUG_FLAG, title[3] + " Json");
+            String[] title_cht = {
+                    "總圖書館",
+                    "自修閱覽室（K館）",
+                    "學習開放空間(敬三)",
+                    "醫學院圖書分館",
+                    "各系所及院圖"
+            };
 
-            saveFile(serviceMap, FILE_NAME);
+            String[] title_eng = {
+                    "Main Library",
+                    "Study Hall",
+                    "Learning Commons(Ching-Yen campus)",
+                    "Medical Library",
+                    "Department Libraries"
+            };
+
+            saveFile(decodeAllJson(title_cht, "cht"), FILE_NAME + "_cht");
+            saveFile(decodeAllJson(title_eng, "eng"), FILE_NAME + "_eng");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private Map<String, ArrayList<String>> decodeAllJson(String[] titles, String locale) throws Exception {
+        Map<String, ArrayList<String>> serviceMap = new HashMap<String, ArrayList<String>>();
+
+        serviceMap.put(titles[0], jsonParsingMainLib(new JSONObject(jsonRecieve(JSON_MAIN_LIB_URL + locale))));
+        Log.d(DEBUG_FLAG, titles[0] + " Json");
+
+        serviceMap.put(titles[1],
+                jsonParsingStudyHall(new JSONObject(jsonRecieve(JSON_STUDY_HALL_URL + locale))));
+        Log.d(DEBUG_FLAG, titles[1] + " Json");
+
+        serviceMap.put(titles[2],
+                jsonParsingLearnComm(new JSONObject(jsonRecieve(JSON_LEARN_COMM_URL + locale))));
+        Log.d(DEBUG_FLAG, titles[2] + " Json");
+
+        serviceMap.put(titles[3],
+                jsonParsingMedLib(new JSONObject(jsonRecieve(JSON_MED_LIB_URL + locale))));
+        Log.d(DEBUG_FLAG, titles[3] + " Json");
+
+        serviceMap.put(titles[4],
+                jsonParsingDeptLib(new JSONArray(jsonRecieve(JSON_DEPT_LIB_URL + locale))));
+        Log.d(DEBUG_FLAG, titles[4] + " Json");
+
+        return serviceMap;
     }
 
     /**
@@ -64,10 +89,10 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask {
         * @return 排版過的字串List
         * @throws Exception
         */
-    private ArrayList<String> jsonParsingServicesDeptLib(JSONArray jsonArray) throws Exception {
+    private ArrayList<String> jsonParsingDeptLib(JSONArray jsonArray) throws Exception {
 
-        final String SEMESTER = "學期中", VOCATION = "寒暑假";
-        String semester = SEMESTER + "\n\n", vacation = VOCATION + "\n\n";
+        final String SEMESTER = mContext.getString(R.string.termTime), VACATION = mContext.getString(R.string.vacations);
+        String semester = SEMESTER + "\n\n", vacation = VACATION + "\n\n";
 
         ArrayList<String> services = new ArrayList<String>();
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -82,7 +107,7 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask {
                     JSONObject serviceList = serviceLists.getJSONObject(j);
                     semester += serviceList.getString("week") + " " + serviceList.getString("hours") + "\n\n";
                 }
-            }else if(VOCATION.equals(service.getString("service"))){
+            }else if(VACATION.equals(service.getString("service"))){
                 vacation += service.getString("dept") + "\n";
                 if(!service.getString("note").isEmpty()){
                     vacation += service.getString("note") + "\n";
@@ -108,7 +133,7 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask {
      * @return 排版過的字串List
      * @throws Exception
      */
-    private ArrayList<String> jsonParsingServicesMainLib(JSONObject jsonObject) throws Exception {
+    private ArrayList<String> jsonParsingMainLib(JSONObject jsonObject) throws Exception {
 
         ArrayList<String> services = new ArrayList<String>();
 
@@ -129,6 +154,20 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask {
 
     }
 
+    private ArrayList<String> jsonParsingLearnComm(JSONObject jsonObject) throws Exception {
+        String notes = "";
+        ArrayList<String> services = new ArrayList<String>();
+
+        JSONArray serviceLists = jsonObject.getJSONArray("ServiceList");
+        for (int i = 0; i < serviceLists.length(); i++) {
+            JSONObject serviceList = serviceLists.getJSONObject(i);
+            notes += serviceList.getString("note") + "\n\n";
+        }
+        services.add(notes);
+
+        return services;
+    }
+
     /**
      * 取得閱覽室開放時間資料
      *
@@ -136,7 +175,7 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask {
      * @return 排版過的字串List
      * @throws Exception
      */
-    private ArrayList<String> jsonParsingServicesStudyHall(JSONObject jsonObject) throws Exception {
+    private ArrayList<String> jsonParsingStudyHall(JSONObject jsonObject) throws Exception {
 
         String notes = "";
         ArrayList<String> services = new ArrayList<String>();
@@ -159,7 +198,7 @@ public class LibOpenTimeReceiveTask extends JsonReceiveTask {
      * @return 排版過的字串List
      * @throws Exception
      */
-    private ArrayList<String> jsonParsingServicesMedLib(JSONObject jsonObject) throws Exception {
+    private ArrayList<String> jsonParsingMedLib(JSONObject jsonObject) throws Exception {
         String serviceTime = "";
         ArrayList<String> services = new ArrayList<String>();
 

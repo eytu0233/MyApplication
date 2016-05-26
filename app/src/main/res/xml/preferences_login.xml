@@ -7,8 +7,8 @@
         android:title="@string/account" >
         <SwitchPreference
             android:key="@string/subscription"
-            android:title="@string/subcriptionTitle"
-            android:summary="@string/subcriptionTip" />
+            android:title="@string/subscription_title"
+            android:summary="@string/subscription_tip" />
     </PreferenceCategory>
 
 </PreferenceScreen>

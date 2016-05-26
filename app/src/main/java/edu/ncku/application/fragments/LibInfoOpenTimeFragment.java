@@ -128,6 +128,7 @@ public class LibInfoOpenTimeFragment extends Fragment {
         mListDataHeader = new ArrayList<String>();
         ArrayList<String> main_lib = new ArrayList<String>();
         ArrayList<String> self_studying = new ArrayList<String>();
+        ArrayList<String> learn_comm = new ArrayList<String>();
         ArrayList<String> medical_branch = new ArrayList<String>();
         ArrayList<String> departments = new ArrayList<String>();
 
@@ -151,13 +152,18 @@ public class LibInfoOpenTimeFragment extends Fragment {
             main_lib.add(getString(R.string.open_time_main_lib));
             self_studying
                     .add(getString(R.string.open_time_self_studying_reading_room));
+            learn_comm.add(getString(R.string.open_time_learn_comm));
             medical_branch.add(getString(R.string.open_time_medical_branch_lib));
+
             departments.add(getString(R.string.open_time_departments));
+            departments.add(getString(R.string.open_time_departments_vacation));
+
             mListDataChild = new HashMap<String, List<String>>();
             mListDataChild.put(mListDataHeader.get(0), main_lib);
             mListDataChild.put(mListDataHeader.get(1), self_studying);
-            mListDataChild.put(mListDataHeader.get(2), medical_branch);
-            mListDataChild.put(mListDataHeader.get(3), departments);
+            mListDataChild.put(mListDataHeader.get(2), learn_comm);
+            mListDataChild.put(mListDataHeader.get(3), medical_branch);
+            mListDataChild.put(mListDataHeader.get(4), departments);
         }
 
     }

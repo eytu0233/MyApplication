@@ -1,14 +1,18 @@
 package edu.ncku.application.adapter;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -67,19 +71,28 @@ public class DrawerListAdapter extends BaseAdapter {
                 holder.drawerString.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        Log.d(DEBUG_FLAG, "Long click...");
                         new AlertDialog.Builder(activity)
                                 .setMessage(Preference.getDeviceID(activity))
                                 .setTitle(Preference.getUsername(activity) + "'s DeviceID")
+                                .setPositiveButton("Copy",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog,
+                                                                int which) {
+                                                ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+                                                clipboard.setPrimaryClip(ClipData.newPlainText("Copied did", Preference.getDeviceID(activity)));
+                                                Toast.makeText(activity, R.string.copy_success, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        })
                                 .create().show();
                         return true;
                     }
                 });
-
-                holder.drawerString.setTextColor(Color.argb(127, 3, 0, 15));
             } else {
-                holder.drawerString.setTextSize(holder.drawerString.getTextSize() / 4);
+                holder.drawerString.setTextSize(holder.drawerString.getTextSize() / 3);
             }
+            holder.drawerString.setTextColor(Color.WHITE);
             holder.drawerString.setText(((DrawerListItem) getItem(position)).getItemString());
 
             convertView.setTag(holder);

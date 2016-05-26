@@ -23,7 +23,7 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
             .getName();
 
     private NetworkInfo currentNetworkInfo;
-    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3);
+    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);
 
     public NetworkCheckReceiver() {
     }
@@ -40,12 +40,11 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
             /* 當連上網路時，在背景執行資料更新的工作 */
             if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
 
-                Log.d(DEBUG_FLAG, "連上網路，自動更新資料");
-
                 scheduledExecutorService.submit(new LibOpenTimeReceiveTask(context));
                 scheduledExecutorService.submit(new RecentActivityReceiveTask(context));
                 scheduledExecutorService.submit(new FloorInfoReceiveTask(context));
                 scheduledExecutorService.submit(new ContactInfoReceiveTask(context));
+                scheduledExecutorService.submit(new VisitorRecieveTask(context, true));
                 String deviceID = PreferenceManager.getDefaultSharedPreferences(context).getString(PreferenceKeys.DEVICE_TOKEN, "");
                 if(deviceID == null || deviceID.equals("")){
                     Log.d(DEBUG_FLAG, "背景執行GCM註冊");

@@ -4,13 +4,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 
 import edu.ncku.application.io.network.LoginTask;
 import edu.ncku.application.util.DrawerListSelector;
-import edu.ncku.application.util.PreferenceKeys;
+import edu.ncku.application.util.Preference;
 
 public class LoginDialog extends DialogFragment {
 
@@ -58,9 +56,10 @@ public class LoginDialog extends DialogFragment {
         // TODO Auto-generated method stub
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View v = inflater.inflate(R.layout.fragment_login, null);
         View v = inflater.inflate(R.layout.fragment_login, null);
         mBtnLogin = (Button) v.findViewById(R.id.btnLogin);
-        mBtnCancel = (Button) v.findViewById(R.id.btnCancel);
+//        mBtnCancel = (Button) v.findViewById(R.id.btnCancel);
         mEditUsername = (EditText) v.findViewById(R.id.editTextID);
         mEditPassword = (EditText) v.findViewById(R.id.editTextPassword);
         mTxtTip = (TextView) v.findViewById(R.id.txtTip);
@@ -116,32 +115,32 @@ public class LoginDialog extends DialogFragment {
 
 				/* 實作LoginTask中的ILoginResult介面 */
                 final Context context = getActivity().getApplicationContext();
-                final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
                 LoginTask loginTask = new LoginTask(context);
                 loginTask.executeOnExecutor(
                         AsyncTask.THREAD_POOL_EXECUTOR, username, password);
-                String loginName = "";
+                String name = "";
                 try {
-                    loginName = loginTask.get();
+                    name = loginTask.get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 } finally {
-                    if (loginName == null) loginName = "";
+                    if (name == null) name = "";
                 }
 
                 setLogining(false);
 
-                if (!loginName.isEmpty()) {
-                    drawerListSelector.loginState(loginName); // 透過drawerListSelector來改變drawer狀態
+                if (!name.isEmpty()) {
+                    drawerListSelector.loginState(name); // 透過drawerListSelector來改變drawer狀態
                     LoginDialog.this.dismiss();
 
                     /* 存進設定值 */
-                    sharedPreferences.edit().putString(PreferenceKeys.NAME, loginName).apply();
-                    sharedPreferences.edit().putString(PreferenceKeys.USERNAME, username).apply();
-                    sharedPreferences.edit().putString(PreferenceKeys.PASSWORD, password).apply();
+                    Preference.setName(context, name);
+                    Preference.setUsername(context, username);
+                    Preference.setPassword(context, password);
+                    Preference.setSubscription(context, false);
 
                     Toast.makeText(context, R.string.login_success, Toast.LENGTH_SHORT).show();
                 } else {
@@ -151,7 +150,7 @@ public class LoginDialog extends DialogFragment {
 
         });
 
-        mBtnCancel.setOnClickListener(new OnClickListener() {
+        /*mBtnCancel.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -160,7 +159,7 @@ public class LoginDialog extends DialogFragment {
                 dismiss();
             }
 
-        });
+        });*/
     }
 
     /**

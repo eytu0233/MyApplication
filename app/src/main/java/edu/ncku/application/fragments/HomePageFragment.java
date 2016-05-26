@@ -3,7 +3,10 @@ package edu.ncku.application.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -12,19 +15,27 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import edu.ncku.application.R;
+import edu.ncku.application.io.network.VisitorRecieveTask;
 import edu.ncku.application.util.ITitleChangeListener;
+import edu.ncku.application.util.Preference;
 
 
 /**
@@ -50,6 +61,8 @@ public class HomePageFragment extends Fragment {
     private ImageView mActivityImageView;
     private ImageView mScannerImageView;
     private EditText searchBarEditText;
+    private LinearLayout footer;
+    private TextView visitorText;
 
     private Context context;
     private Activity activity;
@@ -77,6 +90,9 @@ public class HomePageFragment extends Fragment {
 
         context = this.getActivity().getApplicationContext();
         activity = this.getActivity();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.intent.action.VISITORS_RECEIVER");
+        activity.registerReceiver(mVisitorReceiver, filter);
     }
 
     @Override
@@ -160,9 +176,9 @@ public class HomePageFragment extends Fragment {
         searchBarEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(!checkNetworkToast()) return true;
+                if (!checkNetworkToast()) return true;
 
-                switch(actionId){
+                switch (actionId) {
                     case EditorInfo.IME_NULL:
                     case EditorInfo.IME_ACTION_SEND:
                     case EditorInfo.IME_ACTION_DONE:
@@ -170,12 +186,31 @@ public class HomePageFragment extends Fragment {
                         v.setText("");
                         View view = activity.getCurrentFocus();
                         if (view != null) {
-                            InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         }
                         break;
                 }
                 return true;
+            }
+        });
+        visitorText = (TextView) rootView.findViewById(R.id.visitorsText);
+        visitorText.setText(Preference.getVisitor(context));
+
+        footer = (LinearLayout) rootView.findViewById(R.id.footer);
+        footer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                (new Handler()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        visitorText.setText(R.string.wait_update);
+
+                        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+                        executor.schedule(new VisitorRecieveTask(context, false), 1, TimeUnit.SECONDS);
+                        executor.shutdown();
+                    }
+                });
             }
         });
 
@@ -185,11 +220,21 @@ public class HomePageFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
-        /* 只有在Home頁面時，才顯示設定按鈕 */
-        if (menu != null) {
-            menu.findItem(R.id.settingMenuItem).setVisible(true);
+        /* 只有在Home頁面且登入時時，才顯示設定按鈕 */
+        MenuItem settingItem = menu.findItem(R.id.settingMenuItem);
+
+        /* 只有在Home頁面且登入時時，才顯示設定按鈕 */
+        if (settingItem != null) {
+            settingItem.setVisible(Preference.isLoggin(context));
         }
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onDestroy() {
+        Preference.setVisitor(context, "");
+        activity.unregisterReceiver(mVisitorReceiver);
+        super.onDestroy();
     }
 
     /**
@@ -246,4 +291,22 @@ public class HomePageFragment extends Fragment {
         return true;
     }
 
+    private BroadcastReceiver mVisitorReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context mContext, Intent intent) {
+
+            Bundle bundle = intent.getExtras();
+            String visitors = "";
+            if(bundle != null){
+                visitors = bundle.getString("visitors", "");
+            }
+
+            if(visitors != null && !visitors.isEmpty()){
+                visitorText.setText(visitors);
+            }else{
+                visitorText.setText(R.string.update_fail);
+                Toast.makeText(context, R.string.network_disconnected, Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 }

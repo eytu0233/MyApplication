@@ -9,6 +9,8 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.Map;
 
+import edu.ncku.application.util.EnvChecker;
+
 /**
  * 此AsyncTask類別將會在近期活動頁面開啟時被執行，進行頁面資料讀取的工作
  */
@@ -31,7 +33,7 @@ public class RecentActivityReaderTask extends AsyncTask<Void, Void, Map<String, 
 
         try {
             inputFile = new File(mContext
-                    .getFilesDir(), FILE_NAME);
+                    .getFilesDir(), FILE_NAME + ((EnvChecker.isLunarSetting())?"_cht":"_eng"));
 
             if (!inputFile.exists()) {
                 Log.d(DEBUG_FLAG, "file is not exist.");

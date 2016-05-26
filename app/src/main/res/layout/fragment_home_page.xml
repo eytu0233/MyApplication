@@ -65,7 +65,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal|end"
+        android:gravity="start|center_horizontal"
         android:orientation="vertical"
         android:layout_weight="1"
         android:paddingTop="20dp">
@@ -129,7 +129,33 @@
                 android:background="@null"
                 android:src="@drawable/isbn_selector" />
 
+
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:paddingTop="20dp"
+            android:id="@+id/footer">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/visitors"
+                android:id="@+id/visitorTip"
+                android:layout_marginRight="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/visitorsText" />
+
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

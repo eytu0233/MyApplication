@@ -3,6 +3,8 @@ package edu.ncku.application.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -23,8 +25,8 @@ public class IRSearchFragment extends Fragment {
 
     public static final String KEYWORD = "keyword";
 
-    private static final String SEARCH_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordSearch.php";
-    private static final String BIB_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordbibSearch.php?lan=%s&Keyword=%s";
+    private static final String SEARCH_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordSearch%s.php";
+    private static final String BIB_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordbibSearch.php?Keyword=%s";
 
     private String url;
 
@@ -55,10 +57,9 @@ public class IRSearchFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-//            url = BIB_URL + getArguments().getString(KEYWORD);
-            url = String.format(BIB_URL, (EnvChecker.isLunarSetting())?"cht":"eng", getArguments().getString(KEYWORD));
+            url = String.format(BIB_URL, getArguments().getString(KEYWORD));
         } else {
-            url = SEARCH_URL;
+            url = String.format(SEARCH_URL, (EnvChecker.isLunarSetting())?"":"_eng");
         }
     }
 
@@ -84,5 +85,13 @@ public class IRSearchFragment extends Fragment {
         webView.loadUrl(url);
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (menu != null) {
+            menu.findItem(R.id.settingMenuItem).setVisible(false);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }

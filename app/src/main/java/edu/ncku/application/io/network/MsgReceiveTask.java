@@ -4,10 +4,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -23,6 +21,7 @@ import java.util.LinkedList;
 import edu.ncku.application.MainActivity;
 import edu.ncku.application.R;
 import edu.ncku.application.model.Message;
+import edu.ncku.application.util.Preference;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
@@ -34,7 +33,7 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
     private static final String DEBUG_FLAG = MsgReceiveTask.class.getName();
     private static final Object LOCKER = new Object();
     private static final String SUB_FILE_NAME = ".messages";
-    private static final String JSON_URL = "http://140.116.207.24/push/msg_json.php?msgNo=";
+    private static final String JSON_URL = "http://140.116.207.24/push/msg_json.php?msgNo=%s&os=A&recver=%s&did=%s";
 
     private String username;
     private String json_url;
@@ -43,7 +42,7 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
     public MsgReceiveTask(Context mContext, String username, String msgNo, int publishTimestamp) {
         super(mContext);
         this.username = username;
-        this.json_url = JSON_URL + msgNo;
+        this.json_url = String.format(JSON_URL, msgNo, username, Preference.getDeviceID(mContext));
         this.publishTimestamp = publishTimestamp;
     }
 
@@ -71,7 +70,7 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
      */
     private void sendNotification(String username, String message, int position) {
 
-        if (!isSub(username)) return; // 沒有訂閱不發通知
+        if (!Preference.isSub(mContext, username)) return; // 沒有訂閱不發通知
 
         Intent intent = new Intent(mContext, MainActivity.class);
         intent.putExtra(PreferenceKeys.MSGS_EXTRA, position);
@@ -93,28 +92,6 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(position /* ID of notification */, notificationBuilder.build());
-    }
-
-    /**
-     * 回傳該使用者是否有訂閱
-     *
-     * @param notifyUsername 使用者
-     * @return
-     */
-    private boolean isSub(String notifyUsername) {
-
-        final SharedPreferences SP = PreferenceManager
-                .getDefaultSharedPreferences(mContext);
-        String username = SP.getString(PreferenceKeys.USERNAME, ""),
-                password = SP.getString(PreferenceKeys.PASSWORD, "");
-        boolean sub = SP.getBoolean(PreferenceKeys.SUBSCRIPTION, true);
-
-        if (username.isEmpty() || password.isEmpty() || !username.equals(notifyUsername)) {
-            return false;
-        } else {
-            return sub;
-        }
-
     }
 
     /**

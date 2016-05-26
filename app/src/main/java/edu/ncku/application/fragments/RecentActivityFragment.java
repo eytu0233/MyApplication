@@ -4,11 +4,15 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import edu.ncku.application.R;
 import edu.ncku.application.io.file.RecentActivityReaderTask;
-import edu.ncku.application.io.network.RecentActivityRefreshTask;
+import edu.ncku.application.io.network.RecentActivityReceiveTask;
 
 /**
  * 顯示最近活動頁面(背景為透明)
@@ -58,18 +62,23 @@ public class RecentActivityFragment extends Fragment {
         final Context context = getActivity().getApplicationContext();
 
         try {
-            /* 先進行網路更新動作 */
-            RecentActivityRefreshTask refreshTask = new RecentActivityRefreshTask();
-            refreshTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, context);
-            imgSuperLinks = refreshTask.get(3, TimeUnit.SECONDS);
+            /* 有網路時，進行更新動作 */
+            ConnectivityManager connectivityManager = ((ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE));
+            NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
-            /* 假設從網路更新失敗，則嘗試從檔案之中讀取 */
-            if (imgSuperLinks == null || imgSuperLinks.isEmpty()){
-                RecentActivityReaderTask urlReceiveTask = new RecentActivityReaderTask(context);
-                urlReceiveTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-                imgSuperLinks = urlReceiveTask.get(3, TimeUnit.SECONDS);
+            if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
+                Thread refresh = new Thread(new RecentActivityReceiveTask(context));
+                refresh.start();
+                refresh.join(3000);
+                Log.d(DEBUG_FLAG, "近期活動網路更新");
             }
+
+            /* 從檔案當中讀取近期活動資料 */
+            RecentActivityReaderTask urlReceiveTask = new RecentActivityReaderTask(context);
+            urlReceiveTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+            imgSuperLinks = urlReceiveTask.get(3, TimeUnit.SECONDS);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,6 +125,14 @@ public class RecentActivityFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (menu != null) {
+            menu.findItem(R.id.settingMenuItem).setVisible(false);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     private static class ImageAdapter extends BaseAdapter {

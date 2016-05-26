@@ -83,6 +83,7 @@ public class MessagerFragment extends Fragment{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(DEBUG_FLAG, "position : " + position);
                 changeToMsgViewer(position);
             }
         }); // 註冊點擊事件
@@ -179,6 +180,15 @@ public class MessagerFragment extends Fragment{
                 }
             }
         }, 500);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem settingItem = menu.findItem(R.id.settingMenuItem);
+        if (settingItem != null) {
+            settingItem.setVisible(false);
+        }
+        super.onPrepareOptionsMenu(menu);
     }
 
     private void setListAdapter(final ListAdapter adapter) {

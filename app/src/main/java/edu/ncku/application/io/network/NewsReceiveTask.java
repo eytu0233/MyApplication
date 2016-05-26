@@ -22,7 +22,6 @@ import java.util.LinkedList;
 
 import edu.ncku.application.R;
 import edu.ncku.application.model.News;
-import edu.ncku.application.util.EnvChecker;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
@@ -32,7 +31,7 @@ public class NewsReceiveTask extends JsonReceiveTask {
 
     private static final String DEBUG_FLAG = NewsReceiveTask.class.getName();
     private static final String FILE_NAME = "News";
-    private static final String NEWS_JSON_URL = "http://140.116.207.24/libweb/index.php?item=webNews&lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng");
+    private static final String NEWS_JSON_URL = "http://140.116.207.24/libweb/index.php?item=webNews&lan=";
     private static final Object LOCKER = new Object();
 
     private static NetworkInfo currentNetworkInfo;
@@ -60,10 +59,11 @@ public class NewsReceiveTask extends JsonReceiveTask {
         // 判斷網路是否連線
         if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
 
-            receiveNewsFromNetwork();
+            receiveNewsFromNetwork("cht");
+            receiveNewsFromNetwork("eng");
 
         } else {
-			/* 廣播給NewsFragment告知網路目前無法連線 */
+            /* 廣播給NewsFragment告知網路目前無法連線 */
             if (isOnce) {
                 mIntent.putExtra("flag", mContext.getString(R.string.messenger_network_disconnected));
                 mContext.sendBroadcast(mIntent);
@@ -77,11 +77,11 @@ public class NewsReceiveTask extends JsonReceiveTask {
      * @param newsList 來自網路的最新消息資料
      * @return 新增的最新消息數量
      */
-    private int rewriteNewsFile(LinkedList<News> newsList) {
+    private int rewriteNewsFile(LinkedList<News> newsList, String locale) {
 
 		/* Get internal storage directory */
         File dir = mContext.getFilesDir();
-        File newsFile = new File(dir, FILE_NAME);
+        File newsFile = new File(dir, FILE_NAME + "_" + locale);
 
         ObjectInputStream ois;
         ObjectOutputStream oos;
@@ -131,16 +131,15 @@ public class NewsReceiveTask extends JsonReceiveTask {
     /**
      * 從網路接收最新消息
      */
-    private void receiveNewsFromNetwork() {
+    private void receiveNewsFromNetwork(String locale) {
         LinkedList<News> news;
 
         int numNews = 0;
 
         try {
-
             Resources resources = mContext.getResources();
 
-            JSONObject jsonObject = new JSONObject(jsonRecieve(NEWS_JSON_URL));
+            JSONObject jsonObject = new JSONObject(jsonRecieve(NEWS_JSON_URL + locale));
             String noDataMsg = jsonObject.getString("noDataMsg");
             Log.d(DEBUG_FLAG, "noDataMsg : " + noDataMsg);
             if (!noDataMsg.isEmpty()) {
@@ -172,39 +171,21 @@ public class NewsReceiveTask extends JsonReceiveTask {
 
                 if (relatedLink != null && relatedLink.length() > 0) {
                     content += String.format("<br><tr><td class=\"newslink\"><img src=\"link.png\" height=\"20\" width=\"20\"><a href=\"%s target=\"_blank\" class=\"ui-link\">%s</a></td></tr><br>", relatedLink, resources.getString(R.string.link));
-//                    content += "<br><tr><td class=\"newslink\"><img src=\"link.png\" height=\"20\" width=\"20\"><a href="
-//                            + relatedLink
-//                            + " target=\"_blank\" class=\"ui-link\">" + resources.getString(R.string.link) + "</a></td></tr><br>";
                 }
 
                 if (att_file_1 != null && att_file_1.length() > 0) {
-                    content += String.format("<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href=\"%s\" target=\"_blank\" class=\"ui-link\">%s</a></td></tr><br>", att_file_1,  ((att_file_1_des.length() > 0) ? att_file_1_des
+                    content += String.format("<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href=\"%s\" target=\"_blank\" class=\"ui-link\">%s</a></td></tr><br>", att_file_1, ((att_file_1_des.length() > 0) ? att_file_1_des
                             : resources.getString(R.string.additional) + "1"));
-//                    content += "<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href="
-//                            + att_file_1
-//                            + " target=\"_blank\" class=\"ui-link\">"
-//                            + ((att_file_1_des.length() > 0) ? att_file_1_des
-//                            : resources.getString(R.string.additional) + "1") + "</a></td></tr><br>";
                 }
 
                 if (att_file_2 != null && att_file_2.length() > 0) {
-                    content += String.format("<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href=\"%s\" target=\"_blank\" class=\"ui-link\">%s</a></td></tr><br>", att_file_1,  ((att_file_1_des.length() > 0) ? att_file_1_des
+                    content += String.format("<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href=\"%s\" target=\"_blank\" class=\"ui-link\">%s</a></td></tr><br>", att_file_1, ((att_file_1_des.length() > 0) ? att_file_1_des
                             : resources.getString(R.string.additional) + "2"));
-//                    content += "<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href="
-//                            + att_file_2
-//                            + " target=\"_blank\" class=\"ui-link\">"
-//                            + ((att_file_2_des.length() > 0) ? att_file_2_des
-//                            : resources.getString(R.string.additional) + "2") + "</a></td></tr><br>";
                 }
 
                 if (att_file_3 != null && att_file_3.length() > 0) {
-                    content += String.format("<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href=\"%s\" target=\"_blank\" class=\"ui-link\">%s</a></td></tr><br>", att_file_1,  ((att_file_1_des.length() > 0) ? att_file_1_des
+                    content += String.format("<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href=\"%s\" target=\"_blank\" class=\"ui-link\">%s</a></td></tr><br>", att_file_1, ((att_file_1_des.length() > 0) ? att_file_1_des
                             : resources.getString(R.string.additional) + "3"));
-//                    content += "<br><tr><td class=\"newsfile\"><img src=\"file.png\" height=\"20\" width=\"20\"><a href="
-//                            + att_file_3
-//                            + " target=\"_blank\" class=\"ui-link\">"
-//                            + ((att_file_3_des.length() > 0) ? att_file_3_des
-//                            : resources.getString(R.string.additional) + "3") + "</a></td></tr><br>";
                 }
 
                 if (contact_unit != null && contact_unit.length() > 0) {
@@ -227,13 +208,13 @@ public class NewsReceiveTask extends JsonReceiveTask {
                 news.add(new News(title, publish_dept, publish_time, end_time, content));
             }
 
-            Log.d(DEBUG_FLAG, "get news from network : " + news.size());
+            Log.d(DEBUG_FLAG, "get " + locale + " news from network : " + news.size());
 
-            numNews = rewriteNewsFile(news);
+            numNews = rewriteNewsFile(news, locale);
 
         } catch (JSONException e) {
             Log.e(DEBUG_FLAG, "最新消息Json格式解析錯誤或沒有資料");
-            rewriteNewsFile(new LinkedList<News>());
+            rewriteNewsFile(new LinkedList<News>(), locale);
         }
 
 		/* 當使用者刷新最新消息頁面時，通知其更新頁面 */
