@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,7 @@ public class DrawerListAdapter extends BaseAdapter {
             }
             holder.drawerString.setTextColor(Color.WHITE);
             holder.drawerString.setText(((DrawerListItem) getItem(position)).getItemString());
+            holder.drawerString.setGravity(Gravity.CENTER_HORIZONTAL);
 
             convertView.setTag(holder);
 

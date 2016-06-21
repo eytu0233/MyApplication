@@ -1,11 +1,8 @@
 package edu.ncku.application.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +15,7 @@ import android.widget.Toast;
 
 import edu.ncku.application.R;
 import edu.ncku.application.adapter.ListViewInfoAdapter;
+import edu.ncku.application.util.EnvChecker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +28,7 @@ public class LibInfoListFragment extends Fragment {
     private String DEBUG_FLAG = LibInfoListFragment.class.getName();
 
     private ListView listview;
+    private Toast toast;
 
     /**
      * Use this factory method to create a new instance of
@@ -49,6 +48,7 @@ public class LibInfoListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true); // 使fragment驅動onCreateOptionsMenu
     }
 
     @Override
@@ -108,34 +108,25 @@ public class LibInfoListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (menu != null) {
-            menu.findItem(R.id.settingMenuItem).setVisible(false);
+            menu.findItem(R.id.settingMenuItem).setVisible(false); // 隱藏設定按鈕
         }
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     /**
      * 確認網路狀態
      *
-     * @param toast 當網路無法連結時，要顯示的Toast
+     * @param text 當網路無法連結時，要顯示的Toast
      * @return
      */
-    private boolean checkNetwork(String toast) {
-        ConnectivityManager connectivityManager = ((ConnectivityManager) getActivity().getApplicationContext()
-                .getSystemService(Context.CONNECTIVITY_SERVICE));
-        NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        if (currentNetworkInfo == null || !currentNetworkInfo.isConnected()) {
-            Toast.makeText(getActivity().getApplicationContext(), toast, Toast.LENGTH_LONG).show();
+    private boolean checkNetwork(String text) {
+        Context context = this.getActivity();
+        if (!EnvChecker.pingGoogleDNS()) {
+            if (toast == null)
+            {
+                toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
+            }
+            toast.show();
             return false;
         }
 

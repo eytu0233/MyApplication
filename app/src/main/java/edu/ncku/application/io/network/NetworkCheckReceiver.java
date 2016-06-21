@@ -3,8 +3,6 @@ package edu.ncku.application.io.network;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -12,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import edu.ncku.application.service.RegistrationIntentService;
+import edu.ncku.application.util.EnvChecker;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
@@ -22,8 +21,7 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
     private static final String DEBUG_FLAG = NetworkCheckReceiver.class
             .getName();
 
-    private NetworkInfo currentNetworkInfo;
-    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);
+    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(6);
 
     public NetworkCheckReceiver() {
     }
@@ -34,19 +32,18 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
         try {
             if (context == null) return;
 
-            ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-            currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
             /* 當連上網路時，在背景執行資料更新的工作 */
-            if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
+            if (EnvChecker.isNetworkConnected(context)) {
 
                 scheduledExecutorService.submit(new LibOpenTimeReceiveTask(context));
                 scheduledExecutorService.submit(new RecentActivityReceiveTask(context));
                 scheduledExecutorService.submit(new FloorInfoReceiveTask(context));
                 scheduledExecutorService.submit(new ContactInfoReceiveTask(context));
-                scheduledExecutorService.submit(new VisitorRecieveTask(context, true));
+                scheduledExecutorService.submit(new VisitorRecieveTask(context, true, false));
+                scheduledExecutorService.submit(new CollapseLogSendTask(context));
+
                 String deviceID = PreferenceManager.getDefaultSharedPreferences(context).getString(PreferenceKeys.DEVICE_TOKEN, "");
-                if(deviceID == null || deviceID.equals("")){
+                if(deviceID == null || deviceID.isEmpty()){
                     Log.d(DEBUG_FLAG, "背景執行GCM註冊");
                     RegistrationIntentService.startActionRegisterGCM(context);
                 }else{

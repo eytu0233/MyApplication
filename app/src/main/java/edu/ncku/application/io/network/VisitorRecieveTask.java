@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.concurrent.Executors;
@@ -22,10 +23,12 @@ public class VisitorRecieveTask implements Runnable {
 
     private Context mContext;
     private boolean isBackground;
+    private boolean isOnce;
     
-    public VisitorRecieveTask(Context context, boolean b) {
+    public VisitorRecieveTask(Context context, boolean isBackground, boolean isOnce) {
         this.mContext = context;
-        this.isBackground = b;
+        this.isBackground = isBackground;
+        this.isOnce = isOnce;
     }
 
     @Override
@@ -38,6 +41,11 @@ public class VisitorRecieveTask implements Runnable {
             if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
                 String visitors = HttpClient.sendPost(VISITORS_URL, "").trim();
 
+                /* 如果回傳結果包含非數字則清空 */
+                if(!TextUtils.isDigitsOnly(visitors)){
+                    visitors = "";
+                }
+
                 Intent mIntent = new Intent();
                 mIntent.setAction("android.intent.action.VISITORS_RECEIVER");
                 mIntent.putExtra("visitors", visitors);
@@ -46,9 +54,9 @@ public class VisitorRecieveTask implements Runnable {
                 mContext.sendBroadcast(mIntent);
 
                 /* 註冊一分鐘後的在館人數請求工作 */
-                if(isBackground) {
+                if(isBackground && !isOnce) {
                     ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-                    executor.schedule(new VisitorRecieveTask(mContext, true), 1, TimeUnit.MINUTES);
+                    executor.schedule(new VisitorRecieveTask(mContext, true, false), 1, TimeUnit.MINUTES);
                     executor.shutdown();
                     Log.v(DEBUG_FLAG, "註冊一分鐘後的在館人數請求工作");
                 }else{

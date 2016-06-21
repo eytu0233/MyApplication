@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -49,7 +48,7 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
         // 確認是否有控制指令
         if(control != null) {
             Log.d(DEBUG_FLAG, "Control: " + control);
-            if(control.equals(LOGOUT_CTRL)) clearLogin(); // 收到登出指令，清除登入資料
+            if(control.equals(LOGOUT_CTRL)) logout(); // 收到登出指令，清除登入資料
             return;
         }
 
@@ -84,13 +83,13 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(message)
                 .setAutoCancel(true)
-                .setSound(defaultSoundUri)
+//                .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
@@ -99,11 +98,11 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
         notificationManager.notify(message.hashCode() /* ID of notification */, notificationBuilder.build());
     }
 
-    private void clearLogin(){
+    private void logout(){
         final SharedPreferences SP = PreferenceManager
                 .getDefaultSharedPreferences(this.getApplicationContext());
-        SP.edit().remove(PreferenceKeys.USERNAME).apply();
-        SP.edit().remove(PreferenceKeys.PASSWORD).apply();
+        SP.edit().remove(PreferenceKeys.ACCOUNT).apply();
+        Log.d(DEBUG_FLAG, "logout");
     }
 
 }

@@ -1,7 +1,8 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.ncku.application.fragments.LibContactFragment">
+    tools:context="edu.ncku.application.fragments.LibContactFragment"
+    android:background="@android:color/white">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -9,4 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/lib_contact_webView" />
-</FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/messenger_network_disconnected"
+        android:id="@+id/networkHint"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

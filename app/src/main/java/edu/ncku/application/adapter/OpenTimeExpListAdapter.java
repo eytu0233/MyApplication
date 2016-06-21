@@ -115,6 +115,7 @@ public class OpenTimeExpListAdapter extends BaseExpandableListAdapter {
         gourpView.add(groupPosition, lblListHeader);
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
+//        lblListHeader.setPadding(10, 10, 10, 10);
 
         return convertView;
     }

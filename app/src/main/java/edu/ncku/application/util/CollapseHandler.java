@@ -2,8 +2,6 @@ package edu.ncku.application.util;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -51,7 +49,7 @@ public class CollapseHandler implements Thread.UncaughtExceptionHandler {
             final Writer result = new StringWriter();
             final PrintWriter printWriter = new PrintWriter(result);
             ex.printStackTrace(printWriter);
-            String errorReport = String.format("[%s]AndroidVersion=%s\nIMEI=%s\n%s", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()), VERSION.RELEASE, getIMEI(), result.toString());
+            String errorReport = String.format("[%s]\nAndroidVersion=%s\nIMEI=%s\nID=%s\n%s", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()), VERSION.RELEASE, getIMEI(), Preference.getUsername(mAppContext), result.toString());
 
             Log.e(LOGTAG, errorReport);
 
@@ -84,17 +82,16 @@ public class CollapseHandler implements Thread.UncaughtExceptionHandler {
         return currentProcessName;
     }
 
-    private boolean isNetworkConnected(){
-        ConnectivityManager connectivityManager = ((ConnectivityManager) mAppContext.getSystemService(Context.CONNECTIVITY_SERVICE));
-        NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return currentNetworkInfo != null && currentNetworkInfo.isConnected();
-    }
-
     private String getIMEI() {
-        TelephonyManager telManager = (TelephonyManager) mAppContext.getSystemService(Context.TELEPHONY_SERVICE);
+        try {
+            TelephonyManager telManager = (TelephonyManager) mAppContext.getSystemService(Context.TELEPHONY_SERVICE);
 
-        return telManager.getDeviceId();
+            return telManager.getDeviceId();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return "Fail to Catch IMEI";
     }
 
 }

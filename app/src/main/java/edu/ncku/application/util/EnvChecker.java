@@ -1,5 +1,10 @@
 package edu.ncku.application.util;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+import java.io.IOException;
 import java.util.Locale;
 
 /**
@@ -10,6 +15,7 @@ public class EnvChecker {
 
     /**
      * 判斷是否為(簡繁)中文環境
+     *
      * @return
      */
     public static boolean isLunarSetting() {
@@ -22,8 +28,33 @@ public class EnvChecker {
             return false;
     }
 
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager CM = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = CM.getActiveNetworkInfo();
+        return info != null && info.isConnected();
+    }
+
+    public static boolean pingGoogleDNS() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 -W 2 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     /**
      * 取得語言環境參數
+     *
      * @return
      */
     private static String getLanguageEnv() {

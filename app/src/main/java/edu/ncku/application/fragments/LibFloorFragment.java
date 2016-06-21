@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.TextView;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -47,7 +48,7 @@ public class LibFloorFragment extends Fragment {
         try {
             FloorInfoReaderTask floorInfoReaderTask = new FloorInfoReaderTask(getActivity().getApplicationContext());
             floorInfoReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            Map<String, String> floorInfo = floorInfoReaderTask.get(3, TimeUnit.SECONDS);
+            Map<String, String> floorInfo = floorInfoReaderTask.get(1, TimeUnit.SECONDS);
             if(floorInfo == null){
                 html = null;
                 Log.d(DEBUG_FLAG, "floorInfoReaderTask return null");
@@ -70,8 +71,18 @@ public class LibFloorFragment extends Fragment {
                 false);
 
         WebView webView = (WebView) rootView.findViewById(R.id.lib_floor_webView);
-        webView.loadDataWithBaseURL("file:///android_asset/", "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://m.lib.ncku.edu.tw/css/mobile.css\" />" + ((html!=null)?html:this.getString(R.string.lib_floor_info)) , "text/html",
-                "utf-8", null); // 網頁圖片資源取得(本地)
+        TextView networkHint = (TextView) rootView.findViewById(R.id.networkHint);
+
+        if(html != null) {
+            webView.setVisibility(View.VISIBLE);
+            networkHint.setVisibility(View.INVISIBLE);
+
+            webView.loadDataWithBaseURL("file:///android_asset/", "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://m.lib.ncku.edu.tw/css/mobile.css\" />" + html, "text/html",
+                    "utf-8", null); // 網頁圖片資源取得(本地)
+        }else{
+            webView.setVisibility(View.INVISIBLE);
+            networkHint.setVisibility(View.VISIBLE);
+        }
         return rootView;
     }
 

@@ -2,8 +2,6 @@ package edu.ncku.application.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.Preference;
@@ -17,9 +15,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import edu.ncku.application.R;
 import edu.ncku.application.io.network.SubscribeTask;
+import edu.ncku.application.util.EnvChecker;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
@@ -51,31 +52,34 @@ public class PrefFragment extends PreferenceFragment {
 
         final SwitchPreference switchPref = (SwitchPreference) getPreferenceManager().findPreference(PreferenceKeys.SUBSCRIPTION);
 
-        final ConnectivityManager CM = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-
         if (switchPref != null) // 註冊switchPref的狀態改變事件
             switchPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Log.d(DEBUG_FLAG, "" + switchPref.isChecked());
-                    final NetworkInfo info = CM.getActiveNetworkInfo();
 
                     /* 判斷網路狀態 */
-                    if (info != null && info.isConnected()) {
+                    if (EnvChecker.isNetworkConnected(context)) {
 
                         // Start IntentService to register this application with GCM.
+                        if (progressDialog != null) {
+                            progressDialog.dismiss(); // 關閉顯示處理中的Dialog
+                            progressDialog = null;
+                        }
                         progressDialog = ProgressDialog.show(context, getResources().getString(R.string.please_wait), getResources().getString(R.string.handle_subscription), true); // 顯示處理中的Dialog
                         SubscribeTask subscribeTask = new SubscribeTask(context);
                         subscribeTask.execute(!switchPref.isChecked());
                         Boolean check;
                         try {
-                            check = subscribeTask.get();
+                            check = subscribeTask.get(3, TimeUnit.SECONDS);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                             check = false;
                         } catch (ExecutionException e) {
+                            e.printStackTrace();
+                            check = false;
+                        } catch (TimeoutException e) {
                             e.printStackTrace();
                             check = false;
                         }
@@ -87,7 +91,10 @@ public class PrefFragment extends PreferenceFragment {
                         (new Handler()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (progressDialog != null) progressDialog.dismiss(); // 關閉顯示處理中的Dialog
+                                if (progressDialog != null) {
+                                    progressDialog.dismiss(); // 關閉顯示處理中的Dialog
+                                    progressDialog = null;
+                                }
                                 Toast.makeText(context, (transCheck) ? R.string.sub_handled : R.string.sub_fail, Toast.LENGTH_LONG).show(); // 顯示Toast
                             }
                         }, 1000);

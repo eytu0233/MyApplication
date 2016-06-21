@@ -58,7 +58,7 @@
     <string name="news_empty">No latest news</string>
     <string name="no_maps">unable to us Google Maps APP</string>
     <string name="map_network">Please connect to network in order to use Google Maps APP conveniently.</string>
-    <string name="search_bar_hint">Key in keyword to search catalog</string>
+    <string name="search_bar_hint">Please enter keywords</string>
     <string name="not_match_isbn">Invalid ISBN, please scan the barcode on the back cover</string>
     <string name="msg_empty">No messages</string>
     <string name="subscription_tip">Push notifications will be automatically canceled after finishing departure from school procedure. </string>
@@ -74,8 +74,10 @@
     <string name="contact_phone">LIBRARY</string>
     <string name="default_name">User</string>
     <string name="login_title">Welcome</string>
-    <string name="termTime">Term times</string>
-    <string name="vacations">Vacations</string>
+    <string name="termTime">學期中</string>
+    <string name="vacations">寒暑假</string>
+    <string name="termTime_eng">Term times</string>
+    <string name="vacations_eng">Vacations</string>
     <string name="visitors">Number of Visits :</string>
     <string name="wait_update">Wait to update</string>
     <string name="update_fail">Update fail</string>
@@ -92,141 +94,7 @@
     <string name="drawer_open">打開</string>
     <string name="drawer_close">關閉</string>
 
-    <!-- 本館資訊預設值 -->
-    <string name="open_time_main_lib"><p class="hoursp">*週一至週五 08:20-22:00\n\n</p>
-        <p class="hoursp">*週六及週日 09:00-22:00\n\n</p>
-        <p class="hoursp">*借還書、辦證（一樓流通櫃檯）\n<br></br>
-        <span class="hourscolor">週一~週五 08：20 – 21：40\n</span><br></br>
-	    <span class="hourscolor">週六~週日 09：00 – 21：40\n\n</span>
-        </p>
-        <p class="hoursp">*研究小間 / 討論室\n<br></br>
-        <span class="hourscolor">週一~週五 08：20 – 21：30\n</span><br></br>
-        <span class="hourscolor">週六~週日 09：00 – 21：30\n\n</span>
-        </p>
-        <p class="hoursp">*期刊服務（二樓服務台）\n<br />
-	    <span class="hourscolor">週一~週五 08：20 – 20：30\n</span><br></br>
-        <span class="hourscolor">週六~週日 09：00 – 16：30\n\n</span>
-        </p>
-        <p class="hoursp">*期刊服務/館際合作（三樓服務台）\n<br />
-        <span class="hourscolor">週一~週五 08：20 – 21：40\n</span><br></br>
-	    <span class="hourscolor">週六~週日 09：00 – 21：40\n\n</span>
-        </p>
-        <p class="hoursp">*期刊服務（B2服務台）\n<br />
-        <span class="hourscolor">週一~週五 08：20 – 21：40\n</span><br></br>
-        <span class="hourscolor">週六~週日 09：00 – 21：40\n\n</span>
-        </p>
-        <p class="hoursp">*多媒體中心\n<br />
-        <span class="hourscolor">週一~週五 08：30 – 21：30\n</span><br></br>
-        <span class="hourscolor">週六~週日 09：00 – 21：30\n\n</span>
-        </p>
-        <p class="hoursps">*國定假日閉館、寒暑假開放時間另訂</p>
-    </string>
-    <!--自修閱覽室-->
-    <string name="open_time_self_studying_reading_room">
-        <p class="hoursp">＊07：00 – 23：00（依學校行事曆，每學期期末考前至少一個月~期末考當週，24小時開放）\n\n</p>
-        <p class="hoursps">*國定假日、寒暑假照常開放（春節年除夕、初一、初二 閉館）。</p>
-    </string>
-    <!--學習開放空間-->
-    <string name="open_time_learn_comm">
-        <p class="hoursp">週一至週五：8:30~22:30\n\n</p>
-        <p class="hoursps">週六日：10:00~17:00</p>
-    </string>
-    <!--醫學院圖書分館-->
-    <string name="open_time_medical_branch_lib">
-        <p class="hoursp">*週一至週五 <span class="hourscolor">\t08：20 – 21：30\n\n</span></p>
-        <p class="hoursp">*週六<span class="hourscolor">\t09：00 – 17：00\n\n</span></p>
-        <p class="hoursp">*週日<span class="hourscolor">\t12：00 – 17：00\n\n</span></p>
-        <p class="hoursps">*國定假日閉館、寒暑假開放時間另訂</p>
-    </string>
-    <!--各系所學期中-->
-    <string name="open_time_departments">
-        <table align="center" border="0" class="tablecell" width="100%">
-	    <tr>
-		    <td class="df">學期中</td><br></br>
-	    </tr>
-	    <tr>
-		    <td class="df">規劃與設計學院\n<br></br> 週一～週五<span class="hourscolor">09：00 – 21：00\n\n</span></td>
-	    </tr>
-	    <tr>
-		    <td class="dm">航空太空工程學系\n<br></br> 週一～週五<span class="hourscolor">08：00 – 17：00\n\n</span></td>
-	    </tr>
-	    <tr>
-		    <td class="dm">數學系\n<br></br> 週一～週五<span class="hourscolor">08：10 – 17：00\n\n</span></td>
-	    </tr>
-	    <tr>
-		<td class="dm">水利及海洋工程系\n<br></br> <span class="hoursps">*兼作會議室，會議期間不作開放\n</span><br>週一～週五<br></br>
-			<span class="hourscolor"> 09：00 – 12：00,14：00 – 18：00\n\n</span></br></td>
-	    </tr>
-	    <tr>
-		    <td class="dm">系統及船舶機電工程學系\n<br></br> 週一～週五<br></br> <span class="hourscolor"> 08：00 – 10：30,13：00 – 17：00\n\n</span></td>
-	    </tr>
-	    <tr>
-		    <td class="dm">水工試驗所\n<br></br> 週一～週五<span class="hourscolor">08：30 – 17：30</span></td>
-	    </tr>
-        </table>
-    </string>
-    <!--各系所寒暑假-->
-    <string name="open_time_departments_vacation">
-        <table align="center" border="0" class="tablecell" width="100%">
-	    <tr>
-		    <td class="df">寒暑假</td><br></br>
-	    </tr>
-	    <tr>
-		    <td class="df">規劃與設計學院\n<br></br>
-            週一二四五<span class="hourscolor">09：00 – 13：00\n\n</span></td><br></br>
-            週三<span class="hourscolor">09：00 – 17：00\n\n</span>
-	    </tr>
-	    <tr>
-		    <td class="dm">航空太空工程學系\n<br></br>
-                週一二四五<span class="hourscolor">
-				08：00 – 12：00\n\n</span></td><br></br>
-				週三<span class="hourscolor">09：00 – 17：00\n\n</span>
-	    </tr>
-	    <tr>
-		    <td class="dm">數學系\n<br></br> 週一～週五<span class="hourscolor">08：10 – 12：00,13 : 00 - 17 : 00\n\n</span></td>
-	    </tr>
-	    <tr>
-		    <td class="dm">水利及海洋工程系\n<br></br>
-            <span class="hoursps">*兼作會議室，會議期間不作開放\n</span><br>週一～週五<br></br>
-			<span class="hourscolor"> 09：00 – 12：00,14：00 – 17：00\n\n</span></br></td>
-	    </tr>
-	    <tr>
-		    <td class="dm">系統及船舶機電工程學系\n<br></br>
-            週一～週五<br></br>
-            <span class="hourscolor"> 08：00 – 10：30,13：00 – 17：00\n\n</span></td>
-	    </tr>
-	    <tr>
-		    <td class="dm">水工試驗所\n<br></br>
-            週一～週五<span class="hourscolor">08：30 – 17：30</span></td>
-	    </tr>
-        </table>
-    </string>
-    <!--樓層簡介-->
-    <string name="lib_floor_info">
-        <![CDATA[<span class="floortitle">五樓</span><br></br>中文圖書(分類號733-999)、中文博碩士論文區、研究小間、討論室、音樂欣賞區、典藏組<br><br><span class="floortitle">四樓</span><br></br>中文圖書(分類號400-732)、本校出版品專區、王唯誠贈書區、每月一書專區、討論室、音樂欣賞區、典藏組<br><br><span class="floortitle">三樓</span><br></br>中文圖書(分類號000-399)、館際合作、微縮資料區、技術報告區、化學摘要室、閱報區、教育訓練室、討論室、期刊組(西文期刊)<br><br><span class="floortitle">二樓</span><br></br>中文現期期刊區、外文現期期刊區、期刊工具書區、討論室、期刊組(中文期刊)<br><br><span class="floortitle">一樓</span><br></br>主入口、管制點、流通櫃台、WebPAC查詢區、存物室、參考資料區、輿圖室、資訊檢索區、特殊參考資料、新書及推廣展示區、閱覽組、資訊服務組<br><br><span class="floortitle">B1</span><br></br>多媒體中心、圖書館會議廳、藝術走廊、多媒體視聽組、採編組、館長室、行政室、系統管理組<br><br><span class="floortitle">B2</span><br></br>裝訂期刊區、報紙合訂本區、過大圖書區、過大期刊區、外文圖書區、特殊資料室、珍貴舊籍區、討論室<br><br><span class="floortitle">B3</span><br></br>停車場]]>
-    </string>
-    <!--聯絡資訊-->
-    <string name="lib_contact_info">
-    <![CDATA[<img src="contact.png">聯絡電話<a href="#" onClick="window.PhoneCall.telext('06-2757575,65760');">06-2757575 # 65760</a><br />
-    <img src="dept.png">館長室<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2757575,65700');"># 65700</a></span><br />
-    <a href="mailto:em65700@email.ncku.edu.tw">em65700@email.ncku.edu.tw</a><br /><br />
-    <img src="dept.png">採編組<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2757575,65710');"># 65710</a></span><br />
-    <a href="mailto:em65710@email.ncku.edu.tw">em65710@email.ncku.edu.tw</a><br /><br />
-    <img src="dept.png">期刊組<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2757575,65741');"># 65741</a></span><br />
-    <a href="mailto:em65741@email.ncku.edu.tw">em65741@email.ncku.edu.tw</a><br /><br />
-    <img src="dept.png">典藏組<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2757575,65750');"># 65750</a></span><br />
-    <a href="mailto:em65750@email.ncku.edu.tw">em65750@email.ncku.edu.tw</a><br /><br />
-    <img src="dept.png">閱覽組<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2757575,65760');"># 65760</a></span><br />
-    <a href="mailto:em65760@email.ncku.edu.tw">em65760@email.ncku.edu.tw</a><br /><br />
-    <img src="dept.png">資訊服務組<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2757575,65780');"># 65780</a></span><br />
-    <a href="mailto:em65780@email.ncku.edu.tw">em65780@email.ncku.edu.tw</a><br /><br />
-    <img src="dept.png">多媒體視聽組<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2757575,65790');"># 65790</a></span><br />
-    <a href="mailto:em65790@email.ncku.edu.tw">em65790@email.ncku.edu.tw</a><br /><br />
-    <img src="dept.png">系統管理組<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2757575,65770');"># 65770</a></span><br />
-    <a href="mailto:em65770@email.ncku.edu.tw">em65770@email.ncku.edu.tw</a><br /><br />
-    <img src="dept.png">醫學院分館<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2757575,75120');"># 7-5120</a></span><br />
-    <img src="dept.png">醫學院&nbsp;<span class="hourscolor"><a href="#" onClick="window.PhoneCall.telext('06-2353535,5120');">06-2353535 # 5120</a></span><br />
-    <a href="mailto:medref@libmail.lib.ncku.edu.tw">medref@libmail.lib.ncku.edu.tw</a><br /><br />
-    ]]>
-    </string>
+    <string name="deleteHint">Are you sure?</string>
+    <string name="sub_hint">Need push subscription?(If no, you can change the options  from Settings)</string>
+    <string name="scan_isbn">Please scan an ISBN barcode</string>
 </resources>

@@ -56,6 +56,7 @@ public class IRSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true); // 使fragment驅動onCreateOptionsMenu
         if (getArguments() != null) {
             url = String.format(BIB_URL, getArguments().getString(KEYWORD));
         } else {

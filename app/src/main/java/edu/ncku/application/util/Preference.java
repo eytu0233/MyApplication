@@ -11,27 +11,13 @@ public class Preference {
 
     private static final String DEBUG_FLAG = Preference.class.getName();
 
-    public static boolean isLoggin(Context context){
-        final SharedPreferences SP = PreferenceManager
-                .getDefaultSharedPreferences(context);
-        String username = SP.getString(PreferenceKeys.USERNAME, ""), password = SP.getString(PreferenceKeys.PASSWORD,
-                "");
-
-        if (username.isEmpty() || password.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     public static boolean isSub(Context context, String notifyUsername){
         final SharedPreferences SP = PreferenceManager
                 .getDefaultSharedPreferences(context);
-        String username = SP.getString(PreferenceKeys.USERNAME, ""),
-                password = SP.getString(PreferenceKeys.PASSWORD, "");
-        boolean sub = SP.getBoolean(PreferenceKeys.SUBSCRIPTION, true);
+        String username = SP.getString(PreferenceKeys.ACCOUNT, "");
+        boolean sub = SP.getBoolean(PreferenceKeys.SUBSCRIPTION, false);
 
-        if (username.isEmpty() || password.isEmpty() || !username.equals(notifyUsername)) {
+        if (username.isEmpty() || !username.equals(notifyUsername)) { // 如果沒登入或者帳號與notifyUsername不一致則一律回傳false
             return false;
         } else {
             return sub;
@@ -47,7 +33,7 @@ public class Preference {
     public static String getUsername(Context context) {
         final SharedPreferences SP = PreferenceManager
                 .getDefaultSharedPreferences(context);
-        return SP.getString(PreferenceKeys.USERNAME, "");
+        return SP.getString(PreferenceKeys.ACCOUNT, "");
     }
 
     public static String getDeviceID(Context context) {
@@ -71,13 +57,7 @@ public class Preference {
     public static void setUsername(Context context, String username) {
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
-        sp.edit().putString(PreferenceKeys.USERNAME, username).apply();
-    }
-
-    public static void setPassword(Context context, String password) {
-        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-
-        sp.edit().putString(PreferenceKeys.PASSWORD, password).apply();
+        sp.edit().putString(PreferenceKeys.ACCOUNT, username).apply();
     }
 
     public static void setSubscription(Context context, boolean sub) {
@@ -90,5 +70,10 @@ public class Preference {
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
         sp.edit().putString(PreferenceKeys.VISITOR, visitor).apply();
+    }
+
+    public static boolean isLoggin(Context context) {
+        String username = getUsername(context);
+        return username != null && !username.isEmpty();
     }
 }

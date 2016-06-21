@@ -32,7 +32,7 @@ public class MsgRemoveTask extends AsyncTask<List<Integer>, Void, Void> {
         this.context = context;
         // 每個使用者(學號)都有各自的推播訊息檔案
         this.fileName = PreferenceManager
-                .getDefaultSharedPreferences(context).getString(PreferenceKeys.USERNAME, "") + SUB_FILE_NAME;
+                .getDefaultSharedPreferences(context).getString(PreferenceKeys.ACCOUNT, "") + SUB_FILE_NAME;
     }
 
     @Override

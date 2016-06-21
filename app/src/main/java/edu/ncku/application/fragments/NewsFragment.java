@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
 
 import edu.ncku.application.R;
 import edu.ncku.application.adapter.ListNewsAdapter;
@@ -87,7 +88,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true); // 使fragment驅動onCreateOptionsMenu
 
         this.activity = getActivity();
         this.sp = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -138,7 +139,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (menu != null) {
-            menu.findItem(R.id.settingMenuItem).setVisible(false);
+            menu.findItem(R.id.settingMenuItem).setVisible(false); // 隱藏設定按鈕
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -184,7 +185,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         NewsViewerFragment msgViewerFragment = new NewsViewerFragment();
         msgViewerFragment.setArguments(bundle);
 
-        activity.setTitle(news.getTitle());
         FragmentManager fragmentManager = activity.getFragmentManager();
         fragmentManager.beginTransaction()
                 .addToBackStack(null)
@@ -226,10 +226,10 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         NewsReaderTask newsReaderTask = new NewsReaderTask(this, numShowedMsgs);
         newsReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        listViewAdapter = newsReaderTask.get();
-        setListAdapter(listViewAdapter);
+        listViewAdapter = newsReaderTask.get(1, TimeUnit.SECONDS);
 
         if (listViewAdapter != null) {
+            setListAdapter(listViewAdapter);
             numShowedMsgs = listViewAdapter.getCount();
             newsTip.setVisibility(View.INVISIBLE);
             Log.v(DEBUG_FLAG, "UpdateList finish : " + numShowedMsgs);

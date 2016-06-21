@@ -56,6 +56,21 @@ public class NewsReceiveTask extends JsonReceiveTask {
             currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
         }
 
+        /* 避免因為網路不通而導致最新消息頁面卡住 */
+        Thread protector = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000); // 等待三秒後強制更新頁面
+                    mIntent.putExtra("flag", "FinishFlushFlag");
+                    mContext.sendBroadcast(mIntent);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        protector.start();
+
         // 判斷網路是否連線
         if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
 
@@ -148,8 +163,8 @@ public class NewsReceiveTask extends JsonReceiveTask {
             }
             JSONArray arr = jsonObject.getJSONArray("NewsList");
 
-            news = new LinkedList<News>();
 
+            news = new LinkedList<News>();
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject json = arr.getJSONObject(i);
                 String title = json.getString("news_title");

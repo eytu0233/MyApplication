@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -27,12 +28,10 @@ public class LibContactFragment extends Fragment {
 
     private static final String DEBUG_FLAG = LibContactFragment.class.getName();
 
-    public final static String CSS_STYLE ="<link rel=\"stylesheet\" type=\"text/css\" href=\"http://m.lib.ncku.edu.tw/css/mobile.css\" /><style>* {font-size:20px;line-height:20px;} p {color:#333;} a {color:#3E62A6;} img {max-width:310px;}pre {font-size:9pt;line-height:12pt;font-family:Courier New,Arial;border:1px solid #ddd;border-left:5px solid #6CE26C;background:#f6f6f6;padding:5px;}</style>";
+    public final static String CSS_STYLE ="<link rel=\"stylesheet\" type=\"text/css\" href=\"http://m.lib.ncku.edu.tw/css/mobile.css\" /><style>* {font-size:20px;line-height:20px;} p {color:#333;} a {text-decoration:none;color:#3E62A6;} img {max-width:310px;}pre {font-size:9pt;line-height:12pt;font-family:Courier New,Arial;border:1px solid #ddd;border-left:5px solid #6CE26C;background:#f6f6f6;padding:5px;}</style>";
 //    private static final String CONTACT_PHONE = "聯絡電話";
-    private static final String CONTACT_IMG = "<img src=\"contact.png\">";
-    private static final String CONTACT_PHONE_SUPER_LINK = "<a href=\"#\" onClick=\"window.PhoneCall.telext('%s');\">%s</a><br />";
-    private static final String DEPT_IMG = "<img src=\"dept.png\">";
-    private static final String CONTACT_EMAIL_SUPER_LINK = "<a href=\"mailto:%s\">%s</a><br /><br />";
+    private static final String CONTACT_PHONE_SUPER_LINK = "<a href=\"#\" onClick=\"window.PhoneCall.telext('%s');\">%s</a><br /><br />";
+    private static final String CONTACT_EMAIL_SUPER_LINK = "<a href=\"mailto:%s\">%s</a><br /><br /><hr><br />";
 
     private PhoneCall phoneCall = new PhoneCall();
 
@@ -86,12 +85,12 @@ public class LibContactFragment extends Fragment {
                 String centralPhone = "";
                 for(ContactInfo contactInfo : contactInfos){
                     if(contactInfo.getDivision().equals(CONTACT_PHONE)){
-                        html += CONTACT_IMG;
+//                        html += CONTACT_IMG;
                         html += CONTACT_PHONE;
                         centralPhone = convert2Telext(contactInfo.getPhone().split("#")[0]);
                         html += String.format(CONTACT_PHONE_SUPER_LINK, convert2Telext(contactInfo.getPhone()), contactInfo.getPhone());
                     }else{
-                        html += DEPT_IMG;
+//                        html += DEPT_IMG;
                         html += contactInfo.getDivision() + "<span class=\"hourscolor\">";
                         html += String.format(CONTACT_PHONE_SUPER_LINK, centralPhone + convert2Telext(contactInfo.getPhone()), contactInfo.getPhone());
                         if(contactInfo.getEmail()!=null && !contactInfo.getEmail().isEmpty()){
@@ -110,11 +109,23 @@ public class LibContactFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_lib_contact, container,
                 false);
+
         WebView webView = (WebView) rootView.findViewById(R.id.lib_contact_webView);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(phoneCall, "PhoneCall");
-        webView.loadDataWithBaseURL("file:///android_asset/", CSS_STYLE + ((html != null) ? html : this.getString(R.string.lib_contact_info)), "text/html",
-                "utf-8", null); // 網頁圖片資源取得(本地)
+        TextView networkHint = (TextView) rootView.findViewById(R.id.networkHint);
+
+        if(html != null) {
+
+            webView.setVisibility(View.VISIBLE);
+            networkHint.setVisibility(View.INVISIBLE);
+
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.addJavascriptInterface(phoneCall, "PhoneCall");
+            webView.loadDataWithBaseURL("file:///android_asset/", CSS_STYLE + html, "text/html",
+                    "utf-8", null); // 網頁圖片資源取得(本地)
+        }else{
+            webView.setVisibility(View.INVISIBLE);
+            networkHint.setVisibility(View.VISIBLE);
+        }
         return rootView;
     }
 

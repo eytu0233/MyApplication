@@ -32,7 +32,9 @@ public class RecentActivityReceiveTask extends JsonReceiveTask {
         } catch (JSONException e) {
             Log.e(DEBUG_FLAG, "最近活動Json格式解析錯誤或沒有資料");
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(DEBUG_FLAG, "最近活動Json格式解析錯誤或沒有資料");
+        } catch (Exception e){
+            Log.e(DEBUG_FLAG, "最近活動Json格式解析錯誤或沒有資料");
         }
     }
 

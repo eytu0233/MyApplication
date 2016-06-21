@@ -51,6 +51,7 @@ public class IRISBNSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true); // 使fragment驅動onCreateOptionsMenu
         if (getArguments() != null) {
             isbn = getArguments().getString(ISBN);
         }

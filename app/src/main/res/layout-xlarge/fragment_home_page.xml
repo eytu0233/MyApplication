@@ -55,12 +55,12 @@
             android:background="@null"
             android:layout_alignBottom="@+id/imageView"
             android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:gravity="center"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="40dp" />
+            android:layout_marginLeft="80dp" />
     </RelativeLayout>
 
     <LinearLayout
@@ -68,17 +68,19 @@
         android:layout_height="wrap_content"
         android:gravity="start|center_horizontal"
         android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingTop="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center" >
+            android:gravity="center"
+            android:layout_weight="1">
 
             <ImageButton
                 android:id="@+id/newsImgBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@null"
                 android:src="@drawable/news_selector" />
@@ -86,7 +88,7 @@
             <ImageButton
                 android:id="@+id/IRSearchImgBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@null"
                 android:src="@drawable/catalogs_selector" />
@@ -94,7 +96,7 @@
             <ImageButton
                 android:id="@+id/borrowImgBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@null"
                 android:src="@drawable/account_selector" />
@@ -103,12 +105,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal" >
+            android:layout_weight="1"
+            android:gravity="center">
 
             <ImageButton
                 android:id="@+id/libInfoImgBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@null"
                 android:src="@drawable/info_selector" />
@@ -116,7 +119,7 @@
             <ImageButton
                 android:id="@+id/activityImgBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@null"
                 android:src="@drawable/activity_selector" />
@@ -124,7 +127,7 @@
             <ImageButton
                 android:id="@+id/isbnImgBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@null"
                 android:src="@drawable/isbn_selector" />
@@ -133,11 +136,12 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:paddingTop="20dp"
             android:id="@+id/footer"
-            android:paddingBottom="10dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_weight="2">
 
             <TextView
                 android:layout_width="wrap_content"

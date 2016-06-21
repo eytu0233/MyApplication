@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
                 }
             }
         };
-        Drawable logo = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
+        Drawable logo = ContextCompat.getDrawable(this, R.drawable.ic_notification);
         toolbar.setLogo(logo);
         /* 以下這段用來設定Logo在Toolbar裡的邊界大小 */
         for (int i = 0; i < toolbar.getChildCount(); i++) {
@@ -230,13 +230,14 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         setSupportActionBar(toolbar); // 將設定好的Toolbar實體實裝
         toolbar.setOnMenuItemClickListener(onMenuItemClick); // 設定MenuItemClickListener
 
-        /* Start to create the instances of ui component in main activity */
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    // 如果要有推播功能請刪除這行
+        getSupportActionBar().setHomeButtonEnabled(false);                              // 如果要有推播功能請修改成true
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);                         // 如果要有推播功能請修改成true
 
         mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
                 mDrawerLayout, /* DrawerLayout object */
@@ -245,15 +246,17 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
                 R.string.drawer_close /* "close drawer" description for accessibility */
         ) {
             public void onDrawerClosed(View view) {
-                invalidateOptionsMenu(); // creates call to
-                // onPrepareOptionsMenu()
+                invalidateOptionsMenu();
             }
 
             public void onDrawerOpened(View drawerView) {
-                invalidateOptionsMenu(); // creates call to
-                // onPrepareOptionsMenu()
+                invalidateOptionsMenu();
             }
         };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(false);     // 如果要有推播功能請刪除這行
+        mDrawerToggle.syncState();                          // 如果要有推播功能請刪除這行
+
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         /* 此類別用於降低drawerItem的耦合性 */

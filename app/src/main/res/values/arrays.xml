@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="all_lib_info_list">
+        <item>電子資源查詢</item>
+        <item>本館資訊</item>
+    </string-array>
+</resources>

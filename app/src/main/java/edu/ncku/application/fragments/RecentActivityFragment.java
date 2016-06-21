@@ -4,8 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import edu.ncku.application.R;
 import edu.ncku.application.io.file.RecentActivityReaderTask;
 import edu.ncku.application.io.network.RecentActivityReceiveTask;
+import edu.ncku.application.util.EnvChecker;
 
 /**
  * 顯示最近活動頁面(背景為透明)
@@ -58,16 +57,13 @@ public class RecentActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true); // 使fragment驅動onCreateOptionsMenu
 
         final Context context = getActivity().getApplicationContext();
 
         try {
             /* 有網路時，進行更新動作 */
-            ConnectivityManager connectivityManager = ((ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE));
-            NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-            if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
+            if (EnvChecker.isNetworkConnected(context)) {
                 Thread refresh = new Thread(new RecentActivityReceiveTask(context));
                 refresh.start();
                 refresh.join(3000);

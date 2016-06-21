@@ -30,7 +30,7 @@ public class MsgsReaderTask extends AsyncTask<Void, Void, ListMsgsAdapter> {
     public MsgsReaderTask(MessagerFragment fragment) {
         this.activity = fragment.getActivity();
         String username = PreferenceManager
-                .getDefaultSharedPreferences(activity).getString(PreferenceKeys.USERNAME, "");
+                .getDefaultSharedPreferences(activity).getString(PreferenceKeys.ACCOUNT, "");
         this.fileName = username + SUB_FILE_NAME; // 每個使用者(學號)都有各自的推播訊息檔案
     }
 

@@ -7,49 +7,35 @@
     android:orientation="vertical"
     android:padding="10dp" >
 
-    <TextView
-        android:id="@+id/txtLogin"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#4a4d4a"
-        android:text="登入(login)"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/white"
-        android:textSize="24dp"
-        android:gravity="center_horizontal"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:layout_marginBottom="15dp" />
-
     <EditText
         android:id="@+id/editTextID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:textColor="@color/black"
-        android:hint="帳號(Username)"
+        android:hint="@string/urHint"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:background="@android:drawable/edit_text" />
+        android:background="@android:drawable/edit_text">
+        <requestFocus/>
+        </EditText>
 
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPassword"
         android:textColor="@color/black"
-        android:hint="密碼(Password)"
+        android:hint="@string/pwHint"
         android:layout_margin="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:background="@android:drawable/edit_text">
-
-        <requestFocus />
+        android:background="@android:drawable/edit_text"
+        android:password="false">
     </EditText>
 
     <RelativeLayout
@@ -65,18 +51,18 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:text="@string/login"
-            android:background="#a4a6a4"
+            android:background="#4a4d4a"
             android:textColor="@android:color/white"
             android:textSize="18dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp" />
+            android:layout_alignBottom="@+id/progressBarLogin" />
 
         <ProgressBar
             android:id="@+id/progressBarLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:visibility="invisible"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"

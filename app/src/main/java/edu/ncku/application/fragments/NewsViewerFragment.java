@@ -24,7 +24,7 @@ public class NewsViewerFragment extends Fragment {
     private static final String DEBUG_FLAG = NewsViewerFragment.class.getName();
     private RelativeLayout msgViewer;
     private WebView msgContents;
-    private TextView msgTitle, msgUnit, msgDate;
+    private TextView msgTitle, msgDate;
 
     /**
      * Use this factory method to create a new instance of
@@ -63,9 +63,6 @@ public class NewsViewerFragment extends Fragment {
 
         msgTitle = (TextView) rootView.findViewById(R.id.txtMsgTitle);
         msgTitle.setText(getArguments().getString("title"));
-
-        msgUnit = (TextView) rootView.findViewById(R.id.txtMsgUnit);
-        msgUnit.setText(getArguments().getString("unit"));
 
         msgDate = (TextView) rootView.findViewById(R.id.txtMsgDate);
         msgDate.setText(getArguments().getString("date"));

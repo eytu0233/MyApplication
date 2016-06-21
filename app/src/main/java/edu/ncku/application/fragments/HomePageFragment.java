@@ -7,8 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -34,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import edu.ncku.application.R;
 import edu.ncku.application.io.network.VisitorRecieveTask;
+import edu.ncku.application.util.EnvChecker;
 import edu.ncku.application.util.ITitleChangeListener;
 import edu.ncku.application.util.Preference;
 
@@ -67,6 +66,7 @@ public class HomePageFragment extends Fragment {
     private Context context;
     private Activity activity;
     private ITitleChangeListener titleChangeListener; //標題變更的監聽介面(實體由MainActivity
+    private Toast toast;
 
     // TODO: Rename and change types and number of parameters
     public static HomePageFragment newInstance() {
@@ -85,6 +85,7 @@ public class HomePageFragment extends Fragment {
         mNewsFragment = NewsFragment.getInstance(-1);
         mIRSearchFragment = IRSearchFragment.newInstance();
         mLibInfoListFragment = LibInfoListFragment.newInstance();
+//        mLibInfoListFragment = InfoListFragment.newInstance();
         mRecentActivityFragment = RecentActivityFragment.newInstance();
         mPersonalBorrowFragment = PersonalBorrowFragment.newInstance();
 
@@ -156,6 +157,8 @@ public class HomePageFragment extends Fragment {
         mScannerImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!checkNetworkToast()) return;
+
                 final ProgressFragment progressFragment = ProgressFragment.newInstance();
 
                 final FragmentManager fragmentManager = getActivity()
@@ -167,6 +170,8 @@ public class HomePageFragment extends Fragment {
                     public void run() {
                         fragmentManager.popBackStack();
                         IntentIntegrator integrator = new IntentIntegrator(activity);
+                        integrator.setBarcodeImageEnabled(true);
+                        integrator.setPrompt(getString(R.string.scan_isbn));
                         integrator.initiateScan();
                     }
                 }, 500);
@@ -205,16 +210,19 @@ public class HomePageFragment extends Fragment {
                     @Override
                     public void run() {
                         visitorText.setText(R.string.wait_update);
-
-                        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-                        executor.schedule(new VisitorRecieveTask(context, false), 1, TimeUnit.SECONDS);
-                        executor.shutdown();
+                        refreshVisitor(false, true);
                     }
                 });
             }
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        refreshVisitor(true, true);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -281,14 +289,22 @@ public class HomePageFragment extends Fragment {
         *@return conntected or not
         */
     private boolean checkNetworkToast() {
-        NetworkInfo currentNetworkInfo = ((ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-        if (currentNetworkInfo == null || !currentNetworkInfo.isConnected()) {
-            Toast.makeText(context, R.string.network_disconnected, Toast.LENGTH_SHORT).show();
+        if (!EnvChecker.pingGoogleDNS()) {
+            if (toast == null)
+            {
+                toast = Toast.makeText(context, R.string.network_disconnected, Toast.LENGTH_LONG);
+            }
+            toast.show();
             return false;
         }
 
         return true;
+    }
+
+    private void refreshVisitor(boolean isBackground, boolean isOnce){
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.schedule(new VisitorRecieveTask(context, isBackground, isOnce), 1, TimeUnit.SECONDS);
+        executor.shutdown();
     }
 
     private BroadcastReceiver mVisitorReceiver =  new BroadcastReceiver() {
@@ -305,7 +321,11 @@ public class HomePageFragment extends Fragment {
                 visitorText.setText(visitors);
             }else{
                 visitorText.setText(R.string.update_fail);
-                Toast.makeText(context, R.string.network_disconnected, Toast.LENGTH_LONG).show();
+                if (toast == null)
+                {
+                    toast = Toast.makeText(context, R.string.network_disconnected, Toast.LENGTH_LONG);
+                }
+                toast.show();
             }
         }
     };

@@ -27,7 +27,7 @@ public class SubscribeTask extends AsyncTask<Boolean, Void, Boolean> {
     protected Boolean doInBackground(Boolean... params) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         try {
-            String username = sp.getString(PreferenceKeys.USERNAME, "");
+            String username = sp.getString(PreferenceKeys.ACCOUNT, "");
             String did = sp.getString(PreferenceKeys.DEVICE_TOKEN, "");
             if(username != null && did != null && !username.isEmpty() && !did.isEmpty()){ // 避免因狀態改變的自動登出導致抓不到username
                 if(!HttpClient.sendPost(SUB_URL, String.format("id=%s&did=%s&os=A&sub=%d", username, did, (params[0])?1:0)).contains("OK")) throw new Exception("Posting data to server failed");

@@ -148,27 +148,27 @@ public class ListNewsAdapter extends BaseAdapter {
                     MULTIMEDIA = 6,
                     PEDROIDICAL_GROUP = 7,
                     READING_ROUP = 8;
-            int id = R.drawable.ic_chief_room;
+            int id = R.drawable.ic_administration;
 
             /* 根據單位設置不同的圖片資源，預設為ic_chief_room */
             if (unit.equals(unitStrings[SYSTEM_GROUP])) {
-                id = R.drawable.ic_system_group;
+                id = R.drawable.ic_system;
             } else if (unit.equals(unitStrings[COLLECTION_GROUP])) {
-                id = R.drawable.ic_collection_group;
+                id = R.drawable.ic_collection;
             } else if (unit.equals(unitStrings[CHIEF_ROOM])) {
-                id = R.drawable.ic_chief_room;
+                id = R.drawable.ic_administration;
             } else if (unit.equals(unitStrings[EDITORIAL_GROUP])) {
-                id = R.drawable.ic_editorial_group;
+                id = R.drawable.ic_qcquisition;
             } else if (unit.equals(unitStrings[INFORMATION_GROUP])) {
-                id = R.drawable.ic_information_service;
+                id = R.drawable.ic_information;
             } else if (unit.equals(unitStrings[MEDICAL_BRANCH])) {
-                id = R.drawable.ic_medical_branch;
+                id = R.drawable.ic_medical;
             } else if (unit.equals(unitStrings[MULTIMEDIA])) {
-                id = R.drawable.ic_multimedia;
+                id = R.drawable.ic_media;
             } else if (unit.equals(unitStrings[PEDROIDICAL_GROUP])) {
-                id = R.drawable.ic_periodical_group;
+                id = R.drawable.ic_periodicals;
             } else if (unit.equals(unitStrings[READING_ROUP])) {
-                id = R.drawable.ic_reading_group;
+                id = R.drawable.ic_circulation;
             }
 
             holder.imgGroupIcon.setImageResource(id);

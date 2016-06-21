@@ -2,9 +2,11 @@ package edu.ncku.application.fragments;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -34,7 +36,7 @@ import edu.ncku.application.model.Message;
  * create an instance of this fragment.
  * 顯示推播訊息的列表頁面，當參數大於等於0時，進入該位置的推播訊息
  */
-public class MessagerFragment extends Fragment{
+public class MessagerFragment extends Fragment {
 
     private static final String DEBUG_FLAG = MessagerFragment.class.getName();
     private static final String POSITION = "POSITION";
@@ -62,7 +64,8 @@ public class MessagerFragment extends Fragment{
         return messagerFragment;
     }
 
-    public MessagerFragment(){}
+    public MessagerFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,18 +107,30 @@ public class MessagerFragment extends Fragment{
             }
 
             @Override
-            public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
+            public boolean onActionItemClicked(final android.view.ActionMode mode, MenuItem item) {
                 try {
                     switch (item.getItemId()) {
                         case R.id.selectMenuItem:
-                            for(int position = 0; position < listViewAdapter.getCount(); position++){
+                            for (int position = 0; position < listViewAdapter.getCount(); position++) {
                                 listView.setItemChecked(position, true);
                             }
                             break;
                         case R.id.deleteMenuItem:
-                            listViewAdapter.deleteSelect(listView.getCheckedItemPositions());
-                            onActivityCreated(null);
-                            mode.finish();
+                            (new AlertDialog.Builder(getActivity()))
+                                    .setMessage(R.string.deleteHint)
+                                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // User clicked OK button
+                                            listViewAdapter.deleteSelect(listView.getCheckedItemPositions());
+                                            onActivityCreated(null);
+                                            mode.finish();
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // User cancelled the dialog
+                                        }
+                                    }).show();
                             break;
                         default:
                             Toast.makeText(activity, "Error", Toast.LENGTH_LONG).show();
@@ -139,11 +154,11 @@ public class MessagerFragment extends Fragment{
                 Log.d(DEBUG_FLAG, String.format("Position : %d %s", position, (checked) ? "checked" : "isn't checked"));
             }
 
-            private int selectItems(){
+            private int selectItems() {
                 int select = 0;
                 SparseBooleanArray checkedItemPositions = listView.getCheckedItemPositions();
-                for(int i = 0; i < checkedItemPositions.size(); i++){
-                    if(checkedItemPositions.get(checkedItemPositions.keyAt(i))){
+                for (int i = 0; i < checkedItemPositions.size(); i++) {
+                    if (checkedItemPositions.get(checkedItemPositions.keyAt(i))) {
                         select++;
                     }
                 }
@@ -218,7 +233,7 @@ public class MessagerFragment extends Fragment{
 
             /* 當有來自Notification的位置參數，將會自動轉入該推播訊息 */
             Log.d(DEBUG_FLAG, "position : " + position);
-            if(position >= 0 && position < listViewAdapter.getCount()){
+            if (position >= 0 && position < listViewAdapter.getCount()) {
                 int realPosition = listViewAdapter.getCount() - (position + 1);
                 changeToMsgViewer(realPosition);
                 getArguments().putInt(POSITION, -1);
@@ -235,7 +250,7 @@ public class MessagerFragment extends Fragment{
      *
      * @param position 推播訊息位置
      */
-    private void changeToMsgViewer(int position){
+    private void changeToMsgViewer(int position) {
         Message news = (Message) listViewAdapter.getItem(position);
 
         Bundle bundle = new Bundle();
@@ -247,7 +262,6 @@ public class MessagerFragment extends Fragment{
         NewsViewerFragment msgViewerFragment = new NewsViewerFragment();
         msgViewerFragment.setArguments(bundle);
 
-        activity.setTitle(news.getTitle());
         FragmentManager fragmentManager = activity.getFragmentManager();
         fragmentManager.beginTransaction()
                 .addToBackStack(null)

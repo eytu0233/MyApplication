@@ -30,7 +30,6 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
 
     private static final String DEBUG_FLAG = DrawerListSelector.class.getName();
 
-//    private final DrawerListAdapter loginDrawerListAdapter;
     private final DrawerListAdapter logoutDrawerListAdapter;
     private final ArrayList<DrawerListItem> loginDrawerListItems;
 
@@ -56,7 +55,7 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
 
             @Override
             public void onDrawerItemClick() {
-                activity.setTitle(R.string.app_name);
+                activity.setTitle("");
                 clearBackStackFragment();
                 replaceFragment(mHomePageFragment);
             }
@@ -64,7 +63,7 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         DrawerListItem loginAdapterItem = new DrawerListItem(activity.getResources().getString(R.string.login)) {
             @Override
             public void onDrawerItemClick() {
-                (new LoginDialog(DrawerListSelector.this, activity.getApplicationContext())).show(activity.getFragmentManager(), "Dialog");
+                (new LoginDialog(DrawerListSelector.this, activity)).show(activity.getFragmentManager(), "Dialog");
                 mDrawerLayout.closeDrawer(mDrawerList);
             }
         };
@@ -72,8 +71,7 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
             @Override
             public void onDrawerItemClick() {
                 final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-                sharedPreferences.edit().remove(PreferenceKeys.USERNAME).apply();
-                sharedPreferences.edit().remove(PreferenceKeys.PASSWORD).apply();
+                sharedPreferences.edit().remove(PreferenceKeys.ACCOUNT).apply();
                 mDrawerLayout.closeDrawer(mDrawerList);
                 logoutState();
             }
@@ -99,7 +97,6 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         logoutDrawerListItems.add(loginAdapterItem);
 
         /* 將狀態列表放進各Adapter之中，之後將透過Adapters來進行列表狀態轉換 */
-//        loginDrawerListAdapter = new DrawerListAdapter(activity, loginDrawerListItems);
         logoutDrawerListAdapter = new DrawerListAdapter(activity, logoutDrawerListItems, false);
 
         /* 初始化完成後，自動進入Homepage頁面 */

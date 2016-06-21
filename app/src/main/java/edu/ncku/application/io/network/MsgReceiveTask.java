@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -35,14 +34,14 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
     private static final String SUB_FILE_NAME = ".messages";
     private static final String JSON_URL = "http://140.116.207.24/push/msg_json.php?msgNo=%s&os=A&recver=%s&did=%s";
 
-    private String username;
+    private String account;
     private String json_url;
     private int publishTimestamp; // 時間戳記
 
-    public MsgReceiveTask(Context mContext, String username, String msgNo, int publishTimestamp) {
+    public MsgReceiveTask(Context mContext, String account, String msgNo, int publishTimestamp) {
         super(mContext);
-        this.username = username;
-        this.json_url = String.format(JSON_URL, msgNo, username, Preference.getDeviceID(mContext));
+        this.account = account.toUpperCase();
+        this.json_url = String.format(JSON_URL, msgNo, account, Preference.getDeviceID(mContext));
         this.publishTimestamp = publishTimestamp;
     }
 
@@ -54,9 +53,9 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
             String title = json.getString("Title"); // 從Json的物件當中取得標題
             String content = json.getString("Content"); // 從Json的物件當中取得內容
 
-            int position = synMsgFile(username, new Message(title, publishTimestamp, content));
+            int position = synMsgFile(account, new Message(title, publishTimestamp, content));
             Log.d(DEBUG_FLAG, "position : " + position);
-            sendNotification(username, title, position);
+            sendNotification(account, title, position);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,9 +67,9 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
      *
      * @param message GCM message received.
      */
-    private void sendNotification(String username, String message, int position) {
+    private void sendNotification(String account, String message, int position) {
 
-        if (!Preference.isSub(mContext, username)) return; // 沒有訂閱不發通知
+        if (!Preference.isSub(mContext, account)) return; // 沒有訂閱不發通知
 
         Intent intent = new Intent(mContext, MainActivity.class);
         intent.putExtra(PreferenceKeys.MSGS_EXTRA, position);
@@ -79,13 +78,13 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mContext)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(mContext.getString(R.string.app_name))
                 .setContentText(message)
                 .setAutoCancel(true)
-                .setSound(defaultSoundUri)
+//                .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
@@ -97,15 +96,15 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
     /**
      * 將取得的推播訊息存進檔案之中
      *
-     * @param username 使用者名稱
+     * @param account 帳號
      * @param message 封裝好的推播訊息物件
      * @return 該封推播訊息在檔案中的位置
      */
-    private int synMsgFile(String username, Message message) {
+    private int synMsgFile(String account, Message message) {
 
 		/* Get internal storage directory */
         File dir = mContext.getFilesDir();
-        File messagesFile = new File(dir, username + SUB_FILE_NAME); // 檔名是「學號.messages」，故不同使用者的檔案不同
+        File messagesFile = new File(dir, account + SUB_FILE_NAME); // 檔名是「學號.messages」，故不同使用者的檔案不同
 
         ObjectInputStream ois;
         ObjectOutputStream oos;
