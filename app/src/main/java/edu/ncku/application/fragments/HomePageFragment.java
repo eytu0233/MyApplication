@@ -38,10 +38,8 @@ import edu.ncku.application.util.Preference;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomePageFragment#newInstance} factory method to
- * create an instance of this fragment.
  * 主頁面，提供使用者選擇六個主要功能(最新消息、館藏查詢、個人借閱、本館資訊、最近活動、書籍掃描)
+ * 並在最下方顯示在館人數
  */
 public class HomePageFragment extends Fragment {
 
@@ -65,7 +63,7 @@ public class HomePageFragment extends Fragment {
 
     private Context context;
     private Activity activity;
-    private ITitleChangeListener titleChangeListener; //標題變更的監聽介面(實體由MainActivity
+    private ITitleChangeListener titleChangeListener; //標題變更的監聽介面(實體由MainActivity所控制)
     private Toast toast;
 
     // TODO: Rename and change types and number of parameters
@@ -80,17 +78,19 @@ public class HomePageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true); // 打開動態工具按鈕，使onCreateOptionsMenu生效
 
+        /* 取的分頁物件實體 */
         mNewsFragment = NewsFragment.getInstance(-1);
         mIRSearchFragment = IRSearchFragment.newInstance();
         mLibInfoListFragment = LibInfoListFragment.newInstance();
-//        mLibInfoListFragment = InfoListFragment.newInstance();
-        mRecentActivityFragment = RecentActivityFragment.newInstance();
+        mRecentActivityFragment = UpcomingEventsFragment.newInstance();
         mPersonalBorrowFragment = PersonalBorrowFragment.newInstance();
 
         context = this.getActivity().getApplicationContext();
         activity = this.getActivity();
+
+        /* 註冊在館人數Receiver */
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.intent.action.VISITORS_RECEIVER");
         activity.registerReceiver(mVisitorReceiver, filter);
@@ -174,7 +174,7 @@ public class HomePageFragment extends Fragment {
                         integrator.setPrompt(getString(R.string.scan_isbn));
                         integrator.initiateScan();
                     }
-                }, 500);
+                }, 500); // 0.5秒後開啟掃描器
             }
         });
         searchBarEditText = (EditText) rootView.findViewById(R.id.searchBarEditText);
@@ -183,16 +183,16 @@ public class HomePageFragment extends Fragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (!checkNetworkToast()) return true;
 
-                switch (actionId) {
+                switch (actionId) { // 監聽EditText的鍵盤事件
                     case EditorInfo.IME_NULL:
                     case EditorInfo.IME_ACTION_SEND:
-                    case EditorInfo.IME_ACTION_DONE:
-                        addFragment(IRSearchFragment.newInstance(v.getText().toString()), getResources().getString(R.string.homepage_ic_search));
-                        v.setText("");
+                    case EditorInfo.IME_ACTION_DONE: // 鍵盤按下送出
+                        addFragment(IRSearchFragment.newInstance(v.getText().toString()), getResources().getString(R.string.homepage_ic_search)); // 跳轉到館藏搜尋頁面
+                        v.setText(""); // 搜尋列清空
                         View view = activity.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0); // 隱藏鍵盤
                         }
                         break;
                 }
@@ -209,7 +209,7 @@ public class HomePageFragment extends Fragment {
                 (new Handler()).post(new Runnable() {
                     @Override
                     public void run() {
-                        visitorText.setText(R.string.wait_update);
+                        visitorText.setText(R.string.wait_update); // 監聽在館人數點擊事件
                         refreshVisitor(false, true);
                     }
                 });
@@ -221,13 +221,14 @@ public class HomePageFragment extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        refreshVisitor(true, true);
+        refreshVisitor(true, true); // 第一次進入主頁面時主動更新在館人數(前景 = true, 單次 = true)
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
+        /*  */
         /* 只有在Home頁面且登入時時，才顯示設定按鈕 */
         MenuItem settingItem = menu.findItem(R.id.settingMenuItem);
 
@@ -240,6 +241,7 @@ public class HomePageFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        /* App關閉時，註銷掉在館人數Receiver */
         Preference.setVisitor(context, "");
         activity.unregisterReceiver(mVisitorReceiver);
         super.onDestroy();
@@ -301,6 +303,12 @@ public class HomePageFragment extends Fragment {
         return true;
     }
 
+    /**
+     * 啟動背景在館人數更新工作
+     *
+     * @param isBackground 是否為背景
+     * @param isOnce 是否為單次執行
+     */
     private void refreshVisitor(boolean isBackground, boolean isOnce){
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.schedule(new VisitorRecieveTask(context, isBackground, isOnce), 1, TimeUnit.SECONDS);

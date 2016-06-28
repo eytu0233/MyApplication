@@ -17,6 +17,10 @@ import java.util.LinkedList;
 import edu.ncku.application.R;
 import edu.ncku.application.model.News;
 
+/**
+ * 最新消息Adapter
+ * 被Deprecated掉的建構子或方法，是原本用來做部分顯示功能，後來被取消掉，請無視。
+ */
 public class ListNewsAdapter extends BaseAdapter {
 
     private static final String DEBUG_TAG = ListNewsAdapter.class.getName();

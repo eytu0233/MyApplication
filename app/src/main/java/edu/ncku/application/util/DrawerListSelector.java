@@ -89,7 +89,7 @@ public class DrawerListSelector implements ListView.OnItemClickListener{
         loginDrawerListItems = new ArrayList<DrawerListItem>(); // 登入狀態列表
         loginDrawerListItems.add(homePageAdapterItem);
         loginDrawerListItems.add(messengerAdapterItem);
-        loginDrawerListItems.add(logoutAdapterItem);
+        loginDrawerListItems.add(logoutAdapterItem);   // 如果不要登出功能請刪除或註解這行
 
 
         ArrayList<DrawerListItem> logoutDrawerListItems = new ArrayList<DrawerListItem>(); // 登出狀態列表

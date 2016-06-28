@@ -2,20 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/itemLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="false"
-    android:background="?android:attr/activatedBackgroundIndicator"
-    android:padding="10dp">
+    android:layout_height="match_parent"
+    android:focusable="false"
+    android:padding="10dp" >
+
+    <ImageView
+        android:id="@+id/imgIcon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:src="@drawable/ic_information"
+        android:layout_weight="1" />
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="233dp"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
         android:orientation="vertical"
-        android:layout_weight="3">
+        android:focusable="false"
+        android:layout_weight="5">
 
         <TextView
             android:id="@+id/txtDate"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="left"
             android:maxLines="1"
@@ -26,18 +34,19 @@
 
         <TextView
             android:id="@+id/txtTitle"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
+            android:maxLines="1"
             android:paddingLeft="10dp"
             android:text="@string/title"
             android:textColor="#000000"
-            android:singleLine="true"
-            android:textSize="@dimen/title_size" />
+            android:textSize="@dimen/title_size"
+            android:singleLine="true" />
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/itemStateIcon"
+        android:id="@+id/itemNewsStateIcon"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_column="0"

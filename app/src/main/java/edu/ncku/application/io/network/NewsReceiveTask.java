@@ -21,17 +21,18 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import edu.ncku.application.R;
+import edu.ncku.application.io.IOConstatnt;
 import edu.ncku.application.model.News;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
  * 此類別用來在背景接收最新消息的JSON資料，一樣將其存進檔案之中
  */
-public class NewsReceiveTask extends JsonReceiveTask {
+public class NewsReceiveTask extends JsonReceiveTask implements IOConstatnt {
 
     private static final String DEBUG_FLAG = NewsReceiveTask.class.getName();
-    private static final String FILE_NAME = "News";
-    private static final String NEWS_JSON_URL = "http://140.116.207.24/libweb/index.php?item=webNews&lan=";
+    private static final String FILE_NAME = NEWS_FILE;
+    private static final String NEWS_JSON_URL = NEWS_URL;
     private static final Object LOCKER = new Object();
 
     private static NetworkInfo currentNetworkInfo;

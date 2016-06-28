@@ -14,10 +14,7 @@ import edu.ncku.application.R;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link NewsViewerFragment#newInstance} factory method to
- * create an instance of this fragment.
- * 此頁面是用來顯示最新消息或最新訊息的內容
+ * 此頁面是用來顯示最新消息或最新訊息的內容，以WebView元件顯示
  */
 public class NewsViewerFragment extends Fragment {
 
@@ -26,13 +23,6 @@ public class NewsViewerFragment extends Fragment {
     private WebView msgContents;
     private TextView msgTitle, msgDate;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment NewsViewerFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static NewsViewerFragment newInstance() {
         return new NewsViewerFragment();
     }

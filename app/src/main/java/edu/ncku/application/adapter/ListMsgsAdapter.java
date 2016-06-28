@@ -20,7 +20,8 @@ import edu.ncku.application.io.file.MsgRemoveTask;
 import edu.ncku.application.model.Message;
 
 /**
- * Created by NCKU on 2016/1/8.
+ * 推播訊息Adapter
+ * 被Deprecated掉的建構子或方法，是原本用來做部分顯示功能，後來被取消掉，請無視。
  */
 public class ListMsgsAdapter extends BaseAdapter {
 
@@ -32,6 +33,7 @@ public class ListMsgsAdapter extends BaseAdapter {
 
     private int show;
 
+    @Deprecated
     public ListMsgsAdapter(Activity activity, LinkedList<Message> readMessages, int localShow) {
         this.activity = activity;
         this.show = (localShow > readMessages.size()) ? readMessages.size() : localShow;
@@ -88,6 +90,11 @@ public class ListMsgsAdapter extends BaseAdapter {
         return moreShow;
     }
 
+    /**
+     * 刪除選擇到的推播訊息
+     *
+     * @param checkedItemPositions
+     */
     public void deleteSelect(SparseBooleanArray checkedItemPositions) {
         try {
             LinkedList<Integer> removeList = new LinkedList<Integer>();
@@ -152,6 +159,7 @@ public class ListMsgsAdapter extends BaseAdapter {
             int timeStamp = items.getPubTime();
             String title = items.getTitle(), date = sdFormat.format(new Date((long) timeStamp * 1000));
 
+            /* 將推播訊息的標題、日期填入 */
             holder.txtTitle.setText((title != null) ? title : "");
             holder.txtDate.setText((date != null) ? date : "");
 

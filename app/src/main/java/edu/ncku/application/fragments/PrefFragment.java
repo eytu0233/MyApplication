@@ -72,7 +72,7 @@ public class PrefFragment extends PreferenceFragment {
                         subscribeTask.execute(!switchPref.isChecked());
                         Boolean check;
                         try {
-                            check = subscribeTask.get(3, TimeUnit.SECONDS);
+                            check = subscribeTask.get(3, TimeUnit.SECONDS); // 啟動背景訂閱程式，以3秒為上限
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                             check = false;

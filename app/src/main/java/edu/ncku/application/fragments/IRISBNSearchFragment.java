@@ -12,9 +12,6 @@ import edu.ncku.application.R;
 import edu.ncku.application.util.EnvChecker;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link IRISBNSearchFragment#newInstance} factory method to
- * create an instance of this fragment.
  * 使用ISBN參數來向IR搜尋網頁取得相關資訊
  */
 public class IRISBNSearchFragment extends Fragment {
@@ -28,14 +25,6 @@ public class IRISBNSearchFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String isbn;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param isbn Parameter 1.
-     * @return A new instance of fragment IRISBNSearchFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static IRISBNSearchFragment newInstance(String isbn) {
         IRISBNSearchFragment fragment = new IRISBNSearchFragment();
         Bundle args = new Bundle();

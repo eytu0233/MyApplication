@@ -14,9 +14,6 @@ import edu.ncku.application.R;
 import edu.ncku.application.util.EnvChecker;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link IRSearchFragment#newInstance} factory method to
- * create an instance of this fragment.
  * 開啟IR搜尋網頁，如果有關鍵字的參數則一併輸入，同時會檢查語言環境
  */
 public class IRSearchFragment extends Fragment {
@@ -26,7 +23,7 @@ public class IRSearchFragment extends Fragment {
     public static final String KEYWORD = "keyword";
 
     private static final String SEARCH_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordSearch%s.php";
-    private static final String BIB_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordbibSearch.php?Keyword=%s";
+    private static final String BIB_URL = "http://m.lib.ncku.edu.tw/catalogs/KeywordBibSearch.php?Keyword=%s&lan=%s";
 
     private String url;
 
@@ -58,7 +55,7 @@ public class IRSearchFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true); // 使fragment驅動onCreateOptionsMenu
         if (getArguments() != null) {
-            url = String.format(BIB_URL, getArguments().getString(KEYWORD));
+            url = String.format(BIB_URL, getArguments().getString(KEYWORD), (EnvChecker.isLunarSetting())?"cht":"eng");
         } else {
             url = String.format(SEARCH_URL, (EnvChecker.isLunarSetting())?"":"_eng");
         }

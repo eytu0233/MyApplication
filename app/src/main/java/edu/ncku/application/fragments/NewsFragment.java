@@ -37,9 +37,7 @@ import edu.ncku.application.service.DataReceiveService;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link NewsFragment#getInstance} factory method to
- * create an instance of this fragment.
+ * 最新消息頁面，實作頁面刷新介面(OnRefreshListener)
  */
 public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -67,12 +65,11 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private int numShowedMsgs = 0;
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     *  當position大於等於0時，直接跳轉到該位置的最新消息頁面
      *
-     * @return A new instance of fragment NewsFragment.
+     * @param position 最新消息位置
+     * @return
      */
-    // TODO: Rename and change types and number of parameters
     public static NewsFragment getInstance(int position) {
         NewsFragment instance = new NewsFragment();
         Bundle bundle = new Bundle();
@@ -92,6 +89,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         this.activity = getActivity();
         this.sp = PreferenceManager.getDefaultSharedPreferences(activity);
+        /* 設置預載入的最新消息數量(已取消此功能但保留實作) */
         PRELOAD_MSGS_NUM = Integer.valueOf(sp.getString("PRELOAD_MSGS_MAX",
                 "10"));
 
@@ -99,6 +97,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             Log.e(DEBUG_FLAG, "PRELOAD_MSGS_NUM is smaller than zero");
         }
 
+        /* 當無任何最新消息時的顯示訊息 */
         noDataMsg = sp.getString(PreferenceKeys.NO_DATA_MSGS, getString(R.string.news_empty));
     }
 
@@ -127,7 +126,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 android.R.color.holo_orange_light,
                 android.R.color.holo_green_light);
 
-        /* register NewsReceiver */
+        /* 註冊NewsReceiver */
         receiver = new NewsReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.intent.action.MY_RECEIVER");
@@ -149,7 +148,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
         Log.d(DEBUG_FLAG, "Refresh");
-        onceActiveUpdateMessageData();
+        onceActiveUpdateMessageData(); // 一開始進入最新消息頁面時，主動刷新一次
     }
 
     @Override
@@ -173,9 +172,15 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
+    /**
+     * 當使用者點擊時，轉換到顯示最新消息內容的頁面
+     *
+     * @param position
+     */
     private void changeToNewsViewer(int position) {
         News news = (News) listViewAdapter.getItem(position);
 
+        /* 將News物件裡的資料用Bundle倒給顯示頁面 */
         Bundle bundle = new Bundle();
         bundle.putString("title", news.getTitle());
         bundle.putString("date", new SimpleDateFormat("yyyy/MM/dd").format((long) news.getPubTime() * 1000));
@@ -191,6 +196,11 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 .add(R.id.content_frame, msgViewerFragment).commit();
     }
 
+    /**
+     * 當頁面資料更新時，要更新Adapter才會真正改變UI
+     *
+     * @param adapter
+     */
     private void setListAdapter(final ListAdapter adapter) {
         mHandler.post(new Runnable() {
             @Override
@@ -215,6 +225,12 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }, 800);
     }
 
+    /**
+     * 刷新最新消息頁面
+     *
+     * @return
+     * @throws Exception
+     */
     private boolean updateList() throws Exception {
         /* Read data in background and reflesh the listview of this activity */
         if (numShowedMsgs < PRELOAD_MSGS_NUM) {
@@ -223,12 +239,12 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         Log.v(DEBUG_FLAG, "want to show : "
                 + numShowedMsgs);
 
-
+        /* 最新消息資料會先儲存進手機端，然後在這邊用NewsReaderTask讀出來 */
         NewsReaderTask newsReaderTask = new NewsReaderTask(this, numShowedMsgs);
         newsReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        listViewAdapter = newsReaderTask.get(1, TimeUnit.SECONDS);
+        listViewAdapter = newsReaderTask.get(1, TimeUnit.SECONDS); // 回傳Adapter
 
-        if (listViewAdapter != null) {
+        if (listViewAdapter != null) { // 拿讀到Adapter刷新頁面
             setListAdapter(listViewAdapter);
             numShowedMsgs = listViewAdapter.getCount();
             newsTip.setVisibility(View.INVISIBLE);

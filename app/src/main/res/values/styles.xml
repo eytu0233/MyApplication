@@ -1,7 +1,8 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+    <!--<style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">  深色-->
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar"> <!--無深色-->
         <!-- Customize your theme here. -->
         <item name="windowActionModeOverlay">true</item>
     </style>

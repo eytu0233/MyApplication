@@ -16,6 +16,10 @@ import java.util.Map;
 
 import edu.ncku.application.R;
 
+/**
+ * 開館時間的ExpandableListAdapter
+ * 起注意，ExpandList需要兩種資料，一是標題(List)，二是對應標題的內容(Map)
+ */
 public class OpenTimeExpListAdapter extends BaseExpandableListAdapter {
 
     private final String DEBUG_FLAG = OpenTimeExpListAdapter.class.getName();
@@ -113,9 +117,8 @@ public class OpenTimeExpListAdapter extends BaseExpandableListAdapter {
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.txtTitle);
         gourpView.add(groupPosition, lblListHeader);
-        lblListHeader.setTypeface(null, Typeface.BOLD);
+        lblListHeader.setTypeface(null, Typeface.BOLD); // 粗體
         lblListHeader.setText(headerTitle);
-//        lblListHeader.setPadding(10, 10, 10, 10);
 
         return convertView;
     }

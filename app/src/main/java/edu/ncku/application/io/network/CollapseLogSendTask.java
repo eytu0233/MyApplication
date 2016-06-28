@@ -15,7 +15,7 @@ import java.io.IOException;
 public class CollapseLogSendTask implements Runnable {
 
     private static final String DEBUG_FLAG = CollapseLogSendTask.class.getName();
-    private static final String LOGS_URL = "http://140.116.207.24/push/android_crash_logs.php";
+    private static final String LOGS_URL = "http://m.lib.ncku.edu.tw/push/android_crash_logs.php";
     private static final String LOG_FILE = "CollapseLog";
 
     private Context mContext;
@@ -40,16 +40,13 @@ public class CollapseLogSendTask implements Runnable {
 
             HttpClient.sendPost(LOGS_URL, log);
             Log.d(DEBUG_FLAG, "send log...");
-//            Log.d(DEBUG_FLAG, log);
 
             logFile.delete();
             Log.d(DEBUG_FLAG, "delete log...");
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(DEBUG_FLAG, "Collapse log file is not found.", e);
+        }  catch (Exception e) {
+            Log.e(DEBUG_FLAG, "Some exceptions", e);
         } finally {
             if(reader != null) try {
                 reader.close();

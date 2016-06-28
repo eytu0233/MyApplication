@@ -9,16 +9,17 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
+import edu.ncku.application.io.IOConstatnt;
 import edu.ncku.application.model.ContactInfo;
 import edu.ncku.application.util.EnvChecker;
 
 /**
  * 此AsyncTask類別將會在聯絡資訊頁面開啟時被執行，進行頁面資料讀取的工作
  */
-public class ContactInfoReaderTask extends AsyncTask<Void, Void, ArrayList<ContactInfo>> {
+public class ContactInfoReaderTask extends AsyncTask<Void, Void, ArrayList<ContactInfo>> implements IOConstatnt {
 
     private static final String DEBUG_FLAG = ContactInfoReaderTask.class.getName();
-    private static final String FILE_NAME = "NCKU_Lib_Contact_Info";
+    private static final String FILE_NAME = CONTACT_FILE;
 
     private Context mContext;
 

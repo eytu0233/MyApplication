@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.util.LinkedList;
 
 import edu.ncku.application.fragments.NewsFragment;
+import edu.ncku.application.io.IOConstatnt;
 import edu.ncku.application.model.News;
 import edu.ncku.application.adapter.ListNewsAdapter;
 import edu.ncku.application.util.EnvChecker;
@@ -17,10 +18,10 @@ import edu.ncku.application.util.EnvChecker;
 /**
  * 此AsyncTask類別將會在最新消息頁面開啟時被執行，進行頁面資料讀取的工作
  */
-public class NewsReaderTask extends AsyncTask<Void, Void, ListNewsAdapter>{
+public class NewsReaderTask extends AsyncTask<Void, Void, ListNewsAdapter> implements IOConstatnt{
 
 	private static final String DEBUG_FLAG = NewsReaderTask.class.getName();
-	private static final String FILE_NAME = "News";
+	private static final String FILE_NAME = NEWS_FILE;
 	
 	private NewsFragment newsFragment;
 	private Context context;

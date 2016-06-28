@@ -11,16 +11,18 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.ncku.application.io.IOConstatnt;
+
 /**
  * 此類別用來接收近期活動的JSON資料，一樣儲存進檔案
  */
-public class RecentActivityReceiveTask extends JsonReceiveTask {
+public class UpcomingEventsReceiveTask extends JsonReceiveTask implements IOConstatnt {
 
-    private static final String DEBUG_FLAG = RecentActivityReceiveTask.class.getName();
-    private static final String JSON_URL = "http://140.116.207.24/libweb/index.php?item=webActivity&lan=";
-    private static final String FILE_NAME = "NCKU_Lib_RecentActivity";
+    private static final String DEBUG_FLAG = UpcomingEventsReceiveTask.class.getName();
+    private static final String JSON_URL = UPCOMING_EVENT_URL;
+    private static final String FILE_NAME = UPCOMING_EVENT_FILE;
 
-    public RecentActivityReceiveTask(Context context) {
+    public UpcomingEventsReceiveTask(Context context) {
         super(context);
     }
 
@@ -29,12 +31,8 @@ public class RecentActivityReceiveTask extends JsonReceiveTask {
         try {
             saveFile(decodeJson(JSON_URL + "cht"), FILE_NAME + "_cht");
             saveFile(decodeJson(JSON_URL + "eng"), FILE_NAME + "_eng");
-        } catch (JSONException e) {
-            Log.e(DEBUG_FLAG, "最近活動Json格式解析錯誤或沒有資料");
-        } catch (IOException e) {
-            Log.e(DEBUG_FLAG, "最近活動Json格式解析錯誤或沒有資料");
         } catch (Exception e){
-            Log.e(DEBUG_FLAG, "最近活動Json格式解析錯誤或沒有資料");
+            Log.e(DEBUG_FLAG, "最近活動Json格式解析錯誤或沒有資料", e);
         }
     }
 

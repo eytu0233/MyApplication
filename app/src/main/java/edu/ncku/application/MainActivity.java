@@ -235,9 +235,9 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
         ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    // 如果要有推播功能請刪除這行
-        getSupportActionBar().setHomeButtonEnabled(false);                              // 如果要有推播功能請修改成true
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);                         // 如果要有推播功能請修改成true
+//        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    // 如果要有推播功能請刪除這行
+        getSupportActionBar().setHomeButtonEnabled(true);                              // 如果要有推播功能請修改成true
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);                         // 如果要有推播功能請修改成true
 
         mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
                 mDrawerLayout, /* DrawerLayout object */
@@ -254,8 +254,8 @@ public class MainActivity extends AppCompatActivity implements ITitleChangeListe
             }
         };
 
-        mDrawerToggle.setDrawerIndicatorEnabled(false);     // 如果要有推播功能請刪除這行
-        mDrawerToggle.syncState();                          // 如果要有推播功能請刪除這行
+//        mDrawerToggle.setDrawerIndicatorEnabled(false);     // 如果要有推播功能請刪除這行
+//        mDrawerToggle.syncState();                          // 如果要有推播功能請刪除這行
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 

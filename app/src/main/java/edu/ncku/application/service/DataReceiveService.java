@@ -11,6 +11,7 @@ import edu.ncku.application.io.network.NewsReceiveTask;
 
 /**
  * 此IntentService類別是用來在背景處理NewsReceiveTask的啟動
+ * 表示手動更新最新消息的背景程式
  * 透過靜態方法startActionONCE就可以讓NewsFragment驅動
  */
 public class DataReceiveService extends IntentService {

@@ -27,13 +27,13 @@ import edu.ncku.application.util.PreferenceKeys;
 import edu.ncku.application.util.Security;
 
 /**
- * 在背景執行登入驗證工作
+ * 在背景執行登入工作
  */
 public class LoginTask extends AsyncTask<String, Void, String> {
 
     private static final String DEBUG_FLAG = LoginTask.class.getName();
 
-    private static final String LOGIN_URL = "http://140.116.207.24/push/login.php";
+    private static final String LOGIN_URL = "http://m.lib.ncku.edu.tw/push/login.php";
     private static final String OK = "OK";
     private static final String RESULT_LABEL = "Result";
     private static final String NAME_LABEL = "Name";
@@ -115,7 +115,6 @@ public class LoginTask extends AsyncTask<String, Void, String> {
             Preference.setUsername(context, username);
             Preference.setSubscription(context, false);
 
-//            (new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.subDialog)))
             (new AlertDialog.Builder(context))
                     .setMessage(R.string.sub_hint)
                     .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {

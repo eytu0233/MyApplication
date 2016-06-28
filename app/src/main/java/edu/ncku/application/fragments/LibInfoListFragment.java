@@ -18,9 +18,6 @@ import edu.ncku.application.adapter.ListViewInfoAdapter;
 import edu.ncku.application.util.EnvChecker;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link LibInfoListFragment#newInstance} factory method to
- * create an instance of this fragment.
  * 圖書館相關資訊列表頁面，讓使用者選擇開放時間、樓層簡介、聯絡資訊、地理位置等頁面
  */
 public class LibInfoListFragment extends Fragment {

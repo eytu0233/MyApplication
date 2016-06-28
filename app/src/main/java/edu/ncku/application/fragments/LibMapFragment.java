@@ -33,9 +33,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import edu.ncku.application.R;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link LibMapFragment#getInstance} factory method to
- * create an instance of this fragment.
  * 顯示地利位置的頁面，預設以Google Map顯示，假如開啟失敗則以網頁形式顯示
  */
 public class LibMapFragment extends Fragment implements OnMapReadyCallback {

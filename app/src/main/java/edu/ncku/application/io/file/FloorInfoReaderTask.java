@@ -9,15 +9,16 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.Map;
 
+import edu.ncku.application.io.IOConstatnt;
 import edu.ncku.application.util.EnvChecker;
 
 /**
  * 此AsyncTask類別將會在樓層資訊頁面開啟時被執行，進行頁面資料讀取的工作
  */
-public class FloorInfoReaderTask extends AsyncTask<Void, Void, Map<String, String>> {
+public class FloorInfoReaderTask extends AsyncTask<Void, Void, Map<String, String>> implements IOConstatnt {
 
     private static final String DEBUG_FLAG = FloorInfoReaderTask.class.getName();
-    private static final String FILE_NAME = "NCKU_Lib_Floor_Info";
+    private static final String FILE_NAME = FLOOR_INFO_FILE;
 
     private Context mContext;
 

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import edu.ncku.application.util.Preference;
 
 /**
- * Created by NCKU on 2016/5/24.
+ * 在館人數更新背景工作
  */
 public class VisitorRecieveTask implements Runnable {
 
@@ -39,7 +39,13 @@ public class VisitorRecieveTask implements Runnable {
 
             /* 再次確認網路狀態 */
             if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
-                String visitors = HttpClient.sendPost(VISITORS_URL, "").trim();
+                String visitors = "";
+                try {
+                    visitors = HttpClient.sendPost(VISITORS_URL, "").trim();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    visitors = "";
+                }
 
                 /* 如果回傳結果包含非數字則清空 */
                 if(!TextUtils.isDigitsOnly(visitors)){
@@ -62,7 +68,7 @@ public class VisitorRecieveTask implements Runnable {
                 }else{
                     Log.v(DEBUG_FLAG, "點擊刷新");
                 }
-            }else{
+            }else{ // 網路斷線
                 if(isBackground) {
                     Log.d(DEBUG_FLAG, "網路斷線，取消註冊一分鐘後的在館人數請求工作");
                     Preference.setVisitor(mContext, ""); // 斷線時清空
@@ -73,6 +79,12 @@ public class VisitorRecieveTask implements Runnable {
                 }
             }
         } catch (Exception e) {
+            /* 當發生例外時，一律對前景發出網路不通的訊息 */
+            if(!isBackground) {
+                Intent mIntent = new Intent();
+                mIntent.setAction("android.intent.action.VISITORS_RECEIVER");
+                mContext.sendBroadcast(mIntent);
+            }
             e.printStackTrace();
         }
     }

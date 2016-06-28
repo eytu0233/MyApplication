@@ -46,6 +46,7 @@ public class LibFloorFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         try {
+            /* 從檔案當中讀取樓層資訊 */
             FloorInfoReaderTask floorInfoReaderTask = new FloorInfoReaderTask(getActivity().getApplicationContext());
             floorInfoReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             Map<String, String> floorInfo = floorInfoReaderTask.get(1, TimeUnit.SECONDS);

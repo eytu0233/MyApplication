@@ -17,7 +17,6 @@ import edu.ncku.application.model.Message;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
- * Created by NCKU on 2016/4/19.
  * 此AsyncTask類別將會在使用者點擊多選刪除時執行，用來刪除在檔案裏面的推播訊息
  */
 public class MsgRemoveTask extends AsyncTask<List<Integer>, Void, Void> {

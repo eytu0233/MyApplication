@@ -1,6 +1,5 @@
 package edu.ncku.application.util;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -16,11 +15,8 @@ import java.util.Date;
 import static android.os.Build.VERSION;
 
 /**
- * Created by NCKU on 2016/5/5.
- *
  * 此類別用來處理此應用程式崩潰問題，如果發生了任一例外卻沒有處理
  * 則進入此類別的uncaughtException方法進行相關處理。
- *
  */
 public class CollapseHandler implements Thread.UncaughtExceptionHandler {
 
@@ -37,14 +33,6 @@ public class CollapseHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        /*String processName =  getProcessName(mAppContext);
-        if (mAppContext.getPackageName().equals(processName)) {
-            Log.i(LOGTAG, "uncaughtException main process");
-            mDefaultExceptionHandler.uncaughtException(thread, ex);
-        } else {
-            Log.i(LOGTAG, "uncaughtException process name=" + processName);
-            android.os.Process.killProcess(android.os.Process.myPid());
-        }*/
         try{
             final Writer result = new StringWriter();
             final PrintWriter printWriter = new PrintWriter(result);
@@ -67,19 +55,6 @@ public class CollapseHandler implements Thread.UncaughtExceptionHandler {
             android.os.Process.killProcess(android.os.Process.myPid());
         }
 
-    }
-
-    private String getProcessName(Context appContext) {
-        String currentProcessName = "";
-        int pid = android.os.Process.myPid();
-        ActivityManager manager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningAppProcessInfo processInfo : manager.getRunningAppProcesses()) {
-            if (processInfo.pid == pid) {
-                currentProcessName = processInfo.processName;
-                break;
-            }
-        }
-        return currentProcessName;
     }
 
     private String getIMEI() {

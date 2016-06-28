@@ -22,7 +22,8 @@ import edu.ncku.application.util.DrawerListItem;
 import edu.ncku.application.util.Preference;
 
 /**
- * Created by NCKU on 2016/1/15.
+ * Drawer的Adapter
+ * 決定Drawer要如何顯示資料項目
  */
 public class DrawerListAdapter extends BaseAdapter {
 
@@ -30,7 +31,7 @@ public class DrawerListAdapter extends BaseAdapter {
 
     final private Activity activity;
     final private ArrayList<DrawerListItem> drawerListItems;
-    final private boolean containName;
+    final private boolean containName; // 是否包含使用者姓名
 
     public DrawerListAdapter(Activity activity, ArrayList<DrawerListItem> drawerListItems, boolean containName) {
         this.activity = activity;
@@ -66,12 +67,15 @@ public class DrawerListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.drawerString = (TextView) convertView
                     .findViewById(R.id.txtDrawer);
+            /* 當有使用者姓名時，對第一個DrawerList進行變動 */
             if (containName && position == 0) {
                 holder.drawerString.setPadding(0, 40, 0, 40);
-                holder.drawerString.setTextSize(holder.drawerString.getTextSize() / 2);
+                holder.drawerString.setTextSize(holder.drawerString.getTextSize() / 2); // 姓名相對大一點只除以2
+                /* 設定長按事件，用來顯示GCM Device ID */
                 holder.drawerString.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
+                        /* 跳出一個顯示GCM Device ID的Dialog，並附贈一個copy的按鈕可以複製到剪貼簿 */
                         new AlertDialog.Builder(activity)
                                 .setMessage(Preference.getDeviceID(activity))
                                 .setTitle(Preference.getUsername(activity) + "'s DeviceID")
@@ -80,6 +84,7 @@ public class DrawerListAdapter extends BaseAdapter {
                                             @Override
                                             public void onClick(DialogInterface dialog,
                                                                 int which) {
+                                                /* 將Device ID複製到剪貼簿 */
                                                 ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
                                                 clipboard.setPrimaryClip(ClipData.newPlainText("Copied did", Preference.getDeviceID(activity)));
                                                 Toast.makeText(activity, R.string.copy_success, Toast.LENGTH_SHORT).show();
@@ -91,10 +96,10 @@ public class DrawerListAdapter extends BaseAdapter {
                     }
                 });
             } else {
-                holder.drawerString.setTextSize(holder.drawerString.getTextSize() / 3);
+                holder.drawerString.setTextSize(holder.drawerString.getTextSize() / 3); // 其他項目字相對小除以3
             }
             holder.drawerString.setTextColor(Color.WHITE);
-            holder.drawerString.setText(((DrawerListItem) getItem(position)).getItemString());
+            holder.drawerString.setText(((DrawerListItem) getItem(position)).getItemString()); // 將字給填入
             holder.drawerString.setGravity(Gravity.CENTER_HORIZONTAL);
 
             convertView.setTag(holder);

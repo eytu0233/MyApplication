@@ -14,9 +14,6 @@ import edu.ncku.application.R;
 import edu.ncku.application.util.EnvChecker;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link PersonalBorrowFragment#newInstance} factory method to
- * create an instance of this fragment.
  * 顯示個人借閱網頁頁面
  */
 public class PersonalBorrowFragment extends Fragment {

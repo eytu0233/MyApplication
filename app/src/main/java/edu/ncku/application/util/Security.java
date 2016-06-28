@@ -10,7 +10,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Created by NCKU on 2016/3/25.
  * 安全工具類別，使用AES CBC加密密碼
  */
 public class Security {

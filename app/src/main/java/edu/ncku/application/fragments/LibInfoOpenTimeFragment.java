@@ -21,9 +21,6 @@ import edu.ncku.application.adapter.OpenTimeExpListAdapter;
 import edu.ncku.application.io.file.LibOpenTimeReaderTask;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link LibInfoOpenTimeFragment#newInstance} factory method to
- * create an instance of this fragment.
  * 圖書館開放時間頁面，使用ExpandableListView顯示
  */
 public class LibInfoOpenTimeFragment extends Fragment {
@@ -128,6 +125,7 @@ public class LibInfoOpenTimeFragment extends Fragment {
                 }
             });
         }else{
+            /* 當沒有讀取到資料時，顯示請保持網路暢通的訊息 */
             mNetworkHint.setVisibility(View.VISIBLE);
             mOpenTimeExpListView.setVisibility(View.INVISIBLE);
         }
@@ -136,7 +134,7 @@ public class LibInfoOpenTimeFragment extends Fragment {
     }
 
     /**
-     * 準備列表資料，預設從文字資源檔取得，假如有檔案(來自網路)則優先讀取
+     * 準備列表資料，從檔案中讀取
      */
     private void prepareListData() {
         // TODO Auto-generated method stub

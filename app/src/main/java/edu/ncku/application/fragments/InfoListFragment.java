@@ -15,10 +15,7 @@ import edu.ncku.application.R;
 import edu.ncku.application.adapter.ListViewInfoAdapter;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * Use the {@link InfoListFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * 本館資訊頁面
  */
 public class InfoListFragment extends Fragment {
 
@@ -28,13 +25,6 @@ public class InfoListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment InfoListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static InfoListFragment newInstance() {
         InfoListFragment fragment = new InfoListFragment();
         return fragment;
@@ -54,6 +44,7 @@ public class InfoListFragment extends Fragment {
                 false);
         allInfoListview = (ListView) rootView.findViewById(R.id.allInfoListView);
 
+        /* 從資源檔讀取本館資訊字串陣列 */
         String[] all_lib_info_list = getResources().getStringArray(
                 R.array.all_lib_info_list);
 

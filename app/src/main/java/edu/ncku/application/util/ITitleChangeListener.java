@@ -6,6 +6,6 @@ package edu.ncku.application.util;
  */
 public interface ITitleChangeListener {
 
-    public void onChangeTitle(String title);
+    void onChangeTitle(String title);
 
 }

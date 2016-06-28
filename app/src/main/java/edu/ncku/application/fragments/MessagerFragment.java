@@ -31,9 +31,6 @@ import edu.ncku.application.io.file.MsgsReaderTask;
 import edu.ncku.application.model.Message;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link MessagerFragment#getInstance} factory method to
- * create an instance of this fragment.
  * 顯示推播訊息的列表頁面，當參數大於等於0時，進入該位置的推播訊息
  */
 public class MessagerFragment extends Fragment {

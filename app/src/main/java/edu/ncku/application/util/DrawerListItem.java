@@ -1,7 +1,6 @@
 package edu.ncku.application.util;
 
 /**
- * Created by NCKU on 2016/1/15.
  * 此抽象類別是給DrawerListSelector使用，用來表示點擊的物件
  * ，並且將點擊物件的名稱與點擊事件綁在一起。
  * 只要繼承並實作此類別就能夠加進DrawerList之中，主要是降低

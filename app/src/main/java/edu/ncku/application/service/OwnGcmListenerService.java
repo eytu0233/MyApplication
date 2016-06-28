@@ -45,19 +45,21 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
         String msgNo = data.getString("msgNo");
         String control = data.getString("control");
 
-        // 確認是否有控制指令
+        /* 確認是否有控制指令 */
         if(control != null) {
             Log.d(DEBUG_FLAG, "Control: " + control);
             if(control.equals(LOGOUT_CTRL)) logout(); // 收到登出指令，清除登入資料
             return;
         }
 
+        /* 確認是否為廣播資料 */
         if(GLOBAL.equals(from) && title != null && !title.isEmpty()){
             Log.d(DEBUG_FLAG, "Handle Global Notification");
             sendGlobalNotification(title);
             return;
         }
 
+        /* 確認推播訊息的完整性 */
         if(time == null || time.isEmpty() ||
                 msgNo == null || msgNo.isEmpty()) {
             Log.e(DEBUG_FLAG, "推播資料缺失");
@@ -68,18 +70,21 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
         Log.d(DEBUG_FLAG, "Time : " + time);
         Log.d(DEBUG_FLAG, "msgNo : " + msgNo);
 
+        /* 如果沒有登入則不顯示推播通知 */
         if(username == null || username.isEmpty()) return;
         Log.d(DEBUG_FLAG, "username : " + username);
 
+        /* 將推播儲存起來 */
         Executors.newSingleThreadExecutor().submit(new MsgReceiveTask(this.getApplicationContext(), username, msgNo, Integer.valueOf(time)));
     }
     // [END receive_message]
 
     private void sendGlobalNotification(String message){
+        /* 設置通知點擊會啟動App Intent */
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(PreferenceKeys.GLOBAL_NEWS, true);
+        intent.putExtra(PreferenceKeys.GLOBAL_NEWS, true); // 告訴Activity要開啟最新消息頁面
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.setData(Uri.parse("custom://" + System.currentTimeMillis()));
+        intent.setData(Uri.parse("custom://" + System.currentTimeMillis())); // 時間差
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
@@ -89,7 +94,7 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(message)
                 .setAutoCancel(true)
-//                .setSound(defaultSoundUri)
+//                .setSound(defaultSoundUri)   通知聲音關閉
                 .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
@@ -98,6 +103,9 @@ public class OwnGcmListenerService extends com.google.android.gms.gcm.GcmListene
         notificationManager.notify(message.hashCode() /* ID of notification */, notificationBuilder.build());
     }
 
+    /**
+     * 清除登入資訊來表示登出
+     */
     private void logout(){
         final SharedPreferences SP = PreferenceManager
                 .getDefaultSharedPreferences(this.getApplicationContext());

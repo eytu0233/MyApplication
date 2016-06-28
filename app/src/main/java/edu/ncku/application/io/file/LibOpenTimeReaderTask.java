@@ -10,15 +10,16 @@ import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.Map;
 
+import edu.ncku.application.io.IOConstatnt;
 import edu.ncku.application.util.EnvChecker;
 
 /**
  * 此AsyncTask類別將會在開放時間頁面開啟時被執行，進行頁面資料讀取的工作
  */
-public class LibOpenTimeReaderTask extends AsyncTask<Void, Void, Map<String, List<String>>> {
+public class LibOpenTimeReaderTask extends AsyncTask<Void, Void, Map<String, List<String>>> implements IOConstatnt {
 
     private static final String DEBUG_FLAG = LibOpenTimeReaderTask.class.getName();
-    private static final String FILE_NAME = "NCKU_Lib_Open_Time";
+    private static final String FILE_NAME = LIB_OPEN_TIME_FILE;
 
     private Context mContext;
 

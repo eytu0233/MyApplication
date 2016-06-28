@@ -9,6 +9,9 @@ import android.widget.FrameLayout;
 
 import edu.ncku.application.R;
 
+/**
+ * 此頁面只用來顯示運轉中，用在ISBN頁面等待0.5秒啟動時
+ */
 public class ProgressFragment extends Fragment {
 
     // TODO: Rename and change types and number of parameters

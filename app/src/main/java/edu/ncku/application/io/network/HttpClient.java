@@ -7,7 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by NCKU on 2016/2/23.
  * 工具靜態類別，處理Http Request
  */
 public class HttpClient {
@@ -17,7 +16,7 @@ public class HttpClient {
      *
      * @param urlStr 發送請求的URL
      * @param parmas 請求参數，請求参數應該是name1=value1&name2=value2的形式
-     * @return URL所代表遠程資源的回應
+     * @return 網頁回傳的字串
      */
     public static String sendPost(String urlStr, String parmas) throws Exception {
 

@@ -11,6 +11,6 @@ public class RebootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        context.startService(new Intent(context, NetworkListenerService.class));// 重開機後，自動重啟網路監視Service
+        context.startService(new Intent(context, NetworkListenerService.class));// 重開機(手機)後，自動重啟網路監視Service
     }
 }

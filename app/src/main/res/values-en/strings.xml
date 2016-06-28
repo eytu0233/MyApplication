@@ -46,7 +46,7 @@
     <string name="subscription_title">Subscribe Push Notification</string>
     <string name="dialog_subscription">Sure to change the subscription settings?</string>
     <string name="dialog_close_confirm">Exit?</string>
-    <string name="messenger_network_disconnected">Please keep network working, in order to get the latest news.</string>
+    <string name="messenger_network_disconnected">Please keep network working, in order to get the latest information.</string>
     <string name="network_disconnected">Network connection required, please try again</string>
     <string name="invalid_account_or_password">wrong account  or password</string>
     <string name="login_tip">This function currently open to faculty and students of NCKU. Use the account and password as in NCKU Portal.</string>

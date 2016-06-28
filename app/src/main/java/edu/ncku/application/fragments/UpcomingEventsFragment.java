@@ -29,16 +29,16 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import edu.ncku.application.R;
-import edu.ncku.application.io.file.RecentActivityReaderTask;
-import edu.ncku.application.io.network.RecentActivityReceiveTask;
+import edu.ncku.application.io.file.UpcomingEventsReaderTask;
+import edu.ncku.application.io.network.UpcomingEventsReceiveTask;
 import edu.ncku.application.util.EnvChecker;
 
 /**
  * 顯示最近活動頁面(背景為透明)
  */
-public class RecentActivityFragment extends Fragment {
+public class UpcomingEventsFragment extends Fragment {
 
-    private static final String DEBUG_FLAG = RecentActivityFragment.class
+    private static final String DEBUG_FLAG = UpcomingEventsFragment.class
             .getName();
 
     private static Map<String, String> imgSuperLinks;
@@ -46,11 +46,11 @@ public class RecentActivityFragment extends Fragment {
 
     private static Gallery gallery;
 
-    public static RecentActivityFragment newInstance() {
-        return new RecentActivityFragment();
+    public static UpcomingEventsFragment newInstance() {
+        return new UpcomingEventsFragment();
     }
 
-    public RecentActivityFragment() {
+    public UpcomingEventsFragment() {
         // Required empty public constructor
     }
 
@@ -64,14 +64,14 @@ public class RecentActivityFragment extends Fragment {
         try {
             /* 有網路時，進行更新動作 */
             if (EnvChecker.isNetworkConnected(context)) {
-                Thread refresh = new Thread(new RecentActivityReceiveTask(context));
+                Thread refresh = new Thread(new UpcomingEventsReceiveTask(context));
                 refresh.start();
                 refresh.join(3000);
                 Log.d(DEBUG_FLAG, "近期活動網路更新");
             }
 
             /* 從檔案當中讀取近期活動資料 */
-            RecentActivityReaderTask urlReceiveTask = new RecentActivityReaderTask(context);
+            UpcomingEventsReaderTask urlReceiveTask = new UpcomingEventsReaderTask(context);
             urlReceiveTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             imgSuperLinks = urlReceiveTask.get(3, TimeUnit.SECONDS);
@@ -104,9 +104,11 @@ public class RecentActivityFragment extends Fragment {
                                     int position, long id) {
                 Log.d(DEBUG_FLAG, "position : " + position % imgURLs.length);
                 /* 顯示該網址的網頁 */
-                Uri uri = Uri.parse(imgSuperLinks.get(imgURLs[position % imgURLs.length]));
-                Intent i = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(i);
+                String link = imgSuperLinks.get(imgURLs[position % imgURLs.length]);
+                if(link != null && !link.isEmpty()) {
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                    startActivity(i);
+                }
             }
         });
         gallery.post(new Runnable() {
@@ -144,9 +146,9 @@ public class RecentActivityFragment extends Fragment {
 
             /* ImageLoader選項 */
             options = new DisplayImageOptions.Builder()
-                    .showImageOnLoading(R.drawable.ic_loding)
-                    .showImageForEmptyUri(R.drawable.ic_empty)
-                    .showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+                    .showImageOnLoading(R.drawable.loading_pic)
+                    .showImageForEmptyUri(R.drawable.empty_pic)
+                    .showImageOnFail(R.drawable.error_pic).cacheInMemory(true)
                     .cacheOnDisk(true).considerExifParams(true)
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .displayer(new RoundedBitmapDisplayer(20)).build();
@@ -164,7 +166,7 @@ public class RecentActivityFragment extends Fragment {
         @Override
         public Object getItem(int position) {
             // TODO Auto-generated method stub
-            return position % imgURLs.length;
+            return position % imgURLs.length; // 設置模擬無限左右滑動
         }
 
         @Override
@@ -180,7 +182,7 @@ public class RecentActivityFragment extends Fragment {
                         R.layout.item_gallery_image, parent, false);
             }
 
-            int width = gallery.getWidth() * 2 / 3, height = gallery.getHeight() * 2 / 3;
+            int width = gallery.getWidth() * 2 / 3, height = gallery.getHeight() * 2 / 3; // 長寬變成原本的 2/3
 
             imageView.setAdjustViewBounds(true);
             imageView.setLayoutParams(new Gallery.LayoutParams(width, height));

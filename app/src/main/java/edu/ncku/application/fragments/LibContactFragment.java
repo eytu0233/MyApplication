@@ -53,13 +53,6 @@ public class LibContactFragment extends Fragment {
 
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment LibContactFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static LibContactFragment newInstance() {
         LibContactFragment fragment = new LibContactFragment();
         return fragment;
@@ -76,6 +69,7 @@ public class LibContactFragment extends Fragment {
         final String CONTACT_PHONE = getString(R.string.contact_phone);
 
         try {
+            /* 從檔案之中讀取聯絡資訊 */
             ContactInfoReaderTask contactInfoReaderTask = new ContactInfoReaderTask(getActivity().getApplicationContext());
             contactInfoReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             ArrayList<ContactInfo> contactInfos = contactInfoReaderTask.get(3, TimeUnit.SECONDS);
@@ -87,7 +81,7 @@ public class LibContactFragment extends Fragment {
                     if(contactInfo.getDivision().equals(CONTACT_PHONE)){
 //                        html += CONTACT_IMG;
                         html += CONTACT_PHONE;
-                        centralPhone = convert2Telext(contactInfo.getPhone().split("#")[0]);
+                        centralPhone = convert2Telext(contactInfo.getPhone().split("#")[0]); // 將分機號碼進行處理
                         html += String.format(CONTACT_PHONE_SUPER_LINK, convert2Telext(contactInfo.getPhone()), contactInfo.getPhone());
                     }else{
 //                        html += DEPT_IMG;
@@ -130,7 +124,7 @@ public class LibContactFragment extends Fragment {
     }
 
     /**
-     * 將電話號碼裡有分機的進行轉換以便撥打電話，將#取代為,
+     * 將電話號碼裡有分機的進行轉換以便撥打電話，將#取代為,，以方便Javascript使用
      *
      * @param s
      * @return

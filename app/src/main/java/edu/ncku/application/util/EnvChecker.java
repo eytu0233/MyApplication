@@ -28,6 +28,12 @@ public class EnvChecker {
             return false;
     }
 
+    /**
+     * 確認手機是否連線(只能知道wifi或3, 4G已經連上AP或基地台不代表真的連上網路)
+     *
+     * @param context
+     * @return
+     */
     public static boolean isNetworkConnected(Context context) {
         ConnectivityManager CM = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -35,6 +41,10 @@ public class EnvChecker {
         return info != null && info.isConnected();
     }
 
+    /**
+        *  以兩秒為上限，對Google DNS進行Ping的動作，以確認真正有連上網路
+        * @return
+        */
     public static boolean pingGoogleDNS() {
         Runtime runtime = Runtime.getRuntime();
         try {
@@ -55,7 +65,7 @@ public class EnvChecker {
     /**
      * 取得語言環境參數
      *
-     * @return
+     * @return 語言環境
      */
     private static String getLanguageEnv() {
         Locale l = Locale.getDefault();

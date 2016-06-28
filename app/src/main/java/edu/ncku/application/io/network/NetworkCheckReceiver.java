@@ -36,7 +36,7 @@ public class NetworkCheckReceiver extends BroadcastReceiver {
             if (EnvChecker.isNetworkConnected(context)) {
 
                 scheduledExecutorService.submit(new LibOpenTimeReceiveTask(context));
-                scheduledExecutorService.submit(new RecentActivityReceiveTask(context));
+                scheduledExecutorService.submit(new UpcomingEventsReceiveTask(context));
                 scheduledExecutorService.submit(new FloorInfoReceiveTask(context));
                 scheduledExecutorService.submit(new ContactInfoReceiveTask(context));
                 scheduledExecutorService.submit(new VisitorRecieveTask(context, true, false));

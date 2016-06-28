@@ -29,13 +29,13 @@
             android:maxLines="1"
             android:paddingLeft="10dp"
             android:text="@string/time"
-            android:textColor="#0f55bd" />
+            android:textColor="#0f55bd"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/txtTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.05"
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingLeft="10dp"

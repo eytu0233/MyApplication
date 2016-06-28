@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import edu.ncku.application.R;
 
+/**
+ * 一般ListView的Adapter，只有單純的字串陣列
+ */
 public class ListViewInfoAdapter extends BaseAdapter{
 
 	private Context context;

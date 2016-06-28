@@ -8,14 +8,13 @@ import android.preference.PreferenceManager;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
- * Created by NCKU on 2016/5/5.
  * 此AsyncTask類別是用來讓圖書館伺服器的資料庫改變訂閱狀態，透過php網頁傳送參數
  */
 public class SubscribeTask extends AsyncTask<Boolean, Void, Boolean> {
 
     private static final String DEBUG_FLAG = SubscribeTask.class.getName();
 
-    private static final String SUB_URL = "http://140.116.207.24/push/subscription.php";
+    private static final String SUB_URL = "http://m.lib.ncku.edu.tw/push/subscription.php";
 
     private Context mContext;
 

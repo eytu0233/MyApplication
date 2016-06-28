@@ -24,7 +24,6 @@ import edu.ncku.application.util.Preference;
 import edu.ncku.application.util.PreferenceKeys;
 
 /**
- * Created by NCKU on 2016/4/25.
  * 透過來自GCM傳送的資料(msgNo)，向圖書館伺服器取得推播訊息的內容
  */
 public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
@@ -32,7 +31,7 @@ public class MsgReceiveTask extends JsonReceiveTask implements Runnable {
     private static final String DEBUG_FLAG = MsgReceiveTask.class.getName();
     private static final Object LOCKER = new Object();
     private static final String SUB_FILE_NAME = ".messages";
-    private static final String JSON_URL = "http://140.116.207.24/push/msg_json.php?msgNo=%s&os=A&recver=%s&did=%s";
+    private static final String JSON_URL = "http://m.lib.ncku.edu.tw/push/msg_json.php?msgNo=%s&os=A&recver=%s&did=%s";
 
     private String account;
     private String json_url;

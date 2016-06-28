@@ -48,6 +48,7 @@ public abstract class JsonReceiveTask implements Runnable{
             e.printStackTrace();
         } finally {
             if (urlConnection != null) urlConnection.disconnect();
+            if(responseStrBuilder == null) responseStrBuilder = new StringBuilder();
         }
 
         return responseStrBuilder.toString();
