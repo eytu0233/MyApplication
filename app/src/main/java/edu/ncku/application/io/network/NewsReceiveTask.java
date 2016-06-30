@@ -95,6 +95,8 @@ public class NewsReceiveTask extends JsonReceiveTask implements IOConstatnt {
      */
     private int rewriteNewsFile(LinkedList<News> newsList, String locale) {
 
+        if(newsList == null || newsList.isEmpty()) return 0; // 當資料異常或為空時，不寫入檔案
+
 		/* Get internal storage directory */
         File dir = mContext.getFilesDir();
         File newsFile = new File(dir, FILE_NAME + "_" + locale);

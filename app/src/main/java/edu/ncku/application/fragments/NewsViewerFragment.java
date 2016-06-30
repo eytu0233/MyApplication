@@ -2,7 +2,6 @@ package edu.ncku.application.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,16 +50,24 @@ public class NewsViewerFragment extends Fragment {
             }
         });
 
+        String title = "", date = "", contents = "";
+        try {
+            title = getArguments().getString("title");
+            date = getArguments().getString("date");
+            contents = getArguments().getString("contents");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         msgTitle = (TextView) rootView.findViewById(R.id.txtMsgTitle);
-        msgTitle.setText(getArguments().getString("title"));
+        msgTitle.setText((title != null)?title:"title");
 
         msgDate = (TextView) rootView.findViewById(R.id.txtMsgDate);
-        msgDate.setText(getArguments().getString("date"));
+        msgDate.setText((date != null)?date:"2038/1/19");
 
         msgContents = (WebView) rootView.findViewById(R.id.webContesViewer);
-        Log.d(DEBUG_FLAG, getArguments().getString("contents"));
         msgContents.loadDataWithBaseURL("file:///android_asset/",
-                getArguments().getString("contents"), "text/html",
+                (contents != null)?contents:"", "text/html",
                 "utf-8", null);
 
         return rootView;

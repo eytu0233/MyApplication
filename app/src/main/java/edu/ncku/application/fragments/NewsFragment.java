@@ -65,7 +65,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private int numShowedMsgs = 0;
 
     /**
-     *  當position大於等於0時，直接跳轉到該位置的最新消息頁面
+     * 當position大於等於0時，直接跳轉到該位置的最新消息頁面
      *
      * @param position 最新消息位置
      * @return
@@ -130,7 +130,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         receiver = new NewsReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.intent.action.MY_RECEIVER");
-        activity.registerReceiver(receiver, filter);
+        if (activity != null) activity.registerReceiver(receiver, filter);
 
         return rootView;
     }
@@ -154,19 +154,20 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onDestroy() {
         // TODO Auto-generated method stub
-        activity.unregisterReceiver(receiver);
+        if (activity != null) activity.unregisterReceiver(receiver);
         super.onDestroy();
     }
 
     @Override
     public void onRefresh() {
         try {
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    onceActiveUpdateMessageData();
-                }
-            }, 300);
+            if (mHandler != null)
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onceActiveUpdateMessageData();
+                    }
+                }, 300);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -178,6 +179,8 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * @param position
      */
     private void changeToNewsViewer(int position) {
+        if (listViewAdapter == null) return;
+
         News news = (News) listViewAdapter.getItem(position);
 
         /* 將News物件裡的資料用Bundle倒給顯示頁面 */
@@ -191,9 +194,11 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         msgViewerFragment.setArguments(bundle);
 
         FragmentManager fragmentManager = activity.getFragmentManager();
-        fragmentManager.beginTransaction()
-                .addToBackStack(null)
-                .add(R.id.content_frame, msgViewerFragment).commit();
+        if (fragmentManager != null) {
+            fragmentManager.beginTransaction()
+                    .addToBackStack(null)
+                    .add(R.id.content_frame, msgViewerFragment).commit();
+        }
     }
 
     /**
@@ -202,13 +207,14 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * @param adapter
      */
     private void setListAdapter(final ListAdapter adapter) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                listView.setAdapter(adapter);
-            }
-        });
+        if (mHandler != null)
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    if (listView != null) listView.setAdapter(adapter);
+                }
+            });
     }
 
     /**
@@ -217,12 +223,13 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private void onceActiveUpdateMessageData() {
         DataReceiveService.startActionONCE(getActivity().getApplicationContext());
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipe.setRefreshing(false);
-            }
-        }, 800);
+        if (mHandler != null)
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    swipe.setRefreshing(false);
+                }
+            }, 800);
     }
 
     /**
@@ -236,8 +243,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if (numShowedMsgs < PRELOAD_MSGS_NUM) {
             numShowedMsgs = PRELOAD_MSGS_NUM;
         }
-        Log.v(DEBUG_FLAG, "want to show : "
-                + numShowedMsgs);
 
         /* 最新消息資料會先儲存進手機端，然後在這邊用NewsReaderTask讀出來 */
         NewsReaderTask newsReaderTask = new NewsReaderTask(this, numShowedMsgs);
@@ -248,7 +253,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             setListAdapter(listViewAdapter);
             numShowedMsgs = listViewAdapter.getCount();
             newsTip.setVisibility(View.INVISIBLE);
-            Log.v(DEBUG_FLAG, "UpdateList finish : " + numShowedMsgs);
             return true;
         } else {
             return false;
@@ -264,6 +268,8 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
+                if(progressBar != null && newsTip != null)
+
                 if (updateList()) {
                     progressBar.setVisibility(View.INVISIBLE);
                 } else {

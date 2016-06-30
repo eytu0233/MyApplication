@@ -29,8 +29,18 @@ public class UpcomingEventsReceiveTask extends JsonReceiveTask implements IOCons
     @Override
     public void run() {
         try {
-            saveFile(decodeJson(JSON_URL + "cht"), FILE_NAME + "_cht");
-            saveFile(decodeJson(JSON_URL + "eng"), FILE_NAME + "_eng");
+            Map<String, String> upcomingEventData;
+            upcomingEventData = decodeJson(JSON_URL + "cht");
+
+            if(upcomingEventData != null && !upcomingEventData.isEmpty()){
+                saveFile(upcomingEventData, FILE_NAME + "_cht");
+            }
+
+            upcomingEventData = decodeJson(JSON_URL + "eng");
+
+            if(upcomingEventData != null && !upcomingEventData.isEmpty()){
+                saveFile(upcomingEventData, FILE_NAME + "_eng");
+            }
         } catch (Exception e){
             Log.e(DEBUG_FLAG, "最近活動Json格式解析錯誤或沒有資料", e);
         }

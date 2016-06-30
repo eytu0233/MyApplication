@@ -31,7 +31,7 @@
         android:id="@+id/msgListView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:divider="#FFEEEEEE"
+        android:divider="@color/divider"
         android:dividerHeight="1dip" >
     </ListView>
 

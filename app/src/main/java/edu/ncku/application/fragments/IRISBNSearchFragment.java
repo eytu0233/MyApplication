@@ -20,7 +20,7 @@ public class IRISBNSearchFragment extends Fragment {
 
     private static final String ISBN = "ISBN";
 
-    private static final String ISBN_SEARCH_URL = "http://m.lib.ncku.edu.tw/catalogs/ISBNBibSearch.php?lan=" + ((EnvChecker.isLunarSetting())?"cht":"eng") + "&ISBN=";
+    private static final String ISBN_SEARCH_URL = "http://m.lib.ncku.edu.tw/catalogs/ISBNBibSearch.php?lan=%s&ISBN=%s";
 
     // TODO: Rename and change types of parameters
     private String isbn;
@@ -65,7 +65,7 @@ public class IRISBNSearchFragment extends Fragment {
             }
 
         });
-        webView.loadUrl(ISBN_SEARCH_URL + isbn);
+        webView.loadUrl(String.format(ISBN_SEARCH_URL, ((EnvChecker.isLunarSetting())?"cht":"eng"), isbn));
 
         return rootView;
     }
